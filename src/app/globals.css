@@ -1,26 +1,94 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 
 :root {
+  /* Fondo principal (body en modo claro) */
   --background: #ffffff;
-  --foreground: #171717;
+  /* Texto principal en modo claro */
+  --foreground: oklch(0.145 0 0);
+
+  /* Card (ej: fondos de tarjetas o paneles) */
+  --card: #ffffff;
+  --card-foreground: oklch(0.145 0 0);
+
+  /* Popover / tooltip */
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+
+  /* 🌿 Verde principal de la marca */
+  --primary: #4CAF50;
+  --primary-foreground: #ffffff; /* texto blanco sobre verde */
+
+  /* Color secundario (gris azulado suave) */
+  --secondary: oklch(0.95 0.0058 264.53);
+  --secondary-foreground: #030213;
+
+  /* Colores apagados (texto o bordes sutiles) */
+  --muted: #ececf0;
+  --muted-foreground: #717182;
+
+  /* 🍊 Naranja de acento (para resaltar botones o highlights) */
+  --accent: #FF9800;
+  --accent-foreground: #ffffff;
+
+  /* ❌ Rojo destructivo (errores, alertas) */
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+
+  /* Bordes y detalles */
+  --border: rgba(0, 0, 0, 0.1);
+
+  /* Inputs (fondo de campos de texto) */
+  --input: transparent;
+  --input-background: #f3f3f5;
+
+  /* Switches, sliders */
+  --switch-background: #cbced4;
+
+  /* Colores de enfoque / anillo */
+  --ring: #4CAF50;
+
+  /* 🎨 Paleta para gráficos (charts, tags, badges) */
+  --chart-1: oklch(0.646 0.222 41.116); /* naranja rojizo */
+  --chart-2: oklch(0.6 0.118 184.704); /* azul verdoso */
+  --chart-3: oklch(0.398 0.07 227.392); /* azul marino */
+  --chart-4: oklch(0.828 0.189 84.429); /* verde lima */
+  --chart-5: oklch(0.769 0.188 70.08);  /* amarillo verdoso */
+
+  /* Esquinas redondeadas */
+  --radius: 0.75rem;
+
+  /* Sidebar (colores para menús laterales) */
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: #4CAF50;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: #4CAF50;
+
+  /* Paleta extendida de grises (por si necesitas más granularidad) */
+  --color-gray-50: #FAFAFA;
+  --color-gray-100: #F5F5F5;
+  --color-gray-200: #EEEEEE;
+  --color-gray-300: #E0E0E0;
+  --color-gray-400: #BDBDBD;
+  --color-gray-500: #9E9E9E;
+  --color-gray-600: #757575;
+  --color-gray-700: #616161;
+  --color-gray-800: #424242;
+  --color-gray-900: #212121;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* 🌙 Modo oscuro (se redefinen las mismas variables) */
+.dark {
+  --background: oklch(0.145 0 0);  /* fondo casi negro */
+  --foreground: oklch(0.985 0 0);  /* texto blanco */
+  --primary: oklch(0.985 0 0);     /* en dark el "primary" pasa a claro */
+  --primary-foreground: oklch(0.205 0 0);
+  /* ...etc, mismas variables ajustadas a dark mode */
 }
