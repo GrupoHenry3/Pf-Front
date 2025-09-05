@@ -5,6 +5,9 @@ export default function Home() {
   return (
     <div>
       <Hero />
+      <p>hola mundo
+      </p>
     </div>
+    
   );
 }
