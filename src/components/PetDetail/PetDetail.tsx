@@ -23,12 +23,10 @@ import { ImageWithFallback } from "../utils/ImageWithFallback";
 import type { User } from "../../interfaces/User";
 import type { Pet } from "../../interfaces/Pet";
 import PATHROUTES from "../utils/PathRoutes.util";
-import router from "next/router";
 import Link from "next/link";
 
 interface PetDetailProps {
   pet: Pet;
-  onBack: () => void;
   user: User | null;
   onStartChat: () => void;
   onStartAdoption: (pet: Pet) => void;
@@ -36,7 +34,6 @@ interface PetDetailProps {
 
 export function PetDetail({
   pet,
-  onBack,
   user,
   onStartChat,
   onStartAdoption,
@@ -314,9 +311,7 @@ export function PetDetail({
                         asChild
                         className="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl flex items-center justify-center"
                       >
-                        <Link
-                          href={`${PATHROUTES.ADOPTION}?petId=${pet.id}`}
-                        >
+                        <Link href={`${PATHROUTES.ADOPTION}?petId=${pet.id}`}>
                           <Heart className="w-4 h-4 mr-2" />
                           ¡Quiero adoptar a {pet.name}!
                         </Link>
@@ -365,9 +360,7 @@ export function PetDetail({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tipo:</span>
-                  <span className="text-gray-900">
-                    {getTypeLabel(pet.type)}
-                  </span>
+                  <span className="text-gray-900">{getTypeLabel(pet.type)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Raza:</span>
@@ -379,9 +372,7 @@ export function PetDetail({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tamaño:</span>
-                  <span className="text-gray-900">
-                    {getSizeLabel(pet.size)}
-                  </span>
+                  <span className="text-gray-900">{getSizeLabel(pet.size)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Género:</span>

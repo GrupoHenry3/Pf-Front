@@ -3,7 +3,7 @@ import type { Pet } from "@/interfaces/Pet";
 
 export const PETS: Pet[] = [
   {
-    id: "1",
+    id: 1,
     name: "Luna",
     type: "dog",
     breed: "Golden Retriever",
@@ -25,7 +25,7 @@ export const PETS: Pet[] = [
     dni: "P001",
   },
   {
-    id: "2",
+    id: 2,
     name: "Milo",
     type: "cat",
     breed: "Maine Coon",
@@ -47,7 +47,7 @@ export const PETS: Pet[] = [
     dni: "P002",
   },
   {
-    id: "3",
+    id: 3,
     name: "Rocky",
     type: "dog",
     breed: "Labrador Mix",
@@ -70,7 +70,7 @@ export const PETS: Pet[] = [
   },
 
   {
-  id: "4",
+  id: 4,
   name: "Nala",
   type: "cat",
   breed: "Siamesa",
@@ -92,7 +92,7 @@ export const PETS: Pet[] = [
   dni: "P004",
 },
 {
-  id: "5",
+  id: 5,
   name: "Thor",
   type: "dog",
   breed: "Pastor Alemán",
@@ -114,7 +114,7 @@ export const PETS: Pet[] = [
   dni: "P005",
 },
 {
-  id: "6",
+  id: 6,
   name: "Coco",
   type: "dog",
   breed: "Beagle",
@@ -138,6 +138,6 @@ export const PETS: Pet[] = [
 
 ];
 
-export function getPetById(id: string): Pet | undefined {
+export function getPetById(id: number): Pet | undefined {
   return PETS.find((p) => p.id === id);
 }

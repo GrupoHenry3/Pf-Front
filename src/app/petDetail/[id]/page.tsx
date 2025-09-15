@@ -1,52 +1,44 @@
 "use client";
 
 import { PetDetail } from "@/components/PetDetail/PetDetail";
-import {Sidebar } from "@/components/sidebar/Sidebar";
+import { Sidebar } from "@/components/sidebar/Sidebar";
 import { useState } from "react";
+import { useParams } from "next/navigation";
 import type { Pet } from "@/interfaces/Pet";
 import type { User } from "@/interfaces/User";
+import { PETS } from "@/data/pets"; // 👉 importa el mock con todas las mascotas
 
 export default function PetDetailPage() {
+  const params = useParams();
+  const petId = Number(params?.id); // id dinámico desde la URL
   const [currentView, setCurrentView] = useState("catalog");
+
   const handleNavigate = (view: string) => setCurrentView(view);
   const handleLogout = () => {};
 
-  // 🚀 Simulación: mascota de ejemplo
-  const mockPet: Pet = {
-    id: 1,
-    name: "Firulais",
-    type: "dog",
-    breed: "Labrador Retriever",
-    age: 3,
-    size: "medium",
-    gender: "male",
-    vaccinated: true,
-    neutered: false,
-    trained: true,
-    goodWithKids: true,
-    goodWithPets: true,
-    location: "Bogotá, Colombia",
-    dateAdded: new Date().toISOString(),
-    description:
-      "Firulais es un perro juguetón, muy cariñoso y lleno de energía. Le encanta salir a pasear, correr y recibir cariño. Ideal para una familia activa.",
-    images: [
-      "https://placedog.net/800/600?id=100",
-      "https://placedog.net/800/600?id=101",
-      "https://placedog.net/800/600?id=102",
-    ],
-    shelterName: "Refugio Huellitas",
-  };
+  // 👉 Buscar la mascota en el mock usando el id
+  const mockPet: Pet | undefined = PETS.find((pet) => pet.id === petId);
 
   const mockUser: User = {
     id: 1,
     name: "Eduin",
-    role: "adopter", // puede ser "adopter" o "shelter"
+    role: "adopter",
   };
+
+  if (!mockPet) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-gray-50">
+        <p className="text-gray-700 text-lg">
+          Mascota no encontrada. Verifica el ID en la URL.
+        </p>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="flex h-full">
-        {/* Sidebar a la izquierda */}
+        {/* Sidebar /}
         <Sidebar
           user={mockUser}
           currentView={currentView}
@@ -54,13 +46,12 @@ export default function PetDetailPage() {
           onLogout={handleLogout}
         />
 
-        {/* Contenido principal */}
+        {/ Contenido principal */}
         <div className="flex-1">
           <div className="max-w-6xl mx-auto px-4 py-8">
             <PetDetail
               pet={mockPet}
               user={mockUser}
-              onBack={() => console.log("Volver al catálogo")}
               onStartChat={() => console.log("Iniciar chat con refugio")}
               onStartAdoption={(pet) =>
                 console.log("Solicitud de adopción:", pet)
