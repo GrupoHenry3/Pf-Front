@@ -12,15 +12,12 @@ import { StepHousing } from "@/components/adoptionApplication/steps/StepHousing"
 import { StepLifestyle } from "@/components/adoptionApplication/steps/StepLifestyle";
 import { StepFamilyPets } from "@/components/adoptionApplication/steps/StepFamilyPets";
 import type { ApplicationData } from "@/interfaces/Adoption";
-import type { Pet } from "@/./interfaces/Pet";
+import type { Pet } from "@/interfaces/Pet";
 import PATHROUTES from "../utils/PathRoutes.util";
 import Link from "next/link";
 
 export default function AdoptionPageWrapper() {
   const user = { id: "user1", name: "Moritz" };
-  const handleBack = () => console.log("Volver");
-  const handleSubmit = (data: any) => console.log("Solicitud enviada:", data);
-
   const params = useParams();
   const petId = params?.id;
 
@@ -92,7 +89,8 @@ export default function AdoptionPageWrapper() {
       status: "new",
     };
 
-    handleSubmit(submission);
+    console.log("Solicitud enviada:", submission);
+    window.alert("✅ Solicitud enviada con éxito");
   };
 
   useEffect(() => {
@@ -134,26 +132,22 @@ export default function AdoptionPageWrapper() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      {/* Contenedor centrado con ancho limitado */}
       <div className="max-w-8xl mx-auto px-4 sm:px-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
+        {/* Botón único de Volver
+        <div className="mb-6">
           <Button
             asChild
             variant="ghost"
-            className="text-gray-600 hover:text-gray-900 mb-4 sm:mb-0 flex items-center"
+            className="text-gray-600 hover:text-gray-900 flex items-left"
           >
-            <Link href={PATHROUTES.PET_DETAIL}>
+            <Link href={PATHROUTES.CATALOG}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Volver
             </Link>
           </Button>
-          {/* <span className="text-2xl font-semibold text-gray-900">
-            Solicitud para {fetchedPet ? fetchedPet.name : "la mascota"}
-          </span> */}
-        </div>
+        </div> */}
 
-        {/* Progress */}
+        {/* Progreso */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-gray-600">
@@ -166,7 +160,7 @@ export default function AdoptionPageWrapper() {
           <Progress value={getProgress()} className="h-2 rounded-full" />
         </div>
 
-        {/* Pet Info Card */}
+        {/* Info de mascota */}
         {fetchedPet && (
           <Card className="mb-8 shadow-md">
             <CardContent className="p-6 flex flex-col sm:flex-row items-center sm:items-start">
@@ -178,8 +172,7 @@ export default function AdoptionPageWrapper() {
               <div className="flex-1">
                 <h2 className="text-xl font-semibold">{fetchedPet.name}</h2>
                 <p className="text-gray-600 mt-1">
-                  {fetchedPet.breed} • {fetchedPet.age} años •{" "}
-                  {fetchedPet.gender}
+                  {fetchedPet.breed} • {fetchedPet.age} años • {fetchedPet.gender}
                 </p>
                 <p className="mt-2 text-gray-700">{fetchedPet.description}</p>
                 <p className="mt-1 text-gray-500 text-sm">
@@ -193,12 +186,12 @@ export default function AdoptionPageWrapper() {
           </Card>
         )}
 
-        {/* Form Step */}
+        {/* Formulario del paso */}
         <Card className="shadow-lg mb-8">
           <CardContent className="p-6">{renderStep()}</CardContent>
         </Card>
 
-        {/* Navigation */}
+        {/* Navegación de pasos */}
         <div className="flex flex-col sm:flex-row justify-between mt-6 gap-2 sm:gap-0">
           <Button
             variant="outline"
@@ -219,19 +212,16 @@ export default function AdoptionPageWrapper() {
             </Button>
           ) : (
             <Button
-  onClick={() => {
-    handleSubmitForm();
-    window.alert("✅ Solicitud enviada con éxito");
-  }}
-  disabled={!validateStep(currentStep)}
-  className="bg-green-500 hover:bg-green-600 w-full sm:w-auto"
->
-  Enviar Solicitud <Send className="w-4 h-4 ml-2" />
-</Button>
+              onClick={handleSubmitForm}
+              disabled={!validateStep(currentStep)}
+              className="bg-green-500 hover:bg-green-600 w-full sm:w-auto"
+            >
+              Enviar Solicitud <Send className="w-4 h-4 ml-2" />
+            </Button>
           )}
         </div>
 
-        {/* Final Alert */}
+        {/* Alerta final */}
         {currentStep === totalSteps && validateStep(currentStep) && (
           <Alert className="border-green-200 bg-green-50 mt-6 flex items-center gap-2">
             <Check className="w-4 h-4 text-green-600" />

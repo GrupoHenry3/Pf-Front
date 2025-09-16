@@ -24,6 +24,7 @@ import type { User } from "../../interfaces/User";
 import type { Pet } from "../../interfaces/Pet";
 import PATHROUTES from "../utils/PathRoutes.util";
 import Link from "next/link";
+import { Sidebar } from "../sidebar/Sidebar";
 
 interface PetDetailProps {
   pet: Pet;
@@ -91,7 +92,7 @@ export function PetDetail({
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
+        <Sidebar />
         <div className="flex items-center justify-between mb-8">
           <Button
             asChild

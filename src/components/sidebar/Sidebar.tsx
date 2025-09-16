@@ -1,6 +1,7 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'; // 🚨 Necesario para redirección
 import {
   Menu,
   Home,
@@ -16,11 +17,12 @@ import {
   Shield,
   Bell,
   HelpCircle,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
+} from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 import {
   Sheet,
   SheetContent,
@@ -28,24 +30,24 @@ import {
   SheetTitle,
   SheetDescription,
   SheetHeader,
-} from "@/components/ui/sheet";
+} from '@/components/ui/sheet';
 
-type Role = "adopter" | "shelter" | "admin";
+type Role = 'adopter' | 'shelter' | 'admin';
 export type CurrentView =
-  | "catalog"
-  | "donation-flow"
-  | "auth"
-  | "adopter-dashboard"
-  | "shelter-dashboard"
-  | "admin-dashboard"
-  | "messages"
-  | "profile"
-  | "add-pet"
-  | "manage-applications"
-  | "donations"
-  | "help"
-  | "notifications"
-  | "settings";
+  | 'catalog'
+  | 'donation-flow'
+  | 'auth'
+  | 'adopter-dashboard'
+  | 'shelter-dashboard'
+  | 'admin-dashboard'
+  | 'messages'
+  | 'profile'
+  | 'add-pet'
+  | 'manage-applications'
+  | 'donations'
+  | 'help'
+  | 'notifications'
+  | 'settings';
 
 export interface UserType {
   name: string;
@@ -57,126 +59,117 @@ export interface UserType {
 interface SidebarProps {
   user: UserType | null;
   currentView: CurrentView;
-  onNavigate: (view: CurrentView) => void;
   onLogout: () => void;
 }
+
+// 🔁 Mapea IDs de vista a rutas reales
+const getRoutePath = (view: CurrentView): string => {
+  switch (view) {
+    case 'catalog':
+      return '/pet-catalog'; // 📝 Cambia por la ruta de tu catálogo
+    case 'donation-flow':
+      return '/donate'; // 📝 Ruta del flujo de donación
+    case 'auth':
+      return '/login'; // 📝 Ruta de login
+    case 'adopter-dashboard':
+      return '/dashboard/adopter'; // 📝 Ruta dashboard adoptante
+    case 'shelter-dashboard':
+      return '/dashboard/shelter'; // 📝 Ruta dashboard refugio
+    case 'admin-dashboard':
+      return '/dashboard/admin'; // 📝 Ruta dashboard admin
+    case 'messages':
+      return '/messages';
+    case 'profile':
+      return '/profile';
+    case 'add-pet':
+      return '/pets/add';
+    case 'manage-applications':
+      return '/applications';
+    case 'donations':
+      return '/donations';
+    case 'help':
+      return '/help';
+    case 'notifications':
+      return '/notifications';
+    case 'settings':
+      return '/settings';
+    default:
+      return '/';
+  }
+};
 
 export function Sidebar({
   user,
   currentView,
-  onNavigate,
   onLogout,
 }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter(); // 🚨 Para redirección
 
-  // Cierra el menú al cambiar a desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
         setIsOpen(false);
       }
     };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Cierra el menú al cambiar de vista
   useEffect(() => {
     setIsOpen(false);
   }, [currentView]);
 
   const getNavigationItems = () => {
     const commonItems = [
-      { id: "donation-flow", label: "Hacer Donación", icon: Heart, badge: null },
+      { id: 'donation-flow', label: 'Hacer Donación', icon: Heart, badge: null },
     ];
 
     if (!user) {
-      return [{ id: "catalog", label: "Ver Mascotas", icon: Search, badge: null }, ...commonItems];
+      return [{ id: 'catalog', label: 'Ver Mascotas', icon: Search, badge: null }, ...commonItems];
     }
 
     switch (user.role) {
-      case "adopter":
+      case 'adopter':
         return [
-          { id: "adopter-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Buscar Mascotas", icon: Search, badge: null },
-          { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 3 },
+          { id: 'adopter-dashboard', label: 'Dashboard', icon: Home, badge: null },
+          { id: 'catalog', label: 'Buscar Mascotas', icon: Search, badge: null },
+          { id: 'messages', label: 'Mensajes', icon: MessageCircle, badge: 3 },
           ...commonItems,
-          { id: "profile", label: "Mi Perfil", icon: User, badge: null },
+          { id: 'profile', label: 'Mi Perfil', icon: User, badge: null },
         ];
-
-      case "shelter":
+      case 'shelter':
         return [
-          { id: "shelter-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Mis Mascotas", icon: Heart, badge: null },
-          { id: "add-pet", label: "Agregar Mascota", icon: Plus, badge: null },
-          { id: "manage-applications", label: "Solicitudes", icon: FileText, badge: 5 },
-          { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 2 },
-          { id: "donations", label: "Donaciones Recibidas", icon: DollarSign, badge: null },
-          { id: "profile", label: "Mi Perfil", icon: User, badge: null },
+          { id: 'shelter-dashboard', label: 'Dashboard', icon: Home, badge: null },
+          { id: 'catalog', label: 'Mis Mascotas', icon: Heart, badge: null },
+          { id: 'add-pet', label: 'Agregar Mascota', icon: Plus, badge: null },
+          { id: 'manage-applications', label: 'Solicitudes', icon: FileText, badge: 5 },
+          { id: 'messages', label: 'Mensajes', icon: MessageCircle, badge: 2 },
+          { id: 'donations', label: 'Donaciones Recibidas', icon: DollarSign, badge: null },
+          { id: 'profile', label: 'Mi Perfil', icon: User, badge: null },
         ];
-
-      case "admin":
+      case 'admin':
         return [
-          { id: "admin-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Mascotas", icon: Search, badge: null },
-          { id: "manage-applications", label: "Solicitudes", icon: FileText, badge: 12 },
-          { id: "donations", label: "Donaciones Sistema", icon: DollarSign, badge: null },
+          { id: 'admin-dashboard', label: 'Dashboard', icon: Home, badge: null },
+          { id: 'catalog', label: 'Mascotas', icon: Search, badge: null },
+          { id: 'manage-applications', label: 'Solicitudes', icon: FileText, badge: 12 },
+          { id: 'donations', label: 'Donaciones Sistema', icon: DollarSign, badge: null },
           ...commonItems,
-          { id: "profile", label: "Mi Perfil", icon: User, badge: null },
+          { id: 'profile', label: 'Mi Perfil', icon: User, badge: null },
         ];
-
       default:
         return [];
     }
   };
 
   const getSupportItems = () => [
-    { id: "help", label: "Ayuda", icon: HelpCircle },
-    { id: "notifications", label: "Notificaciones", icon: Bell },
-    { id: "settings", label: "Configuración", icon: Settings },
+    { id: 'help', label: 'Ayuda', icon: HelpCircle },
+    { id: 'notifications', label: 'Notificaciones', icon: Bell },
+    { id: 'settings', label: 'Configuración', icon: Settings },
   ];
-
-  const getQuickAccessItems = () => {
-    if (!user) {
-      return [
-        { id: "catalog", label: "Mascotas", icon: Search, badge: null },
-        { id: "donation-flow", label: "Donar", icon: Heart, badge: null },
-      ];
-    }
-
-    switch (user.role) {
-      case "adopter":
-        return [
-          { id: "adopter-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Buscar", icon: Search, badge: null },
-          { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 3 },
-          { id: "donation-flow", label: "Donar", icon: Heart, badge: null },
-        ];
-
-      case "shelter":
-        return [
-          { id: "shelter-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Mascotas", icon: Heart, badge: null },
-          { id: "add-pet", label: "Agregar", icon: Plus, badge: null },
-          { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 2 },
-        ];
-
-      case "admin":
-        return [
-          { id: "admin-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Mascotas", icon: Search, badge: null },
-          { id: "manage-applications", label: "Solicitudes", icon: FileText, badge: 12 },
-          { id: "donations", label: "Donaciones", icon: DollarSign, badge: null },
-        ];
-
-      default:
-        return [];
-    }
-  };
 
   const navigationItems = getNavigationItems();
   const supportItems = getSupportItems();
-  const quickAccessItems = getQuickAccessItems();
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-white border-r border-gray-200">
@@ -206,9 +199,9 @@ export function Sidebar({
             <div className="flex-1 min-w-0">
               <p className="text-sm text-gray-900 truncate">{user.name}</p>
               <p className="text-xs text-gray-500 truncate">
-                {user.role === "adopter" && "Adoptante"}
-                {user.role === "shelter" && "Refugio"}
-                {user.role === "admin" && "Administrador"}
+                {user.role === 'adopter' && 'Adoptante'}
+                {user.role === 'shelter' && 'Refugio'}
+                {user.role === 'admin' && 'Administrador'}
               </p>
             </div>
             {user.verified && <Shield className="w-4 h-4 text-green-500" />}
@@ -222,23 +215,21 @@ export function Sidebar({
           {navigationItems.map((item) => (
             <Button
               key={item.id}
-              variant={currentView === item.id ? "default" : "ghost"}
+              variant={currentView === item.id ? 'default' : 'ghost'}
               className={`w-full justify-start ${
                 currentView === item.id
-                  ? "bg-green-500 text-white hover:bg-green-600"
-                  : "text-gray-700 hover:bg-gray-100"
+                  ? 'bg-green-500 text-white hover:bg-green-600'
+                  : 'text-gray-700 hover:bg-gray-100'
               }`}
               onClick={() => {
-                onNavigate(item.id as CurrentView);
+                router.push(getRoutePath(item.id as CurrentView)); // 🚀 Aquí redireccionas
                 setIsOpen(false);
               }}
             >
               <item.icon className="w-4 h-4 mr-3" />
               {item.label}
               {item.badge && item.badge > 0 && (
-                <Badge className="ml-auto bg-orange-500 text-white">
-                  {item.badge}
-                </Badge>
+                <Badge className="ml-auto bg-orange-500 text-white">{item.badge}</Badge>
               )}
             </Button>
           ))}
@@ -248,15 +239,16 @@ export function Sidebar({
 
         {/* Support */}
         <nav className="p-4 space-y-2">
-          <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">
-            Soporte
-          </p>
+          <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Soporte</p>
           {supportItems.map((item) => (
             <Button
               key={item.id}
               variant="ghost"
               className="w-full justify-start text-gray-700 hover:bg-gray-100"
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                router.push(getRoutePath(item.id as CurrentView));
+                setIsOpen(false);
+              }}
             >
               <item.icon className="w-4 h-4 mr-3" />
               {item.label}
@@ -271,7 +263,7 @@ export function Sidebar({
           <Button
             variant="ghost"
             className="w-full justify-start text-red-600 hover:bg-red-50"
-            onClick={onLogout}
+            onClick={() => router.push("/")}
           >
             <LogOut className="w-4 h-4 mr-3" />
             Cerrar Sesión
@@ -279,10 +271,7 @@ export function Sidebar({
         ) : (
           <Button
             className="w-full bg-green-500 hover:bg-green-600"
-            onClick={() => {
-              onNavigate("auth");
-              setIsOpen(false);
-            }}
+            onClick={() => router.push("/auth")}
           >
             Iniciar Sesión
           </Button>
@@ -314,53 +303,12 @@ export function Sidebar({
             <SheetHeader className="sr-only">
               <SheetTitle>Menú de navegación</SheetTitle>
               <SheetDescription>
-                Navegación principal de PetAdopt para acceso a todas las
-                funciones
+                Navegación principal de PetAdopt para acceso a todas las funciones
               </SheetDescription>
             </SheetHeader>
             <SidebarContent />
           </SheetContent>
         </Sheet>
-      </div>
-
-      {/* Mobile Bottom Bar */}
-      <div
-        className={`lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-lg transition-transform duration-300 ${
-          isOpen ? "translate-y-full" : "translate-y-0"
-        }`}
-      >
-        <nav className="flex items-center justify-around px-1 py-1 safe-area-pb">
-          {quickAccessItems.map((item) => (
-            <Button
-              key={item.id}
-              variant="ghost"
-              size="sm"
-              className={`relative flex flex-col items-center justify-center h-16 px-2 py-1 min-w-0 flex-1 ${
-                currentView === item.id
-                  ? "text-green-500 bg-green-50"
-                  : "text-gray-600 hover:text-green-500 hover:bg-green-50"
-              }`}
-              onClick={() => onNavigate(item.id as CurrentView)}
-            >
-              <div className="relative">
-                <item.icon
-                  className={`w-5 h-5 mb-1 ${
-                    currentView === item.id ? "text-green-500" : "text-gray-600"
-                  }`}
-                />
-                {item.badge && item.badge > 0 && (
-                  <Badge className="absolute -top-0.5 -right-0.5 bg-orange-500 text-white min-w-3.5 h-3.5 text-xs flex items-center justify-center p-0 border border-white text-[10px] rounded-full">
-                    {item.badge > 9 ? "9+" : item.badge}
-                  </Badge>
-                )}
-              </div>
-              <span className="text-xs truncate max-w-full">{item.label}</span>
-              {currentView === item.id && (
-                <div className="absolute bottom-1 w-1 h-1 bg-green-500 rounded-full"></div>
-              )}
-            </Button>
-          ))}
-        </nav>
       </div>
     </>
   );

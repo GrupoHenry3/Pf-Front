@@ -5,23 +5,24 @@ import { User } from '@/interfaces/User';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ImageWithFallback } from '@/components/utils/ImageWithFallback';
 import { Button } from '@/components/ui/button';
-import { Sidebar } from '@/components/sidebar/Sidebar';
+import { Sidebar, type CurrentView } from '@/components/sidebar/Sidebar';
 import { Badge } from '@/components/ui/badge';
-
-interface AdopterDashboardProps {
-  user: User;
-  onViewCatalog: () => void;
-  onViewMessages: () => void;
-}
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 const userExample: User = {
   id: '123',
   name: 'Juan Pérez',
   email: 'correo@correo.com',
   role: 'adopter'
-}
+};
 
-function AdopterDashboard({ user, onViewCatalog, onViewMessages }: AdopterDashboardProps) {
+function AdopterDashboard() {
+  const router = useRouter();
+  const [currentView, setCurrentView] = useState<CurrentView>('adopter-dashboard');
+  const onViewCatalog = () => router.push('/pet-catalog');
+  const onViewMessages = () => setCurrentView('messages');
+  const handleLogout = () => console.log('Logout');
   const recentlyViewed = [
     {
       id: '1',
@@ -92,14 +93,14 @@ function AdopterDashboard({ user, onViewCatalog, onViewMessages }: AdopterDashbo
   ];
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar fijo */}
-      <div className="w-64 border-r bg-white shadow-sm">
-        <Sidebar user={userExample} />
-      </div>
-
-      {/* Contenido principal */}
-      <div className="flex-1 bg-gray-50">
+    <div className="min-h-screen bg-gray-50">
+      <Sidebar
+        user={userExample}
+        currentView={currentView}
+        onNavigate={(v) => setCurrentView(v)}
+        onLogout={handleLogout}
+      />
+      <div className="pl-0 lg:pl-64">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-8">
             <h1 className="text-3xl text-gray-900 mb-2">

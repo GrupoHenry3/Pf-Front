@@ -1,6 +1,5 @@
 export interface Pet {
   id: number;
-  dni: string;
   name: string;
   type: 'dog' | 'cat' | 'other';
   breed: string;

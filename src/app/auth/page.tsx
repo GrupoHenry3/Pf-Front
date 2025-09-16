@@ -14,7 +14,7 @@ export default function AuthPage() {
       if (isLogin) {
         // Login: correo o nombre de usuario
         login(user.email, user.password);
-        router.push("/dashboard"); // redirige solo en login
+        router.push("/dashboard/adopter"); // redirige solo en login
       } else {
         // Registro
         register(user);

@@ -4,14 +4,14 @@ import type { Pet } from "@/interfaces/Pet";
 export const PETS: Pet[] = [
   {
     id: 1,
-    name: "Luna",
+    name: "Firulais",
     type: "dog",
     breed: "Golden Retriever",
     age: 2,
     size: "large",
     gender: "female",
     description: "Luna es una perra muy cariñosa y juguetona. Ideal para familias activas.",
-    images: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxeR6UMI84XItTt9VBjpB3JHGJzbMRcJ1gEQ&s"],
+    images: ["https://placedog.net/800/600?id=100"],
     location: "Madrid, España",
     shelterId: "1",
     shelterName: "Refugio San Francisco",
