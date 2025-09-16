@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
-import { Hero } from "@/components/hero/Hero";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  return <Hero />;
+  const router = useRouter();
+  router.push("/welcome");
 }

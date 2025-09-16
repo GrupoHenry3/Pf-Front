@@ -1,27 +1,42 @@
 "use client";
 
 import { Heart, Search, MessageCircle, Calendar, MapPin, Star } from 'lucide-react';
-import { User } from '@/interfaces/User';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ImageWithFallback } from '@/components/utils/ImageWithFallback';
 import { Button } from '@/components/ui/button';
 import { Sidebar } from '@/components/sidebar/Sidebar';
 import { Badge } from '@/components/ui/badge';
+import { useUser } from '@/context/UserContext';
+import { ErrorAlert } from '@/components/ui/ErrorAlert';
 
 interface AdopterDashboardProps {
-  user: User;
   onViewCatalog: () => void;
   onViewMessages: () => void;
 }
 
-const userExample: User = {
-  id: '123',
-  name: 'Juan Pérez',
-  email: 'correo@correo.com',
-  role: 'adopter'
+interface AdoptionApplication {
+  id: string;
+  petName: string;
+  petImage: string;
+  shelterName: string;
+  status: string;
+  statusLabel: string;
+  appliedDate: string;
+  nextStep: string;
 }
 
-function AdopterDashboard({ user, onViewCatalog, onViewMessages }: AdopterDashboardProps) {
+
+function AdopterDashboard({ onViewCatalog, onViewMessages }: AdopterDashboardProps) {
+
+  const { 
+    user, 
+    isProfileLoaded, 
+    isUserLoading, 
+    isInitialized, 
+    error, 
+    clearError 
+  } = useUser();
+
   const recentlyViewed = [
     {
       id: '1',
@@ -45,28 +60,6 @@ function AdopterDashboard({ user, onViewCatalog, onViewMessages }: AdopterDashbo
     }
   ];
 
-  const applications = [
-    {
-      id: '1',
-      petName: 'Bella',
-      petImage: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=300&h=300&fit=crop',
-      shelterName: 'Refugio La Esperanza',
-      status: 'pending',
-      statusLabel: 'En revisión',
-      appliedDate: '2024-03-15',
-      nextStep: 'Entrevista programada para el 20 de marzo'
-    },
-    {
-      id: '2',
-      petName: 'Max',
-      petImage: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=300&h=300&fit=crop',
-      shelterName: 'Amigos Peludos',
-      status: 'approved',
-      statusLabel: 'Aprobada',
-      appliedDate: '2024-03-10',
-      nextStep: 'Contactar para coordinar la entrega'
-    }
-  ];
 
   const recommendations = [
     {
@@ -90,24 +83,57 @@ function AdopterDashboard({ user, onViewCatalog, onViewMessages }: AdopterDashbo
       reason: 'Perfecto para apartamentos'
     }
   ];
+  
+// Mostrar loading mientras se inicializa o carga el usuario
+if (!isInitialized || isUserLoading || !isProfileLoaded) {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+        <p className="text-gray-600">Cargando tu dashboard...</p>
+        <p className="text-sm text-gray-500 mt-2">
+          {!isInitialized && "Inicializando..."}
+          {isInitialized && isUserLoading && "Cargando perfil..."}
+          {isInitialized && !isUserLoading && !isProfileLoaded && "Verificando autenticación..."}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+if (isInitialized && isProfileLoaded && !user) {
+  return null;
+}
 
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar fijo */}
       <div className="w-64 border-r bg-white shadow-sm">
-        <Sidebar user={userExample} />
+        <Sidebar 
+          user={user} 
+        />
       </div>
 
       {/* Contenido principal */}
       <div className="flex-1 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+          {/* Mostrar errores si existen */}
+          {error && (
+            <ErrorAlert error={error} onClear={clearError} />
+          )}
+          
           <div className="mb-8">
             <h1 className="text-3xl text-gray-900 mb-2">
-              ¡Hola, {userExample.name}! 👋
+              ¡Hola, {user!.fullName || 'Usuario'}! 👋
             </h1>
             <p className="text-lg text-gray-600">
               Te ayudamos a encontrar a tu compañero perfecto
             </p>
+            {/* Mostrar información adicional del usuario si está disponible */}
+            {user!.email && (
+              <p className="text-sm text-gray-500 mt-1">
+                Conectado como: {user!.email}
+              </p>
+            )}
           </div>
 
           {/* Tarjetas superiores */}
@@ -168,51 +194,62 @@ function AdopterDashboard({ user, onViewCatalog, onViewMessages }: AdopterDashbo
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {applications.length > 0 ? (
-                    <div className="space-y-4">
-                      {applications.map((app) => (
-                        <div
-                          key={app.id}
-                          className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg"
-                        >
-                          <ImageWithFallback
-                            src={app.petImage}
-                            alt={app.petName}
-                            className="w-16 h-16 rounded-lg object-cover"
-                          />
-                          <div className="flex-1">
-                            <div className="flex items-center justify-between mb-2">
-                              <h4 className="text-lg text-gray-900">{app.petName}</h4>
-                              <Badge
-                                variant={app.status === 'approved' ? 'default' : 'secondary'}
-                                className={
-                                  app.status === 'approved'
-                                    ? 'bg-green-100 text-green-800'
-                                    : 'bg-orange-100 text-orange-800'
-                                }
-                              >
-                                {app.statusLabel}
-                              </Badge>
+                  {/* Solo mostrar contenido si hay un usuario autenticado */}
+                  {user ? (
+                    user.adoptions && user.adoptions.length > 0 ? (
+                      <div className="space-y-4">
+                        {(user.adoptions as AdoptionApplication[]).map((app) => (
+                          <div
+                            key={app.id}
+                            className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg"
+                          >
+                            <ImageWithFallback
+                              src={app.petImage}
+                              alt={app.petName}
+                              className="w-16 h-16 rounded-lg object-cover"
+                            />
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between mb-2">
+                                <h4 className="text-lg text-gray-900">{app.petName}</h4>
+                                <Badge
+                                  variant={app.status === 'approved' ? 'default' : 'secondary'}
+                                  className={
+                                    app.status === 'approved'
+                                      ? 'bg-green-100 text-green-800'
+                                      : 'bg-orange-100 text-orange-800'
+                                  }
+                                >
+                                  {app.statusLabel}
+                                </Badge>
+                              </div>
+                              <p className="text-sm text-gray-600 mb-1">{app.shelterName}</p>
+                              <p className="text-sm text-gray-500">{app.nextStep}</p>
                             </div>
-                            <p className="text-sm text-gray-600 mb-1">{app.shelterName}</p>
-                            <p className="text-sm text-gray-500">{app.nextStep}</p>
                           </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                        <h3 className="text-lg text-gray-900 mb-2">No tienes solicitudes activas</h3>
+                        <p className="text-gray-500 mb-4">
+                          Cuando apliques para adoptar una mascota, aparecerán aquí
+                        </p>
+                        <Button
+                          onClick={onViewCatalog}
+                          className="bg-green-500 hover:bg-green-600"
+                        >
+                          Explorar Mascotas
+                        </Button>
+                      </div>
+                    )
                   ) : (
                     <div className="text-center py-8">
                       <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                      <h3 className="text-lg text-gray-900 mb-2">No tienes solicitudes activas</h3>
-                      <p className="text-gray-500 mb-4">
-                        Cuando apliques para adoptar una mascota, aparecerán aquí
+                      <h3 className="text-lg text-gray-900 mb-2">Cargando información...</h3>
+                      <p className="text-gray-500">
+                        Obteniendo tus solicitudes de adopción
                       </p>
-                      <Button
-                        onClick={onViewCatalog}
-                        className="bg-green-500 hover:bg-green-600"
-                      >
-                        Explorar Mascotas
-                      </Button>
                     </div>
                   )}
                 </CardContent>
@@ -329,3 +366,24 @@ function AdopterDashboard({ user, onViewCatalog, onViewMessages }: AdopterDashbo
 }
 
 export default AdopterDashboard;
+
+/*
+ * Dashboard del Adoptante - Implementación Segura
+ * 
+ * Este componente implementa las siguientes medidas de seguridad:
+ * 
+ * 1. Validación de inicialización: Solo se renderiza cuando el contexto está completamente inicializado
+ * 2. Validación de perfil cargado: Espera a que el perfil del usuario esté completamente cargado
+ * 3. Validación de usuario autenticado: Solo muestra contenido si hay un usuario válido
+ * 4. Acceso universal: Todos los usuarios autenticados pueden acceder (todos inician como adoptantes)
+ * 5. Manejo de errores: Muestra errores del contexto de usuario de forma segura
+ * 6. Estados de carga informativos: Proporciona feedback visual durante la carga
+ * 
+ * Estados del contexto utilizados:
+ * - isInitialized: Indica si el contexto se ha inicializado
+ * - isUserLoading: Indica si se está cargando el perfil del usuario
+ * - isProfileLoaded: Indica si el perfil se ha cargado completamente
+ * - user: Datos del usuario autenticado
+ * - error: Errores del contexto de usuario
+ * - clearError: Función para limpiar errores
+ */

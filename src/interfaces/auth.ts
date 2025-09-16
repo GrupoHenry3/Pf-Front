@@ -20,3 +20,4 @@ export interface UserRefugio {
   password: string;
   confirmPassword: string;
 }
+

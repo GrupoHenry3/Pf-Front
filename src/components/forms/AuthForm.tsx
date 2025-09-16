@@ -1,83 +1,79 @@
 "use client";
 
 import { useState } from "react";
-import { Heart } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import AuthHeader from "./AuthHeader";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
-import type { AuthFormData, UserRole } from "../../interfaces/auth";
-import type { User as UserType } from "../../interfaces/User";
+import { LoginFormValues, RegisterFormValues } from "@/validators/loginSchema";
+import { useRouter } from "next/navigation";
+import { useUser } from "@/context/UserContext";
 
-interface AuthFormProps {
-  onLogin: (user: UserType, isLogin: boolean) => void;
-  onBack: () => void;
-}
+export function AuthForm() {
 
-export function AuthForm({ onLogin, onBack }: AuthFormProps) {
+  const {login,register }= useUser()
+  const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
-  const [userRole, setUserRole] = useState<UserRole>("adopter");
 
-  const [formData, setFormData] = useState<AuthFormData>({
-    name: "",
+  const [loginFormData, setLoginFormData] = useState<LoginFormValues>({
     email: "",
-    password: "",
-    confirmPassword: "",
-    phone: "",
-    address: "",
-    cuit: "",
+    password: ""
   });
 
-  const handleChange = (field: keyof AuthFormData, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const [registerFormData, setRegisterFormData] = useState<RegisterFormValues>({
+    fullName: "",
+    email: "", 
+    password: "",
+  });
+  
+
+  const handleLoginChange = (field: keyof LoginFormValues, value: string) => {
+    setLoginFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    const handleRegisterChange = (field: keyof RegisterFormValues, value: string) => {
+    setRegisterFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (isLogin) {
-      onLogin(
-        {
-          id: "",
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          role: userRole,
-        },
-        true
-      );
-    } else {
-      onLogin(
-        {
-          id: crypto.randomUUID(),
-          name: userRole === "shelter" ? formData.name : formData.name,
-          email: formData.email,
-          password: formData.password,
-          role: userRole,
-          phone: userRole === "shelter" ? formData.phone : undefined,
-          address: userRole === "shelter" ? formData.address : undefined,
-          cuit: userRole === "shelter" ? formData.cuit : undefined,
-        },
-        false
-      );
+      try{
+        console.log(isLogin)
+        await login(loginFormData.email, loginFormData.password)  
+      
+        router.push("/dashboard/adopter");
+      }
+      catch(error){
+        console.error("Login failed:", error);
+      
     }
+    }
+    else{
+
+      try{
+        await register(registerFormData.fullName, registerFormData.email, registerFormData.password)
+        router.push("/dashboard");
+      }
+      catch(error){
+        console.error("Registration failed:", error);
+      }
+    }
+
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-orange-50 py-12">
       <div className="mx-auto max-w-md px-4 sm:px-6">
-        {/* Header con volver + logo */}
-        <AuthHeader onBack={onBack} />
-       
-
+        <AuthHeader/>
         <Card className="shadow-xl border-0">
           <CardHeader className="space-y-1 pb-6">
             <Tabs
               value={isLogin ? "login" : "register"}
               onValueChange={(val) => setIsLogin(val === "login")}
-            >
+              >
               <TabsList className="grid w-full grid-cols-2 rounded-full bg-gray-100 p-1">
                 <TabsTrigger
                   value="login"
@@ -99,22 +95,16 @@ export function AuthForm({ onLogin, onBack }: AuthFormProps) {
             <form onSubmit={handleSubmit} className="space-y-6">
               {isLogin ? (
                 <LoginForm
-                  formData={{
-                    email: formData.email,
-                    password: formData.password,
-                  }}
-                  onChange={handleChange}
+                  formData={loginFormData}
+                  onLoginInputsChange={handleLoginChange}
                 />
               ) : (
                 <RegisterForm
-                  userRole={userRole}
-                  onRoleChange={setUserRole}
-                  formData={formData}
-                  onChange={handleChange}
+                  formData={registerFormData}
+                  onRegisterChange={handleRegisterChange}
                 />
               )}
 
-              {/* Línea separadora */}
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t border-gray-300" />
@@ -124,7 +114,6 @@ export function AuthForm({ onLogin, onBack }: AuthFormProps) {
                 </div>
               </div>
 
-              {/* Botón Google */}
               <Button
                 type="button"
                 variant="outline"
@@ -163,7 +152,7 @@ export function AuthForm({ onLogin, onBack }: AuthFormProps) {
                 Continuar con Google
               </Button>
 
-              {/* Botón principal */}
+
               <Button
                 type="submit"
                 className="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl"
@@ -172,7 +161,7 @@ export function AuthForm({ onLogin, onBack }: AuthFormProps) {
                 {isLogin ? "Iniciar Sesión" : "Crear Cuenta"}
               </Button>
 
-              {/* Link olvidar contraseña */}
+
               {isLogin && (
                 <div className="text-center">
                   <Button variant="link" className="text-green-600 hover:text-green-700">
@@ -184,7 +173,6 @@ export function AuthForm({ onLogin, onBack }: AuthFormProps) {
           </CardContent>
         </Card>
 
-        {/* Términos solo en registro */}
         {!isLogin && (
           <p className="text-center text-sm text-gray-500 mt-6">
             Al registrarte, aceptas nuestros{" "}

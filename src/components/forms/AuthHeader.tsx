@@ -2,19 +2,21 @@
 
 import { ArrowLeft, Heart } from "lucide-react";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
-interface AuthHeaderProps {
-  onBack: () => void;
-}
 
-export default function AuthHeader({ onBack }: AuthHeaderProps) {
+export default function AuthHeader() {
+  
+  const router = useRouter();
+  const onBack = () => router.push("/welcome");
+  
   return (
     <div className="mb-8">
       {/* Botón volver */}
       <Button
         variant="ghost"
-        onClick={onBack}
         className="mb-4 -ml-4 text-gray-600 hover:text-gray-900"
+        onClick={onBack}
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
         Volver

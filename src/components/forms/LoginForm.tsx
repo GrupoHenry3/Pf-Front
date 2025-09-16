@@ -1,15 +1,16 @@
 "use client";
 
-import { Lock, Mail, User } from "lucide-react";
+import { Lock, User } from "lucide-react";
 import InputWithIcon from "./InputWithIcon";
-import type { AuthFormData } from "../../interfaces/auth";
+import { LoginFormValues } from "@/validators/loginSchema";
+
 
 interface LoginFormProps {
-  formData: Pick<AuthFormData, "email" | "password">;
-  onChange: (field: keyof AuthFormData, value: string) => void;
+  formData: LoginFormValues;
+  onLoginInputsChange: (field: keyof LoginFormValues, value: string) => void;
 }
 
-export default function LoginForm({ formData, onChange }: LoginFormProps) {
+export default function LoginForm({ formData, onLoginInputsChange }: LoginFormProps) {
   return (
     <div className="space-y-6">
       <InputWithIcon
@@ -19,7 +20,7 @@ export default function LoginForm({ formData, onChange }: LoginFormProps) {
         type="text"
         icon={User}
         value={formData.email}
-        onChange={(value) => onChange("email", value)}
+        onChange={(value) => onLoginInputsChange("email", value)}
       />
 
       <InputWithIcon
@@ -29,7 +30,7 @@ export default function LoginForm({ formData, onChange }: LoginFormProps) {
         type="password"
         icon={Lock}
         value={formData.password}
-        onChange={(value) => onChange("password", value)}
+        onChange={(value) => onLoginInputsChange("password", value)}
       />
 
       <div className="text-center">

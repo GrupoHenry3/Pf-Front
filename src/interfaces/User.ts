@@ -1,12 +1,24 @@
 import { Credential } from "./Credential";
+import { Pet } from "./Pet";
 
-// types/user.ts
-export interface User {
-  id: string;
 
-  role: "adopter" | "shelter" | "admin";
-  name: string; // Nombre completo o nombre del refugio               // Nombre de usuario único
+export interface UserInterface {
+  id?: string;
+  fullName?: string;
   email: string;
-  password: string; // Hashed password
-  confirmed_password: boolean; // Email confirmado
+  password?: string;
+  role: "adopter" | "shelter" | "admin";
+  googleID?: string;
+  phoneNumber?: string;
+  city?: string;
+  country?: string;
+  address?: string;
+  avatarURL?: string;
+  userType: string;
+  siteAdmin: boolean;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  adoptions?: [];
+  favoritePets?: Pet[];
 }

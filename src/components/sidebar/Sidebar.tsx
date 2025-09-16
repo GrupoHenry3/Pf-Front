@@ -8,12 +8,11 @@ import {
   Heart,
   MessageCircle,
   Settings,
-  User,
   LogOut,
   Plus,
+  User,
   FileText,
   DollarSign,
-  Shield,
   Bell,
   HelpCircle,
 } from "lucide-react";
@@ -29,8 +28,10 @@ import {
   SheetDescription,
   SheetHeader,
 } from "@/components/ui/sheet";
+import {  UserInterface } from "@/interfaces/User";
+import { useRouter } from "next/navigation";
+import { useUser } from "@/context/UserContext";
 
-type Role = "adopter" | "shelter" | "admin";
 export type CurrentView =
   | "catalog"
   | "donation-flow"
@@ -47,29 +48,30 @@ export type CurrentView =
   | "notifications"
   | "settings";
 
-export interface UserType {
-  name: string;
-  avatar?: string;
-  role: Role;
-  verified?: boolean;
-}
 
 interface SidebarProps {
-  user: UserType | null;
-  currentView: CurrentView;
-  onNavigate: (view: CurrentView) => void;
-  onLogout: () => void;
+  user: UserInterface | null;
 }
 
 export function Sidebar({
   user,
-  currentView,
-  onNavigate,
-  onLogout,
 }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Cierra el menú al cambiar a desktop
+  const router = useRouter();
+
+  const { logout } = useUser();
+
+  const handleLogout = async () => {
+    try{
+      await logout();
+      router.push("/auth");
+    }
+    catch(error){
+      console.error("Error al cerrar sesión:", error);
+    }
+  };
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
@@ -80,10 +82,7 @@ export function Sidebar({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Cierra el menú al cambiar de vista
-  useEffect(() => {
-    setIsOpen(false);
-  }, [currentView]);
+
 
   const getNavigationItems = () => {
     const commonItems = [
@@ -94,6 +93,18 @@ export function Sidebar({
       return [{ id: "catalog", label: "Ver Mascotas", icon: Search, badge: null }, ...commonItems];
     }
 
+    // Por ahora solo mostramos elementos para adoptantes
+    // TODO: Implementar switch case para diferentes roles más adelante
+    return [
+      { id: "adopter-dashboard", label: "Dashboard", icon: Home, badge: null },
+      { id: "catalog", label: "Buscar Mascotas", icon: Search, badge: null },
+      { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 3 },
+      ...commonItems,
+      { id: "profile", label: "Mi Perfil", icon: User, badge: null },
+    ];
+
+    // Switch case comentado para implementación futura
+    /*
     switch (user.role) {
       case "adopter":
         return [
@@ -128,6 +139,7 @@ export function Sidebar({
       default:
         return [];
     }
+    */
   };
 
   const getSupportItems = () => [
@@ -198,20 +210,19 @@ export function Sidebar({
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <Avatar className="w-10 h-10">
-              <AvatarImage src={user.avatar} alt={user.name} />
+              <AvatarImage src={user.avatarURL} alt={user.fullName} />
               <AvatarFallback className="bg-green-500 text-white">
-                {user.name.slice(0, 2).toUpperCase()}
+                {user.fullName?.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-900 truncate">{user.name}</p>
+              <p className="text-sm text-gray-900 truncate">{user.fullName}</p>
               <p className="text-xs text-gray-500 truncate">
                 {user.role === "adopter" && "Adoptante"}
                 {user.role === "shelter" && "Refugio"}
                 {user.role === "admin" && "Administrador"}
               </p>
             </div>
-            {user.verified && <Shield className="w-4 h-4 text-green-500" />}
           </div>
         </div>
       )}
@@ -222,16 +233,8 @@ export function Sidebar({
           {navigationItems.map((item) => (
             <Button
               key={item.id}
-              variant={currentView === item.id ? "default" : "ghost"}
-              className={`w-full justify-start ${
-                currentView === item.id
-                  ? "bg-green-500 text-white hover:bg-green-600"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
-              onClick={() => {
-                onNavigate(item.id as CurrentView);
-                setIsOpen(false);
-              }}
+              variant= "ghost"
+              className= "w-full justify-start text-gray-700 hover:bg-gray-100"
             >
               <item.icon className="w-4 h-4 mr-3" />
               {item.label}
@@ -271,7 +274,7 @@ export function Sidebar({
           <Button
             variant="ghost"
             className="w-full justify-start text-red-600 hover:bg-red-50"
-            onClick={onLogout}
+            onClick={handleLogout}
           >
             <LogOut className="w-4 h-4 mr-3" />
             Cerrar Sesión
@@ -280,7 +283,7 @@ export function Sidebar({
           <Button
             className="w-full bg-green-500 hover:bg-green-600"
             onClick={() => {
-              onNavigate("auth");
+              router.push("/auth");
               setIsOpen(false);
             }}
           >
@@ -335,18 +338,9 @@ export function Sidebar({
               key={item.id}
               variant="ghost"
               size="sm"
-              className={`relative flex flex-col items-center justify-center h-16 px-2 py-1 min-w-0 flex-1 ${
-                currentView === item.id
-                  ? "text-green-500 bg-green-50"
-                  : "text-gray-600 hover:text-green-500 hover:bg-green-50"
-              }`}
-              onClick={() => onNavigate(item.id as CurrentView)}
             >
               <div className="relative">
                 <item.icon
-                  className={`w-5 h-5 mb-1 ${
-                    currentView === item.id ? "text-green-500" : "text-gray-600"
-                  }`}
                 />
                 {item.badge && item.badge > 0 && (
                   <Badge className="absolute -top-0.5 -right-0.5 bg-orange-500 text-white min-w-3.5 h-3.5 text-xs flex items-center justify-center p-0 border border-white text-[10px] rounded-full">
@@ -355,9 +349,7 @@ export function Sidebar({
                 )}
               </div>
               <span className="text-xs truncate max-w-full">{item.label}</span>
-              {currentView === item.id && (
-                <div className="absolute bottom-1 w-1 h-1 bg-green-500 rounded-full"></div>
-              )}
+  
             </Button>
           ))}
         </nav>

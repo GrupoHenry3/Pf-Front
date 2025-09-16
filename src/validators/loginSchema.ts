@@ -4,6 +4,12 @@
 
 import * as yup from "yup";
 
+export interface RegisterFormValues{
+  fullName: string;
+  email: string;
+  password: string;
+  confirmPassword?: string;
+}
 // definición de la interfaz
 export interface LoginFormValues {
   email: string;
@@ -15,6 +21,7 @@ export const loginInitialValues: LoginFormValues = {
   email: "",
   password: "",
 };
+
 
 // Esquema de validación
 export const loginValidationSchema = yup.object({
