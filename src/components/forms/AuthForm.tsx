@@ -26,6 +26,7 @@ export function AuthForm() {
     fullName: "",
     email: "", 
     password: "",
+    confirmedPassword: "",
   });
   
 
@@ -43,7 +44,6 @@ export function AuthForm() {
       try{
         console.log(isLogin)
         await login(loginFormData.email, loginFormData.password)  
-      
         router.push("/dashboard/adopter");
       }
       catch(error){
@@ -54,8 +54,8 @@ export function AuthForm() {
     else{
 
       try{
-        await register(registerFormData.fullName, registerFormData.email, registerFormData.password)
-        router.push("/dashboard");
+        await register(registerFormData.fullName, registerFormData.email, registerFormData.password, registerFormData.confirmedPassword)
+        setIsLogin(true);
       }
       catch(error){
         console.error("Registration failed:", error);
@@ -119,6 +119,9 @@ export function AuthForm() {
                 variant="outline"
                 className="w-full py-3 rounded-xl border-2"
                 size="lg"
+                onClick={() => {
+                  window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
+                }}
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path

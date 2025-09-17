@@ -49,8 +49,8 @@ export default function RegisterForm({ formData, onRegisterChange }: RegisterFor
         placeholder="••••••••"
         type="password"
         icon={Lock}
-        value={formData.confirmPassword || ""}
-        onChange={(value) => onRegisterChange("confirmPassword", value)}
+        value={formData.confirmedPassword || ""}
+        onChange={(value) => onRegisterChange("confirmedPassword", value)}
       />
     </div>
   );

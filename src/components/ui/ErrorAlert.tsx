@@ -28,3 +28,4 @@ export function ErrorAlert({ error, onClear }: ErrorAlertProps) {
     </Alert>
   );
 }
+

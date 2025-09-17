@@ -1,4 +1,5 @@
 import { Credential } from "./Credential";
+import { Shelter } from "./Organization";
 import { Pet } from "./Pet";
 
 
@@ -21,4 +22,5 @@ export interface UserInterface {
   updatedAt: Date;
   adoptions?: [];
   favoritePets?: Pet[];
+  shelter?: Shelter;
 }

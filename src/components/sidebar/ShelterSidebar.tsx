@@ -16,6 +16,10 @@ import {
   Bell,
   HelpCircle,
   Building2,
+  Users,
+  BarChart3,
+  Calendar,
+  Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,52 +33,40 @@ import {
   SheetDescription,
   SheetHeader,
 } from "@/components/ui/sheet";
-import {  UserInterface } from "@/interfaces/User";
+import { UserInterface } from "@/interfaces/User";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
-import { ShelterSidebar } from "./ShelterSidebar";
 
-export type CurrentView =
-  | "catalog"
-  | "donation-flow"
-  | "auth"
-  | "adopter-dashboard"
+export type ShelterCurrentView =
   | "shelter-dashboard"
-  | "admin-dashboard"
-  | "messages"
-  | "profile"
+  | "my-pets"
   | "add-pet"
   | "manage-applications"
+  | "messages"
   | "donations"
+  | "profile"
+  | "analytics"
+  | "volunteers"
+  | "events"
   | "help"
   | "notifications"
   | "settings";
 
-
-interface SidebarProps {
+interface ShelterSidebarProps {
   user: UserInterface | null;
+  embedded?: boolean; // Para usar dentro de un contenedor
 }
 
-export function Sidebar({
-  user,
-}: SidebarProps) {
-  // Si el usuario es un refugio, usar el ShelterSidebar
-  if (user?.userType === "Shelter") {
-    return <ShelterSidebar user={user} />;
-  }
-
+export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
-
   const router = useRouter();
-
   const { logout } = useUser();
 
   const handleLogout = async () => {
-    try{
+    try {
       await logout();
       router.push("/auth");
-    }
-    catch(error){
+    } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }
   };
@@ -89,65 +81,18 @@ export function Sidebar({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-
-
   const getNavigationItems = () => {
-    const commonItems = [
-      { id: "donation-flow", label: "Hacer Donación", icon: Heart, badge: null },
-    ];
-
-    if (!user) {
-      return [{ id: "catalog", label: "Ver Mascotas", icon: Search, badge: null }, ...commonItems];
-    }
-
-    // Por ahora solo mostramos elementos para adoptantes
-    // TODO: Implementar switch case para diferentes roles más adelante
     return [
-      { id: "adopter-dashboard", label: "Dashboard", icon: Home, badge: null },
-      { id: "catalog", label: "Buscar Mascotas", icon: Search, badge: null },
-      { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 3 },
-      ...commonItems,
-      { id: "shelter-mode", label: "Modo Refugio", icon: Building2, badge: null },
-      { id: "profile", label: "Mi Perfil", icon: User, badge: null },
+      { id: "shelter-dashboard", label: "Dashboard", icon: Home, badge: null },
+      { id: "my-pets", label: "Mis Mascotas", icon: Heart, badge: null },
+      { id: "add-pet", label: "Agregar Mascota", icon: Plus, badge: null },
+      { id: "manage-applications", label: "Solicitudes", icon: FileText, badge: 5 },
+      { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 2 },
+      { id: "donations", label: "Donaciones", icon: DollarSign, badge: null },
+      { id: "analytics", label: "Estadísticas", icon: BarChart3, badge: null },
+      { id: "volunteers", label: "Voluntarios", icon: Users, badge: null },
+      { id: "events", label: "Eventos", icon: Calendar, badge: null },
     ];
-
-    // Switch case comentado para implementación futura
-    /*
-    switch (user.role) {
-      case "adopter":
-        return [
-          { id: "adopter-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Buscar Mascotas", icon: Search, badge: null },
-          { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 3 },
-          ...commonItems,
-          { id: "profile", label: "Mi Perfil", icon: User, badge: null },
-        ];
-
-      case "shelter":
-        return [
-          { id: "shelter-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Mis Mascotas", icon: Heart, badge: null },
-          { id: "add-pet", label: "Agregar Mascota", icon: Plus, badge: null },
-          { id: "manage-applications", label: "Solicitudes", icon: FileText, badge: 5 },
-          { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 2 },
-          { id: "donations", label: "Donaciones Recibidas", icon: DollarSign, badge: null },
-          { id: "profile", label: "Mi Perfil", icon: User, badge: null },
-        ];
-
-      case "admin":
-        return [
-          { id: "admin-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Mascotas", icon: Search, badge: null },
-          { id: "manage-applications", label: "Solicitudes", icon: FileText, badge: 12 },
-          { id: "donations", label: "Donaciones Sistema", icon: DollarSign, badge: null },
-          ...commonItems,
-          { id: "profile", label: "Mi Perfil", icon: User, badge: null },
-        ];
-
-      default:
-        return [];
-    }
-    */
   };
 
   const getSupportItems = () => [
@@ -157,46 +102,55 @@ export function Sidebar({
   ];
 
   const getQuickAccessItems = () => {
-    if (!user) {
-      return [
-        { id: "catalog", label: "Mascotas", icon: Search, badge: null },
-        { id: "donation-flow", label: "Donar", icon: Heart, badge: null },
-      ];
-    }
-
-    switch (user.role) {
-      case "adopter":
-        return [
-          { id: "adopter-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Buscar", icon: Search, badge: null },
-          { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 3 },
-          { id: "donation-flow", label: "Donar", icon: Heart, badge: null },
-        ];
-
-      case "shelter":
-        return [
-          { id: "shelter-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Mascotas", icon: Heart, badge: null },
-          { id: "add-pet", label: "Agregar", icon: Plus, badge: null },
-          { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 2 },
-        ];
-
-      case "admin":
-        return [
-          { id: "admin-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Mascotas", icon: Search, badge: null },
-          { id: "manage-applications", label: "Solicitudes", icon: FileText, badge: 12 },
-          { id: "donations", label: "Donaciones", icon: DollarSign, badge: null },
-        ];
-
-      default:
-        return [];
-    }
+    return [
+      { id: "shelter-dashboard", label: "Dashboard", icon: Home, badge: null },
+      { id: "my-pets", label: "Mascotas", icon: Heart, badge: null },
+      { id: "add-pet", label: "Agregar", icon: Plus, badge: null },
+      { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 2 },
+    ];
   };
 
   const navigationItems = getNavigationItems();
   const supportItems = getSupportItems();
   const quickAccessItems = getQuickAccessItems();
+
+  const handleNavigation = (itemId: string) => {
+    switch (itemId) {
+      case "shelter-dashboard":
+        router.push("/dashboard/shelter");
+        break;
+      case "my-pets":
+        router.push("/dashboard/shelter/pets");
+        break;
+      case "add-pet":
+        router.push("/dashboard/shelter/add-pet");
+        break;
+      case "manage-applications":
+        router.push("/dashboard/shelter/applications");
+        break;
+      case "messages":
+        router.push("/dashboard/shelter/messages");
+        break;
+      case "donations":
+        router.push("/dashboard/shelter/donations");
+        break;
+      case "analytics":
+        router.push("/dashboard/shelter/analytics");
+        break;
+      case "volunteers":
+        router.push("/dashboard/shelter/volunteers");
+        break;
+      case "events":
+        router.push("/dashboard/shelter/events");
+        break;
+      case "profile":
+        router.push("/dashboard/shelter/profile");
+        break;
+      default:
+        break;
+    }
+    setIsOpen(false);
+  };
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full bg-white border-r border-gray-200">
@@ -204,11 +158,11 @@ export function Sidebar({
       <div className="p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-            <Heart className="w-5 h-5 text-white" />
+            <Building2 className="w-5 h-5 text-white" />
           </div>
           <div>
             <h1 className="text-xl text-gray-900">PetAdopt</h1>
-            <p className="text-sm text-gray-500">Encuentra tu compañero</p>
+            <p className="text-sm text-gray-500">Panel de Refugio</p>
           </div>
         </div>
       </div>
@@ -226,10 +180,12 @@ export function Sidebar({
             <div className="flex-1 min-w-0">
               <p className="text-sm text-gray-900 truncate">{user.fullName}</p>
               <p className="text-xs text-gray-500 truncate">
-                {user.role === "adopter" && "Adoptante"}
-                {user.role === "shelter" && "Refugio"}
-                {user.role === "admin" && "Administrador"}
+                {user.shelter?.name || "Refugio"}
               </p>
+              <div className="flex items-center mt-1">
+                <Shield className="w-3 h-3 text-green-500 mr-1" />
+                <span className="text-xs text-green-600 font-medium">Refugio Verificado</span>
+              </div>
             </div>
           </div>
         </div>
@@ -241,17 +197,9 @@ export function Sidebar({
           {navigationItems.map((item) => (
             <Button
               key={item.id}
-              variant= "ghost"
-              className= "w-full justify-start text-gray-700 hover:bg-gray-100"
-              onClick={() => {
-                if (item.id === "shelter-mode") {
-                  router.push("/shelter-registration");
-                  setIsOpen(false);
-                } else {
-                  // Aquí puedes agregar más navegación según sea necesario
-                  setIsOpen(false);
-                }
-              }}
+              variant="ghost"
+              className="w-full justify-start text-gray-700 hover:bg-gray-100"
+              onClick={() => handleNavigation(item.id)}
             >
               <item.icon className="w-4 h-4 mr-3" />
               {item.label}
@@ -287,29 +235,22 @@ export function Sidebar({
 
       {/* Footer */}
       <div className="p-4 border-t border-gray-200">
-        {user ? (
-          <Button
-            variant="ghost"
-            className="w-full justify-start text-red-600 hover:bg-red-50"
-            onClick={handleLogout}
-          >
-            <LogOut className="w-4 h-4 mr-3" />
-            Cerrar Sesión
-          </Button>
-        ) : (
-          <Button
-            className="w-full bg-green-500 hover:bg-green-600"
-            onClick={() => {
-              router.push("/auth");
-              setIsOpen(false);
-            }}
-          >
-            Iniciar Sesión
-          </Button>
-        )}
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-red-600 hover:bg-red-50"
+          onClick={handleLogout}
+        >
+          <LogOut className="w-4 h-4 mr-3" />
+          Cerrar Sesión
+        </Button>
       </div>
     </div>
   );
+
+  // Si está embebido, solo mostrar el contenido
+  if (embedded) {
+    return <SidebarContent />;
+  }
 
   return (
     <>
@@ -332,10 +273,9 @@ export function Sidebar({
           </SheetTrigger>
           <SheetContent side="left" className="p-0 w-64 sm:w-80">
             <SheetHeader className="sr-only">
-              <SheetTitle>Menú de navegación</SheetTitle>
+              <SheetTitle>Menú de navegación - Refugio</SheetTitle>
               <SheetDescription>
-                Navegación principal de PetAdopt para acceso a todas las
-                funciones
+                Panel de control para refugios de PetAdopt
               </SheetDescription>
             </SheetHeader>
             <SidebarContent />
@@ -355,10 +295,10 @@ export function Sidebar({
               key={item.id}
               variant="ghost"
               size="sm"
+              onClick={() => handleNavigation(item.id)}
             >
               <div className="relative">
-                <item.icon
-                />
+                <item.icon />
                 {item.badge && item.badge > 0 && (
                   <Badge className="absolute -top-0.5 -right-0.5 bg-orange-500 text-white min-w-3.5 h-3.5 text-xs flex items-center justify-center p-0 border border-white text-[10px] rounded-full">
                     {item.badge > 9 ? "9+" : item.badge}
@@ -366,7 +306,6 @@ export function Sidebar({
                 )}
               </div>
               <span className="text-xs truncate max-w-full">{item.label}</span>
-  
             </Button>
           ))}
         </nav>

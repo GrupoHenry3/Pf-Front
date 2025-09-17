@@ -8,6 +8,8 @@ import { Sidebar } from '@/components/sidebar/Sidebar';
 import { Badge } from '@/components/ui/badge';
 import { useUser } from '@/context/UserContext';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface AdopterDashboardProps {
   onViewCatalog: () => void;
@@ -83,6 +85,12 @@ function AdopterDashboard({ onViewCatalog, onViewMessages }: AdopterDashboardPro
       reason: 'Perfecto para apartamentos'
     }
   ];
+
+  const router = useRouter();
+
+  const handleViewCatalog = () => {
+    router.push("/pet-catalog");
+  }
   
 // Mostrar loading mientras se inicializa o carga el usuario
 if (!isInitialized || isUserLoading || !isProfileLoaded) {
@@ -139,7 +147,7 @@ if (isInitialized && isProfileLoaded && !user) {
           {/* Tarjetas superiores */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <Card className="cursor-pointer hover:shadow-lg transition-shadow border-0 shadow-md">
-              <CardContent className="p-6" onClick={onViewCatalog}>
+              <CardContent className="p-6" onClick={handleViewCatalog}>
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                     <Search className="w-6 h-6 text-green-600" />

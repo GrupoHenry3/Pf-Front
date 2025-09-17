@@ -36,3 +36,4 @@ export const getUserTypeLabel = (userType: string): string => {
       return 'Usuario';
   }
 };
+

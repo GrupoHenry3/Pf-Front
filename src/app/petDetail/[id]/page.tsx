@@ -1,6 +1,5 @@
 "use client";
-
-import * as React from "react";
+import * as React from 'react';
 import { useState } from "react";
 import {
   ArrowLeft,
@@ -14,47 +13,33 @@ import {
   Phone,
   Mail,
 } from "lucide-react";
-import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Badge } from "../ui/badge";
-import { Separator } from "../ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { ImageWithFallback } from "../utils/ImageWithFallback";
-import type { User } from "../../interfaces/User";
-import type { Pet } from "../../interfaces/Pet";
-import PATHROUTES from "../utils/PathRoutes.util";
+
 import router from "next/router";
 import Link from "next/link";
+import { UserInterface } from "@/interfaces/User";
+import { Pet } from "@/interfaces/Pet";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { AvatarImage } from "@radix-ui/react-avatar";
+import { Separator } from "@/components/ui/separator";
+import { useUser } from "@/context/UserContext";
+import PATHROUTES from "@/components/utils/PathRoutes.util";
+import { PETS } from "@/data/pets";
 
-interface PetDetailProps {
-  pet: Pet;
-  onBack: () => void;
-  user: User | null;
-  onStartChat: () => void;
-  onStartAdoption: (pet: Pet) => void;
-}
 
-export function PetDetail({
-  pet,
-  onBack,
-  user,
-  onStartChat,
-  onStartAdoption,
-}: PetDetailProps) {
-  if (!pet) {
-    return <div>No se encontró información de la mascota.</div>;
-  }
+
+ function PetDetail({params}: {params: {id: string}}) {
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const {id} = React.use(params);
+  const {user} = useUser();
 
-  const characteristics = [
-    { label: "Vacunado", value: pet.vaccinated, icon: Check },
-    { label: "Esterilizado", value: pet.neutered, icon: Check },
-    { label: "Entrenado", value: pet.trained, icon: Check },
-    { label: "Bueno con niños", value: pet.goodWithKids, icon: Check },
-    { label: "Bueno con otras mascotas", value: pet.goodWithPets, icon: Check },
-  ];
+  const pet = PETS.find((pet) => pet.id === id);
+   
 
   const getSizeLabel = (size: string) => {
     switch (size) {
@@ -90,6 +75,11 @@ export function PetDetail({
         return gender;
     }
   };
+
+
+  if (!pet) {
+    return <div>No se encontró información de la mascota.</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -204,7 +194,7 @@ export function PetDetail({
 
                 <div className="mb-6">
                   <h3 className="text-lg text-gray-900 mb-3">
-                    Sobre {pet.name}
+                      Sobre {pet.name}
                   </h3>
                   <p className="text-gray-700 leading-relaxed">
                     {pet.description}
@@ -217,28 +207,9 @@ export function PetDetail({
                     Características
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
-                    {characteristics.map((char, index) => (
-                      <div key={index} className="flex items-center space-x-3">
-                        <div
-                          className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                            char.value ? "bg-green-100" : "bg-red-100"
-                          }`}
-                        >
-                          {char.value ? (
-                            <Check className="w-4 h-4 text-green-600" />
-                          ) : (
-                            <X className="w-4 h-4 text-red-600" />
-                          )}
-                        </div>
-                        <span
-                          className={`text-sm ${
-                            char.value ? "text-gray-900" : "text-gray-500"
-                          }`}
-                        >
-                          {char.label}
-                        </span>
-                      </div>
-                    ))}
+                    
+                  {pet.vaccinated}
+            
                   </div>
                 </div>
               </CardContent>
@@ -271,7 +242,7 @@ export function PetDetail({
                     variant="outline"
                     size="sm"
                     className="w-full justify-start"
-                    onClick={onStartChat}
+                    
                   >
                     <MessageCircle className="w-4 h-4 mr-2" />
                     Enviar mensaje
@@ -309,32 +280,25 @@ export function PetDetail({
               <CardContent className="p-6">
                 {user ? (
                   <div className="space-y-4">
-                    {user.role === "adopter" ? (
+                    
                       <Button
                         asChild
                         className="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl flex items-center justify-center"
                       >
                         <Link
-                          href={`${PATHROUTES.ADOPTION}?petId=${pet.id}`}
+                          href={`${PATHROUTES.ADOPTION}/${pet.id}`}
                         >
                           <Heart className="w-4 h-4 mr-2" />
                           ¡Quiero adoptar a {pet.name}!
                         </Link>
                       </Button>
-                    ) : (
-                      <Button
-                        className="w-full bg-gray-400 text-white py-3 rounded-xl cursor-not-allowed"
-                        disabled
-                      >
-                        Solo adoptantes pueden solicitar
-                      </Button>
-                    )}
-
+  
                     <Button variant="outline" className="w-full">
                       Programar visita
                     </Button>
                   </div>
-                ) : (
+                  )
+                 : (
                   <div className="text-center">
                     <p className="text-gray-600 mb-4">
                       Inicia sesión para adoptar a {pet.name}
@@ -380,7 +344,7 @@ export function PetDetail({
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tamaño:</span>
                   <span className="text-gray-900">
-                    {getSizeLabel(pet.size)}
+                        {getSizeLabel(pet.size)}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -415,3 +379,5 @@ export function PetDetail({
     </div>
   );
 }
+
+export default PetDetail;

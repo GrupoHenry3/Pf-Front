@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Send, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,20 +12,18 @@ import { StepHousing } from "@/components/adoptionApplication/steps/StepHousing"
 import { StepLifestyle } from "@/components/adoptionApplication/steps/StepLifestyle";
 import { StepFamilyPets } from "@/components/adoptionApplication/steps/StepFamilyPets";
 import type { ApplicationData } from "@/interfaces/Adoption";
-import type { Pet } from "@/./interfaces/Pet";
+import type { Pet } from "@/interfaces/Pet";
 import PATHROUTES from "../utils/PathRoutes.util";
-import Link from "next/link";
+import { useUser } from "@/context/UserContext";
 
-export default function AdoptionPageWrapper() {
-  const user = { id: "user1", name: "Moritz" };
-  const handleBack = () => console.log("Volver");
-  const handleSubmit = (data: any) => console.log("Solicitud enviada:", data);
+interface AdoptionApplicationProps {
+  pet: Pet | undefined;
+}
 
-  const params = useParams();
-  const petId = params?.id;
-
+export default function AdoptionPageWrapper({pet}: AdoptionApplicationProps) {
+  const {user} = useUser();
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
-  const [fetchedPet, setFetchedPet] = useState<Pet | null>(null);
   const [loading, setLoading] = useState(true);
 
   const [data, setData] = useState<ApplicationData>({
@@ -81,39 +79,41 @@ export default function AdoptionPageWrapper() {
   const handleBackStep = () => setCurrentStep((prev) => Math.max(1, prev - 1));
 
   const handleSubmitForm = () => {
-    if (!fetchedPet) return;
+    if (!pet) return;
 
     const submission = {
       ...data,
-      petId: fetchedPet.id,
-      applicantId: user.id,
+      petId: pet.id,
+      applicantId: user?.id,
       applicantDNI: data.dni,
       submissionDate: new Date().toISOString(),
       status: "new",
     };
 
-    handleSubmit(submission);
+    console.log("Solicitud enviada:", submission);
+    window.alert("✅ Solicitud enviada con éxito");
+    router.push(`${PATHROUTES.DASHBOARD}/adopter`);
   };
 
-  useEffect(() => {
-    if (!petId) return;
+  // useEffect(() => {
+  //   if (!petId) return;
 
-    const fetchPet = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`/api/pets/${petId}`);
-        if (!res.ok) throw new Error("Mascota no encontrada");
-        const pet: Pet = await res.json();
-        setFetchedPet(pet);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //   const fetchPet = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const res = await fetch(`/api/pets/${petId}`);
+  //       if (!res.ok) throw new Error("Mascota no encontrada");
+  //       const pet: Pet = await res.json();
+  //       setFetchedPet(pet);
+  //     } catch (error) {
+  //       console.error(error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchPet();
-  }, [petId]);
+  //   fetchPet();
+  // }, [petId]);
 
   const renderStep = () => {
     switch (currentStep) {
@@ -134,26 +134,22 @@ export default function AdoptionPageWrapper() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      {/* Contenedor centrado con ancho limitado */}
       <div className="max-w-8xl mx-auto px-4 sm:px-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6">
+        {/* Botón único de Volver
+        <div className="mb-6">
           <Button
             asChild
             variant="ghost"
-            className="text-gray-600 hover:text-gray-900 mb-4 sm:mb-0 flex items-center"
+            className="text-gray-600 hover:text-gray-900 flex items-left"
           >
-            <Link href={PATHROUTES.PET_DETAIL}>
+            <Link href={PATHROUTES.CATALOG}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Volver
             </Link>
           </Button>
-          {/* <span className="text-2xl font-semibold text-gray-900">
-            Solicitud para {fetchedPet ? fetchedPet.name : "la mascota"}
-          </span> */}
-        </div>
+        </div> */}
 
-        {/* Progress */}
+        {/* Progreso */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-gray-600">
@@ -166,39 +162,38 @@ export default function AdoptionPageWrapper() {
           <Progress value={getProgress()} className="h-2 rounded-full" />
         </div>
 
-        {/* Pet Info Card */}
-        {fetchedPet && (
+        {/* Info de mascota */}
+        {pet && (
           <Card className="mb-8 shadow-md">
             <CardContent className="p-6 flex flex-col sm:flex-row items-center sm:items-start">
               <img
-                src={fetchedPet.images[0] || "/placeholder.png"}
-                alt={fetchedPet.name}
+                src={pet.images[0] || "/placeholder.png"}
+                alt={pet.name}
                 className="w-32 h-32 object-cover rounded-lg mr-4 mb-4 sm:mb-0 shadow"
               />
               <div className="flex-1">
-                <h2 className="text-xl font-semibold">{fetchedPet.name}</h2>
+                <h2 className="text-xl font-semibold">{pet.name}</h2>
                 <p className="text-gray-600 mt-1">
-                  {fetchedPet.breed} • {fetchedPet.age} años •{" "}
-                  {fetchedPet.gender}
+                  {pet.breed} • {pet.age} años • {pet.gender}
                 </p>
-                <p className="mt-2 text-gray-700">{fetchedPet.description}</p>
+                <p className="mt-2 text-gray-700">{pet.description}</p>
                 <p className="mt-1 text-gray-500 text-sm">
-                  Ubicación: {fetchedPet.location}
+                  Ubicación: {pet.location}
                 </p>
                 <p className="mt-1 text-gray-500 text-sm">
-                  Refugio: {fetchedPet.shelterName}
+                  Refugio: {pet.shelterName}
                 </p>
               </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Form Step */}
+        {/* Formulario del paso */}
         <Card className="shadow-lg mb-8">
           <CardContent className="p-6">{renderStep()}</CardContent>
         </Card>
 
-        {/* Navigation */}
+        {/* Navegación de pasos */}
         <div className="flex flex-col sm:flex-row justify-between mt-6 gap-2 sm:gap-0">
           <Button
             variant="outline"
@@ -219,19 +214,16 @@ export default function AdoptionPageWrapper() {
             </Button>
           ) : (
             <Button
-  onClick={() => {
-    handleSubmitForm();
-    window.alert("✅ Solicitud enviada con éxito");
-  }}
-  disabled={!validateStep(currentStep)}
-  className="bg-green-500 hover:bg-green-600 w-full sm:w-auto"
->
-  Enviar Solicitud <Send className="w-4 h-4 ml-2" />
-</Button>
+              onClick={handleSubmitForm}
+              disabled={!validateStep(currentStep)}
+              className="bg-green-500 hover:bg-green-600 w-full sm:w-auto"
+            >
+              Enviar Solicitud <Send className="w-4 h-4 ml-2" />
+            </Button>
           )}
         </div>
 
-        {/* Final Alert */}
+        {/* Alerta final */}
         {currentStep === totalSteps && validateStep(currentStep) && (
           <Alert className="border-green-200 bg-green-50 mt-6 flex items-center gap-2">
             <Check className="w-4 h-4 text-green-600" />

@@ -2,39 +2,38 @@
 
 import { useState } from "react";
 import { Users, Heart, MessageCircle, MapPin, Edit, Calendar, Plus } from "lucide-react";
-import { User } from "@/interfaces/User";
+import { UserInterface } from "@/interfaces/User";
 
 import { Sidebar } from "@/components/sidebar/Sidebar"; // ✅ Sidebar general
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
 import { Badge } from "@/components/ui/badge";
+import { useUser } from "@/context/UserContext";
+import { ShelterSidebar } from "@/components/sidebar/ShelterSidebar";
 
 interface ShelterDashboardProps {
-  user: User;
   onAddPet: () => void;
   onManageApplications: () => void;
   onViewMessages: () => void;
 }
 
-const shelterExample = {
-  name: "Shelter Example",
-  location: "Madrid, España",
-  email: "contact@shelterexample.com",
-  phone: "912345678",
-  website: "www.shelterexample.com",
-  description:
-    "Shelter Example es una organización sin fines de lucro que ayuda a rescatar y adoptar mascotas en necesitad de ayuda.",
-  image:
-    "https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop",
-};
 
 function ShelterDashboard({
-  user,
   onAddPet,
   onManageApplications,
-  onViewMessages,
 }: ShelterDashboardProps) {
+
+  const { 
+    user, 
+    isProfileLoaded, 
+    isUserLoading, 
+    isInitialized, 
+    error, 
+    clearError 
+  } = useUser();
+
+
   const stats = {
     totalPets: 34,
     adopted: 127,
@@ -42,44 +41,44 @@ function ShelterDashboard({
     applications: 15,
   };
 
-  const myPets = [
-    {
-      id: "1",
-      name: "Buddy",
-      type: "dog",
-      breed: "Labrador",
-      age: 3,
-      image:
-        "https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop",
-      status: "available",
-      applications: 3,
-      dateAdded: "2024-02-15",
-    },
-    {
-      id: "2",
-      name: "Mittens",
-      type: "cat",
-      breed: "Persian",
-      age: 2,
-      image:
-        "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=300&h=300&fit=crop",
-      status: "pending",
-      applications: 1,
-      dateAdded: "2024-03-01",
-    },
-    {
-      id: "3",
-      name: "Charlie",
-      type: "dog",
-      breed: "Beagle",
-      age: 1,
-      image:
-        "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=300&h=300&fit=crop",
-      status: "available",
-      applications: 5,
-      dateAdded: "2024-03-10",
-    },
-  ];
+  // const myPets = [
+  //   {
+  //     id: "1",
+  //     name: "Buddy",
+  //     type: "dog",
+  //     breed: "Labrador",
+  //     age: 3,
+  //     image:
+  //       "https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop",
+  //     status: "available",
+  //     applications: 3,
+  //     dateAdded: "2024-02-15",
+  //   },
+  //   {
+  //     id: "2",
+  //     name: "Mittens",
+  //     type: "cat",
+  //     breed: "Persian",
+  //     age: 2,
+  //     image:
+  //       "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=300&h=300&fit=crop",
+  //     status: "pending",
+  //     applications: 1,
+  //     dateAdded: "2024-03-01",
+  //   },
+  //   {
+  //     id: "3",
+  //     name: "Charlie",
+  //     type: "dog",
+  //     breed: "Beagle",
+  //     age: 1,
+  //     image:
+  //       "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=300&h=300&fit=crop",
+  //     status: "available",
+  //     applications: 5,
+  //     dateAdded: "2024-03-10",
+  //   },
+  // ];
 
   const recentApplications = [
     {
@@ -177,18 +176,39 @@ function ShelterDashboard({
     }
   };
 
-  return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* ✅ Sidebar general */}
-      <Sidebar user={user} />
+  if (!isInitialized || isUserLoading || !isProfileLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando tu dashboard...</p>
+          <p className="text-sm text-gray-500 mt-2">
+            {!isInitialized && "Inicializando..."}
+            {isInitialized && isUserLoading && "Cargando perfil..."}
+            {isInitialized && !isUserLoading && !isProfileLoaded && "Verificando autenticación..."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+  
+  if (isInitialized && isProfileLoaded && !user) {
+    return null;
+  }
 
+  return (
+    <div className="flex min-h-screen">
+      <div className="w-64 border-r bg-white shadow-sm">
+        <ShelterSidebar user={user} embedded={true} />
+      </div>
       {/* Contenido principal */}
-      <main className="flex-1 lg:ml-64 mx-auto max-w-7xl px-6 py-8">
+      <div className="flex-1 bg-gray-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
           <div>
             <h1 className="text-3xl text-gray-900 mb-2">
-              Panel de {shelterExample.name}
+              Panel de {user?.shelter?.name}
             </h1>
             <p className="text-lg text-gray-600">
               Gestiona tus mascotas y solicitudes de adopción
@@ -347,7 +367,7 @@ function ShelterDashboard({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {myPets.map((pet) => (
                   <div
                     key={pet.id}
@@ -390,13 +410,15 @@ function ShelterDashboard({
                     </div>
                   </div>
                 ))}
-              </div>
+              </div> */}
             </CardContent>
           </Card>
         </div>
-      </main>
+      </div>
+    </div>
     </div>
   );
+
 }
 
 export default ShelterDashboard;

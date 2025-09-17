@@ -12,7 +12,7 @@ export interface Pet {
   location: string;
   shelterId: string;
   shelterName: string;
-  vaccinated: boolean;
+  vaccinated?: boolean;
   neutered: boolean;
   trained: boolean;
   goodWithKids: boolean;

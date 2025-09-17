@@ -7,6 +7,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 interface AxiosError {
     response?: {
+        status?: number;
         data?: {
             message?: string;
         };
@@ -19,7 +20,7 @@ interface UserContextType {
     getProfile: () => Promise<void>;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
-    register: (name: string, email: string, password: string) => Promise<void>;
+    register: (name: string, email: string, password: string, confirmedPassword: string) => Promise<void>;
     isProfileLoaded: boolean;
     isUserLoading: boolean;
     isInitialized: boolean;
@@ -41,7 +42,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const login = async (email: string, password: string) => {
         try {
             clearError();
-            await authService.login({ email, password });
+            console.log("Attempting login...");
+            const loginResponse = await authService.login({ email, password });
+            console.log("Login response:", loginResponse);
+            console.log("Getting profile after login...");
             await getProfile();
         } catch (error: unknown) {
             console.error("Error during login:", error);
@@ -51,10 +55,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }
 
-    const register = async (fullName: string, email: string, password: string) => {
+    const register = async (fullName: string, email: string, password: string, confirmedPassword: string) => {
         try {
             clearError();
-            await authService.register({ fullName, email, password });
+            await authService.register({ fullName, email, password, confirmedPassword });
         } catch (error: unknown) {
             console.error("Error during registration:", error);
             const errorMessage = (error as AxiosError)?.response?.data?.message || "Error al registrarse";
