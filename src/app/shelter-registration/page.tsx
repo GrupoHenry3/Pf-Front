@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Building2, MapPin, Phone, Globe, FileText, ArrowLeft } from "lucide-react";
+import { Building2, MapPin, Phone, FileText, ArrowLeft } from "lucide-react";
 import { sheltersService } from "@/services/shelters/sheltersService";
 import { useUser } from "@/context/UserContext";
 import { toast } from "sonner";

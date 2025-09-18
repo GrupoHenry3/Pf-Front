@@ -14,10 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
-
-import { Sidebar } from "../sidebar/Sidebar";
 import type { Pet } from "@/interfaces/Pet";
-import type { UserInterface } from "@/interfaces/User";
 
 // 👉 importa los datos mock
 import { PETS } from "@/data/pets";
@@ -33,9 +30,9 @@ export function PetCatalog() {
   const [selectedType, setSelectedType] = useState("all");
   const [selectedSize, setSelectedSize] = useState("all");
   const [selectedAge, setSelectedAge] = useState("all");
-  const [selectedGender, setSelectedGender] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("all");
-  const [selectedLocation, setSelectedLocation] = useState("all");
+  const [selectedGender] = useState("all");
+  const [selectedStatus] = useState("all");
+  const [selectedLocation] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
 

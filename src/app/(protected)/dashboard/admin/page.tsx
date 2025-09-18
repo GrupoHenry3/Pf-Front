@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Sidebar } from "@/components/sidebar/Sidebar"; 
-import { User } from "@/interfaces/User";
+import { UserInterface } from "@/interfaces/User";
 import { Settings } from "lucide-react";
 import {
   Alert,
@@ -45,11 +45,10 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface AdminDashboardProps {
-  user: User;
+  user: UserInterface;
 }
 
 export default function AdminDashboard({ user }: AdminDashboardProps) {

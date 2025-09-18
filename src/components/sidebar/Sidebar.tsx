@@ -58,16 +58,25 @@ interface SidebarProps {
 export function Sidebar({
   user,
 }: SidebarProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+  const { logout } = useUser();
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+
   // Si el usuario es un refugio, usar el ShelterSidebar
   if (user?.userType === "Shelter") {
     return <ShelterSidebar user={user} />;
   }
-
-  const [isOpen, setIsOpen] = useState(false);
-
-  const router = useRouter();
-
-  const { logout } = useUser();
 
   const handleLogout = async () => {
     try{
@@ -79,15 +88,6 @@ export function Sidebar({
     }
   };
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setIsOpen(false);
-      }
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
 
 

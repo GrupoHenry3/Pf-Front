@@ -7,17 +7,12 @@ import {
   Share2,
   MapPin,
   Calendar,
-  Check,
-  X,
   MessageCircle,
   Phone,
   Mail,
 } from "lucide-react";
 
-import router from "next/router";
 import Link from "next/link";
-import { UserInterface } from "@/interfaces/User";
-import { Pet } from "@/interfaces/Pet";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
@@ -31,7 +26,7 @@ import { PETS } from "@/data/pets";
 
 
 
- function PetDetail({params}: {params: {id: string}}) {
+ function PetDetail({params}: {params: Promise<{id: string}>}) {
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);

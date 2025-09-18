@@ -4,9 +4,17 @@ import { Input } from "../../ui/input";
 import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import { useState } from "react";
 
+interface MotivationData {
+  dni: string;
+  birthDate: string;
+  adoptionReason: string;
+  expectations: string;
+  petExperience: string;
+}
+
 interface StepProps {
-  data: any;
-  update: (field: string, value: string) => void;
+  data: MotivationData;
+  update: (field: keyof MotivationData, value: string) => void;
 }
 
 export function StepMotivation({ data, update }: StepProps) {

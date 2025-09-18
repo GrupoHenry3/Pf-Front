@@ -8,7 +8,6 @@ import { Sidebar } from '@/components/sidebar/Sidebar';
 import { Badge } from '@/components/ui/badge';
 import { useUser } from '@/context/UserContext';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 interface AdopterDashboardProps {

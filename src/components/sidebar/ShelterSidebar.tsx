@@ -4,13 +4,12 @@ import { useState, useEffect } from "react";
 import {
   Menu,
   Home,
-  Search,
+  
   Heart,
   MessageCircle,
   Settings,
   LogOut,
   Plus,
-  User,
   FileText,
   DollarSign,
   Bell,

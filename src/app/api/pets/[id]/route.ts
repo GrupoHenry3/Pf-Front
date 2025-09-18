@@ -30,9 +30,9 @@ const pets: Pet[] = [
 // Función GET para la ruta dinámica
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await params;
   const pet = pets.find(p => p.id === id);
 
   if (!pet) {

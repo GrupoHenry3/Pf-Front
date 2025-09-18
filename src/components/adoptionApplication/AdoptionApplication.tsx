@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Send, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -15,6 +15,7 @@ import type { ApplicationData } from "@/interfaces/Adoption";
 import type { Pet } from "@/interfaces/Pet";
 import PATHROUTES from "../utils/PathRoutes.util";
 import { useUser } from "@/context/UserContext";
+import Image from "next/image";
 
 interface AdoptionApplicationProps {
   pet: Pet | undefined;
@@ -24,7 +25,6 @@ export default function AdoptionPageWrapper({pet}: AdoptionApplicationProps) {
   const {user} = useUser();
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
-  const [loading, setLoading] = useState(true);
 
   const [data, setData] = useState<ApplicationData>({
     dni: "",
@@ -166,7 +166,7 @@ export default function AdoptionPageWrapper({pet}: AdoptionApplicationProps) {
         {pet && (
           <Card className="mb-8 shadow-md">
             <CardContent className="p-6 flex flex-col sm:flex-row items-center sm:items-start">
-              <img
+              <Image
                 src={pet.images[0] || "/placeholder.png"}
                 alt={pet.name}
                 className="w-32 h-32 object-cover rounded-lg mr-4 mb-4 sm:mb-0 shadow"

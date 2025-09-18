@@ -20,7 +20,7 @@ interface UserContextType {
     getProfile: () => Promise<void>;
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
-    register: (name: string, email: string, password: string, confirmedPassword: string) => Promise<void>;
+    register: (name: string, email: string, password: string, confirmedPassword: string) => Promise<UserInterface>;
     isProfileLoaded: boolean;
     isUserLoading: boolean;
     isInitialized: boolean;
@@ -55,10 +55,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }
 
-    const register = async (fullName: string, email: string, password: string, confirmedPassword: string) => {
+    const register = async (fullName: string, email: string, password: string, confirmedPassword: string): Promise<UserInterface> => {
         try {
             clearError();
-            await authService.register({ fullName, email, password, confirmedPassword });
+            const newUser = await authService.register({ fullName, email, password, confirmedPassword });
+            await getProfile();
+            return newUser;
         } catch (error: unknown) {
             console.error("Error during registration:", error);
             const errorMessage = (error as AxiosError)?.response?.data?.message || "Error al registrarse";

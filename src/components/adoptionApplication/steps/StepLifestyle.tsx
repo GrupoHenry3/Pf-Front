@@ -2,9 +2,16 @@ import { Textarea } from "../../ui/textarea";
 import { Label } from "../../ui/label";
 import { useState } from "react";
 
+interface LifestyleData {
+  workSchedule: string;
+  dailyRoutine: string;
+  exerciseCommitment: string;
+  travelFrequency: string;
+}
+
 interface StepProps {
-  data: any;
-  update: (field: string, value: string) => void;
+  data: LifestyleData;
+  update: (field: keyof LifestyleData, value: string) => void;
 }
 
 export function StepLifestyle({ data, update }: StepProps) {

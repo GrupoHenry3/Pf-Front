@@ -1,10 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { Users, Heart, MessageCircle, MapPin, Edit, Calendar, Plus } from "lucide-react";
-import { UserInterface } from "@/interfaces/User";
-
-import { Sidebar } from "@/components/sidebar/Sidebar"; // ✅ Sidebar general
+import { Users, Heart, MessageCircle, MapPin, Calendar, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
@@ -29,8 +25,6 @@ function ShelterDashboard({
     isProfileLoaded, 
     isUserLoading, 
     isInitialized, 
-    error, 
-    clearError 
   } = useUser();
 
 
@@ -116,31 +110,31 @@ function ShelterDashboard({
     },
   ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "available":
-        return "bg-green-100 text-green-800";
-      case "pending":
-        return "bg-orange-100 text-orange-800";
-      case "adopted":
-        return "bg-blue-100 text-blue-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
+  // const getStatusColor = (status: string) => {
+  //   switch (status) {
+  //     case "available":
+  //       return "bg-green-100 text-green-800";
+  //     case "pending":
+  //       return "bg-orange-100 text-orange-800";
+  //     case "adopted":
+  //       return "bg-blue-100 text-blue-800";
+  //     default:
+  //       return "bg-gray-100 text-gray-800";
+  //   }
+  // };
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "available":
-        return "Disponible";
-      case "pending":
-        return "En proceso";
-      case "adopted":
-        return "Adoptado";
-      default:
-        return status;
-    }
-  };
+  // const getStatusLabel = (status: string) => {
+  //   switch (status) {
+  //     case "available":
+  //       return "Disponible";
+  //     case "pending":
+  //       return "En proceso";
+  //     case "adopted":
+  //       return "Adoptado";
+  //     default:
+  //       return status;
+  //   }
+  // };
 
   const getApplicationStatusColor = (status: string) => {
     switch (status) {

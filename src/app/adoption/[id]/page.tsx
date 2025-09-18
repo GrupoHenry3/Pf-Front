@@ -1,10 +1,10 @@
 "use client";
 
 import AdoptionApplication from "@/components/adoptionApplication/AdoptionApplication";
-import type { Pet } from "@/interfaces/Pet";
 import { PETS } from "@/data/pets";
 import PATHROUTES from "@/components/utils/PathRoutes.util";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function AdopcionPage({params}: {params: {id: string}}) {
   const {id} = params;
@@ -47,7 +47,7 @@ export default function AdopcionPage({params}: {params: {id: string}}) {
             <div className="bg-white rounded-2xl shadow-lg p-5 flex items-center gap-4 mb-8" style={{ minHeight: '90px' }}>
               {
                 pet?.images?.map((image:string) => (
-                  <img key={image} src={image} alt={pet?.name} className="w-16 h-16 object-cover rounded-lg" />
+                  <Image key={image} src={image} alt={pet?.name} className="w-16 h-16 object-cover rounded-lg" />
                 ))
               }
               <div className="flex-1">

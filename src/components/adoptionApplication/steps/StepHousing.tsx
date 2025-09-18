@@ -3,9 +3,16 @@ import { Label } from "../../ui/label";
 import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import { useState } from "react";
 
+interface HousingData {
+  housingType: string;
+  housingOwnership: string;
+  yardSize: string;
+  livingSpace: string;
+}
+
 interface StepProps {
-  data: any;
-  update: (field: string, value: string) => void;
+  data: HousingData;
+  update: (field: keyof HousingData, value: string) => void;
 }
 
 export function StepHousing({ data, update }: StepProps) {

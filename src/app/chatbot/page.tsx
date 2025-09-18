@@ -1,10 +1,9 @@
 "use client";
 
-import { ChatBot } from "@/components/chatBot/ChatBot";
 export default function HomePage() {
-  const handleNavigation = (view: string) => {
-    console.log("Navegar a:", view);
-  };
+  // const handleNavigation = (view: string) => {
+  //   console.log("Navegar a:", view);
+  // };
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -13,7 +12,6 @@ export default function HomePage() {
       </h1>
 
       {/* Chatbot flotante */}
-      <ChatBot onNavigate={handleNavigation} />
     </main>
   );
 }

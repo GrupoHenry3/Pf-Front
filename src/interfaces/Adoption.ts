@@ -1,4 +1,4 @@
-import type { User } from "./User";
+import type { UserInterface } from "./User";
 import type { Pet } from "./Pet";
 
 export interface ApplicationData {
@@ -23,8 +23,8 @@ export interface ApplicationData {
 }
 
 export interface AdoptionApplicationProps {
-  user: User;
+  user: UserInterface;
   pet: Pet;
   onBack: () => void;
-  onSubmit: (applicationData: any) => void;
+  onSubmit: (applicationData: ApplicationData) => void;
 }

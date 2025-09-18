@@ -1,4 +1,3 @@
-import { Credential } from "./Credential";
 import { Shelter } from "./Organization";
 import { Pet } from "./Pet";
 

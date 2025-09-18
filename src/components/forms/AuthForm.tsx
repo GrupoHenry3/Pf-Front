@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
@@ -10,10 +10,11 @@ import RegisterForm from "./RegisterForm";
 import { LoginFormValues, RegisterFormValues } from "@/validators/loginSchema";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
+import { getRedirectUrlByUserType } from "@/utils/redirectUtils";
 
 export function AuthForm() {
 
-  const {login,register }= useUser()
+  const {login, register, user} = useUser()
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
 
@@ -38,13 +39,19 @@ export function AuthForm() {
     setRegisterFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  useEffect(() => {
+    if (user && user.userType) {
+      const redirectUrl = getRedirectUrlByUserType(user.userType);
+      router.push(redirectUrl);
+    }
+  }, [user, router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isLogin) {
       try{
         console.log(isLogin)
         await login(loginFormData.email, loginFormData.password)  
-        router.push("/dashboard/adopter");
       }
       catch(error){
         console.error("Login failed:", error);
@@ -54,8 +61,9 @@ export function AuthForm() {
     else{
 
       try{
-        await register(registerFormData.fullName, registerFormData.email, registerFormData.password, registerFormData.confirmedPassword)
-        setIsLogin(true);
+        await register(registerFormData.fullName, registerFormData.email, registerFormData.password, registerFormData.confirmedPassword || "")
+        // La redirección se manejará automáticamente en el useEffect
+        // No necesitamos cambiar a login ya que el usuario será redirigido al dashboard
       }
       catch(error){
         console.error("Registration failed:", error);

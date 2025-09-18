@@ -1,4 +1,3 @@
-import { Shelter } from "@/interfaces/Organization";
 import axios from "axios";
 
 // Interfaz para la creación de shelters con campos simplificados
