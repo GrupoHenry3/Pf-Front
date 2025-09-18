@@ -1,11 +1,25 @@
-import { Credential } from "./Credential";
+import { Shelter } from "./Organization";
+import { Pet } from "./Pet";
 
-export interface User {
-  id: number;
-  username: string;
-  fullName: string;
+
+export interface UserInterface {
+  id?: string;
+  fullName?: string;
   email: string;
-  phoneNumber: string;
-  address: string;
-  credentialId?: Credential;
+  password?: string;
+  role: "adopter" | "shelter" | "admin";
+  googleID?: string;
+  phoneNumber?: string;
+  city?: string;
+  country?: string;
+  address?: string;
+  avatarURL?: string;
+  userType: string;
+  siteAdmin: boolean;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  adoptions?: [];
+  favoritePets?: Pet[];
+  shelter?: Shelter;
 }

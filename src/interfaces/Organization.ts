@@ -1,6 +1,6 @@
 import { Credential } from "./Credential";
 
-export interface Organization {
+export interface Shelter {
   id: number;
   name: string;
   email: string;
