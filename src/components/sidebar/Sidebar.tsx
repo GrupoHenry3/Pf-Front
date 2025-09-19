@@ -68,7 +68,7 @@ const getRoutePath = (view: CurrentView): string => {
     case 'catalog':
       return '/pet-catalog'; // 📝 Cambia por la ruta de tu catálogo
     case 'donation-flow':
-      return '/donate'; // 📝 Ruta del flujo de donación
+      return '/donation-flow'; // 📝 Ruta del flujo de donación
     case 'auth':
       return '/login'; // 📝 Ruta de login
     case 'adopter-dashboard':

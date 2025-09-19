@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Heart } from "lucide-react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
@@ -10,6 +9,7 @@ import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 import type { AuthFormData, UserRole } from "../../interfaces/auth";
 import type { User as UserType } from "../../interfaces/User";
+import { useGoogleAuth } from "@/hooks/useGoogleAuth";
 
 interface AuthFormProps {
   onLogin: (user: UserType, isLogin: boolean) => void;
@@ -30,47 +30,92 @@ export function AuthForm({ onLogin, onBack }: AuthFormProps) {
     cuit: "",
   });
 
+  const { signInWithGoogle, isLoading } = useGoogleAuth();
+
   const handleChange = (field: keyof AuthFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (isLogin) {
-      onLogin(
-        {
+    const userData: UserType = isLogin
+      ? {
           id: "",
           name: formData.name,
           email: formData.email,
           password: formData.password,
           role: userRole,
-        },
-        true
-      );
-    } else {
-      onLogin(
-        {
+        }
+      : {
           id: crypto.randomUUID(),
-          name: userRole === "shelter" ? formData.name : formData.name,
+          name: formData.name,
           email: formData.email,
           password: formData.password,
           role: userRole,
           phone: userRole === "shelter" ? formData.phone : undefined,
           address: userRole === "shelter" ? formData.address : undefined,
           cuit: userRole === "shelter" ? formData.cuit : undefined,
-        },
-        false
-      );
+        };
+
+    try {
+      // 🔗 Aquí va tu llamada al backend
+      // Ejemplo para login
+      // const response = await fetch("http://TU_API_URL/auth/login", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(userData),
+      // });
+      // const result = await response.json();
+
+      // ⚠️ Simulación por ahora:
+      const result = { success: true, user: userData };
+
+      if (result.success) {
+        onLogin(result.user, isLogin);
+      } else {
+        console.error("Error en login:", result);
+      }
+    } catch (err) {
+      console.error("Error conectando con backend:", err);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    signInWithGoogle(
+      userRole,
+      async (googleUser) => {
+        try {
+          // 🔗 Aquí llamas a tu backend para registrar/verificar al usuario
+          // const response = await fetch("http://TU_API_URL/auth/google", {
+          //   method: "POST",
+          //   headers: { "Content-Type": "application/json" },
+          //   body: JSON.stringify(googleUser),
+          // });
+          // const result = await response.json();
+
+          // ⚠️ Simulación por ahora:
+          const result = { success: true, user: googleUser };
+
+          if (result.success) {
+            onLogin(result.user, true);
+          } else {
+            console.error("Error en login con Google:", result);
+          }
+        } catch (err) {
+          console.error("Error conectando con backend (Google):", err);
+        }
+      },
+      (err) => {
+        console.error("Error Google Auth:", err);
+      }
+    );
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-orange-50 py-12">
       <div className="mx-auto max-w-md px-4 sm:px-6">
-        {/* Header con volver + logo */}
         <AuthHeader onBack={onBack} />
-       
 
         <Card className="shadow-xl border-0">
           <CardHeader className="space-y-1 pb-6">
@@ -120,7 +165,9 @@ export function AuthForm({ onLogin, onBack }: AuthFormProps) {
                   <span className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-white px-2 text-gray-500">O continúa con</span>
+                  <span className="bg-white px-2 text-gray-500">
+                    O continúa con
+                  </span>
                 </div>
               </div>
 
@@ -130,6 +177,8 @@ export function AuthForm({ onLogin, onBack }: AuthFormProps) {
                 variant="outline"
                 className="w-full py-3 rounded-xl border-2"
                 size="lg"
+                onClick={handleGoogleLogin}
+                disabled={isLoading}
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path
@@ -160,7 +209,7 @@ export function AuthForm({ onLogin, onBack }: AuthFormProps) {
                     3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                Continuar con Google
+                {isLoading ? "Conectando..." : "Continuar con Google"}
               </Button>
 
               {/* Botón principal */}
@@ -175,7 +224,10 @@ export function AuthForm({ onLogin, onBack }: AuthFormProps) {
               {/* Link olvidar contraseña */}
               {isLogin && (
                 <div className="text-center">
-                  <Button variant="link" className="text-green-600 hover:text-green-700">
+                  <Button
+                    variant="link"
+                    className="text-green-600 hover:text-green-700"
+                  >
                     ¿Olvidaste tu contraseña?
                   </Button>
                 </div>
@@ -183,20 +235,6 @@ export function AuthForm({ onLogin, onBack }: AuthFormProps) {
             </form>
           </CardContent>
         </Card>
-
-        {/* Términos solo en registro */}
-        {!isLogin && (
-          <p className="text-center text-sm text-gray-500 mt-6">
-            Al registrarte, aceptas nuestros{" "}
-            <Button variant="link" className="p-0 h-auto text-green-600 hover:text-green-700">
-              Términos de Servicio
-            </Button>{" "}
-            y{" "}
-            <Button variant="link" className="p-0 h-auto text-green-600 hover:text-green-700">
-              Política de Privacidad
-            </Button>
-          </p>
-        )}
       </div>
     </div>
   );
