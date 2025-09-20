@@ -16,7 +16,7 @@ export interface UpdateSpeciesDTO {
   name: string;
 }
 
-const BASE_URL = "http://localhost:5500/api";
+const BASE_URL = "https://petadoption-back-dev.onrender.com/";
 
 export const speciesService = {
   /**

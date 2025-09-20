@@ -13,7 +13,7 @@ interface RegisterData {
 }
 
 const apiClient = axios.create({
-    baseURL: "http://localhost:5500/api",
+    baseURL: "https://petadoption-back-dev.onrender.com/",
     withCredentials: true, 
     headers: {
         'Content-Type': 'application/json'
