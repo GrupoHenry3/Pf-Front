@@ -38,52 +38,17 @@ function AdopterDashboard({ onViewCatalog, onViewMessages }: AdopterDashboardPro
     clearError 
   } = useUser();
 
-  const recentlyViewed = [
-    // {
-    //   id: '1',
-    //   name: 'Luna',
-    //   type: 'dog',
-    //   breed: 'Golden Retriever',
-    //   age: 2,
-    //   image: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop',
-    //   location: 'Madrid, España',
-    //   shelterName: 'Refugio San Francisco'
-    // },
-    // {
-    //   id: '2',
-    //   name: 'Milo',
-    //   type: 'cat',
-    //   breed: 'Maine Coon',
-    //   age: 1,
-    //   image: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=300&h=300&fit=crop',
-    //   location: 'Barcelona, España',
-    //   shelterName: 'Gatitos Felices'
-    // }
-  ];
-
-
   const recommendations = [
-    // {
-    //   id: '3',
-    //   name: 'Rocky',
-    //   type: 'dog',
-    //   breed: 'Labrador Mix',
-    //   age: 3,
-    //   image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=300&fit=crop',
-    //   match: 95,
-    //   reason: 'Ideal para familias con niños'
-    // },
-    // {
-    //   id: '4',
-    //   name: 'Whiskers',
-    //   type: 'cat',
-    //   breed: 'Siamese',
-    //   age: 2,
-    //   image: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=300&h=300&fit=crop',
-    //   match: 88,
-    //   reason: 'Perfecto para apartamentos'
-    // }
+    {
+      id: "1",
+      name: "Buddy",
+      image: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop",
+      breed: "Labrador",
+      match: 95,
+      reason: "Buddy es un perro muy activo y juguetón, perfecto para una familia con niños.",
+    },
   ];
+
 
   const router = useRouter();
 
@@ -91,7 +56,6 @@ function AdopterDashboard({ onViewCatalog, onViewMessages }: AdopterDashboardPro
     router.push("/pet-catalog");
   }
   
-// Mostrar loading mientras se inicializa o carga el usuario
 if (!isInitialized || isUserLoading || !isProfileLoaded) {
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -121,13 +85,8 @@ if(user && user.userType !== "User") {
         <Sidebar 
           user={user} 
         />
-      </div>
-
-      {/* Contenido principal */}
-      <div className="flex-1 bg-gray-50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-          {/* Mostrar errores si existen */}
-          {error && (
+      </div><div className="flex-1 bg-gray-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">{error && (
             <ErrorAlert error={error} onClear={clearError} />
           )}
           
@@ -137,17 +96,12 @@ if(user && user.userType !== "User") {
             </h1>
             <p className="text-lg text-gray-600">
               Te ayudamos a encontrar a tu compañero perfecto
-            </p>
-            {/* Mostrar información adicional del usuario si está disponible */}
-            {user!.email && (
+            </p>{user!.email && (
               <p className="text-sm text-gray-500 mt-1">
                 Conectado como: {user!.email}
               </p>
             )}
-          </div>
-
-          {/* Tarjetas superiores */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          </div><div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <Card className="cursor-pointer hover:shadow-lg transition-shadow border-0 shadow-md">
               <CardContent className="p-6" onClick={handleViewCatalog}>
                 <div className="flex items-center space-x-4">
@@ -189,23 +143,14 @@ if(user && user.userType !== "User") {
                 </div>
               </CardContent>
             </Card>
-          </div>
-
-          {/* Grid principal */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Columna central */}
-            <div className="lg:col-span-2 space-y-8">
-              {/* Mis Solicitudes */}
-              <Card className="border-0 shadow-md">
+          </div><div className="grid grid-cols-1 lg:grid-cols-3 gap-8"><div className="lg:col-span-2 space-y-8"><Card className="border-0 shadow-md">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <Calendar className="w-5 h-5 text-green-600" />
                     <span>Mis Solicitudes de Adopción</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  {/* Solo mostrar contenido si hay un usuario autenticado */}
-                  {user ? (
+                <CardContent>{user ? (
                     user.adoptions && user.adoptions.length > 0 ? (
                       <div className="space-y-4">
                         {(user.adoptions as AdoptionApplication[]).map((app) => (
@@ -264,47 +209,8 @@ if(user && user.userType !== "User") {
                   )}
                 </CardContent>
               </Card>
-
-              {/* Visto Recientemente */}
-              <Card className="border-0 shadow-md">
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Visto Recientemente</span>
-                    <Button variant="outline" size="sm" onClick={onViewCatalog}>
-                      Ver todo
-                    </Button>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {recentlyViewed.map((pet) => (
-                      <div
-                        key={pet.id}
-                        className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
-                      >
-                        <ImageWithFallback
-                          src={pet.image}
-                          alt={pet.name}
-                          className="w-full h-40 rounded-lg object-cover mb-3"
-                        />
-                        <h4 className="text-lg text-gray-900 mb-1">{pet.name}</h4>
-                        <p className="text-sm text-gray-600 mb-2">
-                          {pet.breed} • {pet.age} años
-                        </p>
-                        <div className="flex items-center text-xs text-gray-500">
-                          <MapPin className="w-3 h-3 mr-1" />
-                          {pet.location}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
             </div>
-
-            {/* Columna derecha */}
             <div className="space-y-6">
-              {/* Recomendado para ti */}
               <Card className="border-0 shadow-md">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
@@ -345,10 +251,7 @@ if(user && user.userType !== "User") {
                     Ver más recomendaciones
                   </Button>
                 </CardContent>
-              </Card>
-
-              {/* Consejo del día */}
-              <Card className="border-0 shadow-md bg-gradient-to-br from-green-50 to-green-100">
+              </Card><Card className="border-0 shadow-md bg-gradient-to-br from-green-50 to-green-100">
                 <CardHeader>
                   <CardTitle className="text-green-800">💡 Consejo del día</CardTitle>
                 </CardHeader>

@@ -28,11 +28,7 @@ export default function InputWithIcon({
   return (
     <div className={cn("space-y-2 text--500", className)}>
       <Label htmlFor={id}>{label}</Label>
-      <div className="relative">
-        {/* Icono a la izquierda */}
-        <Icon className="absolute left-3 top-3 w-4 h-4 text--400" />
-        {/* Input estilo pill */}
-        <Input
+      <div className="relative"><Icon className="absolute left-3 top-3 w-4 h-4 text--400" /><Input
           id={id}
           type={type}
           placeholder={placeholder}

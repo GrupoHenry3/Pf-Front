@@ -11,7 +11,6 @@ import { LoginFormValues, RegisterFormValues } from "@/validators/loginSchema";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 import { getRedirectUrl } from "../utils/Redirect";
-// Función para determinar la URL de redirección basada en el tipo de usuario
 
 
 export function AuthForm() {
@@ -64,8 +63,6 @@ export function AuthForm() {
 
       try{
         await register(registerFormData.fullName, registerFormData.email, registerFormData.password, registerFormData.confirmedPassword || "")
-        // La redirección se manejará automáticamente en el useEffect
-        // No necesitamos cambiar a login ya que el usuario será redirigido al dashboard
       }
       catch(error){
         console.error("Registration failed:", error);

@@ -152,9 +152,7 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
   };
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-white border-r border-gray-200">
-      {/* Header */}
-      <div className="p-6 border-b border-gray-200">
+    <div className="flex flex-col h-full bg-white border-r border-gray-200"><div className="p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
             <Building2 className="w-5 h-5 text-white" />
@@ -164,10 +162,7 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
             <p className="text-sm text-gray-500">Panel de Refugio</p>
           </div>
         </div>
-      </div>
-
-      {/* User Info */}
-      {user && (
+      </div>{user && (
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <Avatar className="w-10 h-10">
@@ -188,10 +183,7 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
             </div>
           </div>
         </div>
-      )}
-
-      {/* Navigation */}
-      <div className="flex-1 overflow-y-auto">
+      )}<div className="flex-1 overflow-y-auto">
         <nav className="p-4 space-y-2">
           {navigationItems.map((item) => (
             <Button
@@ -211,10 +203,7 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
           ))}
         </nav>
 
-        <Separator className="mx-4" />
-
-        {/* Support */}
-        <nav className="p-4 space-y-2">
+        <Separator className="mx-4" /><nav className="p-4 space-y-2">
           <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">
             Soporte
           </p>
@@ -230,10 +219,7 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
             </Button>
           ))}
         </nav>
-      </div>
-
-      {/* Footer */}
-      <div className="p-4 border-t border-gray-200">
+      </div><div className="p-4 border-t border-gray-200">
         <Button
           variant="ghost"
           className="w-full justify-start text-red-600 hover:bg-red-50"
@@ -246,20 +232,14 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
     </div>
   );
 
-  // Si está embebido, solo mostrar el contenido
   if (embedded) {
     return <SidebarContent />;
   }
 
   return (
-    <>
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:block w-64 h-screen fixed left-0 top-0 z-40">
+    <><div className="hidden lg:block w-64 h-screen fixed left-0 top-0 z-40">
         <SidebarContent />
-      </div>
-
-      {/* Mobile Menu */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
+      </div><div className="lg:hidden fixed top-4 left-4 z-50">
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Button
@@ -280,10 +260,7 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
             <SidebarContent />
           </SheetContent>
         </Sheet>
-      </div>
-
-      {/* Mobile Bottom Bar */}
-      <div
+      </div><div
         className={`lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-lg transition-transform duration-300 ${
           isOpen ? "translate-y-full" : "translate-y-0"
         }`}

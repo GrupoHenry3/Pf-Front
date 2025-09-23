@@ -35,70 +35,6 @@ function ShelterDashboard({
     applications: 15,
   };
 
-  // const myPets = [
-  //   {
-  //     id: "1",
-  //     name: "Buddy",
-  //     type: "dog",
-  //     breed: "Labrador",
-  //     age: 3,
-  //     image:
-  //       "https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop",
-  //     status: "available",
-  //     applications: 3,
-  //     dateAdded: "2024-02-15",
-  //   },
-  //   {
-  //     id: "2",
-  //     name: "Mittens",
-  //     type: "cat",
-  //     breed: "Persian",
-  //     age: 2,
-  //     image:
-  //       "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=300&h=300&fit=crop",
-  //     status: "pending",
-  //     applications: 1,
-  //     dateAdded: "2024-03-01",
-  //   },
-  //   {
-  //     id: "3",
-  //     name: "Charlie",
-  //     type: "dog",
-  //     breed: "Beagle",
-  //     age: 1,
-  //     image:
-  //       "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=300&h=300&fit=crop",
-  //     status: "available",
-  //     applications: 5,
-  //     dateAdded: "2024-03-10",
-  //   },
-  // ];
-
-  // const getStatusColor = (status: string) => {
-  //   switch (status) {
-  //     case "available":
-  //       return "bg-green-100 text-green-800";
-  //     case "pending":
-  //       return "bg-orange-100 text-orange-800";
-  //     case "adopted":
-  //       return "bg-blue-100 text-blue-800";
-  //     default:
-  //       return "bg-gray-100 text-gray-800";
-  //   }
-  // };
-
-  // const getStatusLabel = (status: string) => {
-  //   switch (status) {
-  //     case "available":
-  //       return "Disponible";
-  //     case "pending":
-  //       return "En proceso";
-  //     case "adopted":
-  //       return "Adoptado";
-  //     default:
-  //       return status;
-  //   }
-  // };
 
   const getApplicationStatusColor = (status: string) => {
     switch (status) {
@@ -158,12 +94,8 @@ function ShelterDashboard({
     <div className="flex min-h-screen">
       <div className="w-64 border-r bg-white shadow-sm">
         <ShelterSidebar user={user} embedded={true} />
-      </div>
-      {/* Contenido principal */}
-      <div className="flex-1 bg-gray-50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
+      </div><div className="flex-1 bg-gray-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8"><div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
           <div>
             <h1 className="text-3xl text-gray-900 mb-2">
               Panel de {user?.shelter?.name}
@@ -181,10 +113,7 @@ function ShelterDashboard({
             <Plus className="w-4 h-4 mr-2" />
             Agregar Mascota
           </Button>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        </div><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card className="border-0 shadow-md">
             <CardContent className="p-6">
               <div className="flex items-center space-x-4">
@@ -240,12 +169,7 @@ function ShelterDashboard({
               </div>
             </CardContent>
           </Card>
-        </div>
-
-        {/* Aplicaciones y mascotas */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Recent Applications */}
-          <Card className="border-0 shadow-md">
+        </div><div className="grid grid-cols-1 lg:grid-cols-2 gap-8"><Card className="border-0 shadow-md">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span className="flex items-center space-x-2">
@@ -262,10 +186,7 @@ function ShelterDashboard({
        
               </div>
             </CardContent>
-          </Card>
-
-          {/* My Pets */}
-          <Card className="border-0 shadow-md">
+          </Card><Card className="border-0 shadow-md">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span>Mis Mascotas</span>

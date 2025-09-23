@@ -1,4 +1,3 @@
-// interfaces/auth.ts
 
 export type UserRole = "adopter" | "shelter" | "admin";
 

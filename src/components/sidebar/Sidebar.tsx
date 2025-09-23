@@ -73,7 +73,6 @@ export function Sidebar({
   }, []);
 
 
-  // Si el usuario es un refugio, usar el ShelterSidebar
   if (user?.userType === "Shelter") {
     return <ShelterSidebar user={user} />;
   }
@@ -100,8 +99,6 @@ export function Sidebar({
       return [{ id: "catalog", label: "Ver Mascotas", icon: Search, badge: null }, ...commonItems];
     }
 
-    // Por ahora solo mostramos elementos para adoptantes
-    // TODO: Implementar switch case para diferentes roles más adelante
     return [
       { id: "adopter-dashboard", label: "Dashboard", icon: Home, badge: null },
       { id: "catalog", label: "Buscar Mascotas", icon: Search, badge: null },
@@ -111,7 +108,6 @@ export function Sidebar({
       { id: "profile", label: "Mi Perfil", icon: User, badge: null },
     ];
 
-    // Switch case comentado para implementación futura
     /*
     switch (user.role) {
       case "adopter":
@@ -199,9 +195,7 @@ export function Sidebar({
   const quickAccessItems = getQuickAccessItems();
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-white border-r border-gray-200">
-      {/* Header */}
-      <div className="p-6 border-b border-gray-200">
+    <div className="flex flex-col h-full bg-white border-r border-gray-200"><div className="p-6 border-b border-gray-200">
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
             <Heart className="w-5 h-5 text-white" />
@@ -211,10 +205,7 @@ export function Sidebar({
             <p className="text-sm text-gray-500">Encuentra tu compañero</p>
           </div>
         </div>
-      </div>
-
-      {/* User Info */}
-      {user && (
+      </div>{user && (
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <Avatar className="w-10 h-10">
@@ -233,10 +224,7 @@ export function Sidebar({
             </div>
           </div>
         </div>
-      )}
-
-      {/* Navigation */}
-      <div className="flex-1 overflow-y-auto">
+      )}<div className="flex-1 overflow-y-auto">
         <nav className="p-4 space-y-2">
           {navigationItems.map((item) => (
             <Button
@@ -248,7 +236,6 @@ export function Sidebar({
                   router.push("/shelter-registration");
                   setIsOpen(false);
                 } else {
-                  // Aquí puedes agregar más navegación según sea necesario
                   setIsOpen(false);
                 }
               }}
@@ -264,10 +251,7 @@ export function Sidebar({
           ))}
         </nav>
 
-        <Separator className="mx-4" />
-
-        {/* Support */}
-        <nav className="p-4 space-y-2">
+        <Separator className="mx-4" /><nav className="p-4 space-y-2">
           <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">
             Soporte
           </p>
@@ -283,10 +267,7 @@ export function Sidebar({
             </Button>
           ))}
         </nav>
-      </div>
-
-      {/* Footer */}
-      <div className="p-4 border-t border-gray-200">
+      </div><div className="p-4 border-t border-gray-200">
         {user ? (
           <Button
             variant="ghost"
@@ -312,14 +293,9 @@ export function Sidebar({
   );
 
   return (
-    <>
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:block w-64 h-screen fixed left-0 top-0 z-40">
+    <><div className="hidden lg:block w-64 h-screen fixed left-0 top-0 z-40">
         <SidebarContent />
-      </div>
-
-      {/* Mobile Menu */}
-      <div className="lg:hidden fixed top-4 left-4 z-50">
+      </div><div className="lg:hidden fixed top-4 left-4 z-50">
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
             <Button
@@ -341,10 +317,7 @@ export function Sidebar({
             <SidebarContent />
           </SheetContent>
         </Sheet>
-      </div>
-
-      {/* Mobile Bottom Bar */}
-      <div
+      </div><div
         className={`lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 shadow-lg transition-transform duration-300 ${
           isOpen ? "translate-y-full" : "translate-y-0"
         }`}
