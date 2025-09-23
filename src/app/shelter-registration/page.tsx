@@ -51,7 +51,6 @@ export default function ShelterRegistrationPage() {
       return;
     }
 
-    // Validar campos requeridos
     const requiredFields = ['name', 'country', 'state', 'city', 'address', 'phoneNumber'];
     const missingFields = requiredFields.filter(field => !formData[field as keyof ShelterFormData]);
     
@@ -89,9 +88,7 @@ export default function ShelterRegistrationPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-orange-50 py-8">
-      <div className="mx-auto max-w-2xl px-4 sm:px-6">
-        {/* Header */}
-        <div className="mb-8">
+      <div className="mx-auto max-w-2xl px-4 sm:px-6"><div className="mb-8">
           <Button
             variant="ghost"
             onClick={() => router.back()}
@@ -112,10 +109,7 @@ export default function ShelterRegistrationPage() {
               Únete a nuestra red de refugios y ayuda a encontrar hogares para mascotas
             </p>
           </div>
-        </div>
-
-        {/* Formulario */}
-        <Card className="shadow-xl border-0">
+        </div><Card className="shadow-xl border-0">
           <CardHeader className="text-center pb-6">
             <CardTitle className="text-2xl text-gray-900">
               Información del Refugio
@@ -126,9 +120,7 @@ export default function ShelterRegistrationPage() {
           </CardHeader>
 
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Información Básica */}
-              <div className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6"><div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                   <Building2 className="w-5 h-5 mr-2 text-green-500" />
                   Información Básica
@@ -158,10 +150,7 @@ export default function ShelterRegistrationPage() {
                     rows={4}
                   />
                 </div>
-              </div>
-
-              {/* Ubicación */}
-              <div className="space-y-4">
+              </div><div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                   <MapPin className="w-5 h-5 mr-2 text-green-500" />
                   Ubicación
@@ -220,10 +209,7 @@ export default function ShelterRegistrationPage() {
                     required
                   />
                 </div>
-              </div>
-
-              {/* Contacto */}
-              <div className="space-y-4">
+              </div><div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                   <Phone className="w-5 h-5 mr-2 text-green-500" />
                   Información de Contacto
@@ -255,10 +241,7 @@ export default function ShelterRegistrationPage() {
                     />
                   </div>
                 </div>
-              </div>
-
-              {/* Botones */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-6">
+              </div><div className="flex flex-col sm:flex-row gap-4 pt-6">
                 <Button
                   type="button"
                   variant="outline"
@@ -276,10 +259,7 @@ export default function ShelterRegistrationPage() {
                 >
                   {isLoading ? "Creando Refugio..." : "Crear Refugio"}
                 </Button>
-              </div>
-
-              {/* Información adicional */}
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-6">
+              </div><div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-6">
                 <div className="flex items-start">
                   <FileText className="w-5 h-5 text-blue-500 mr-3 mt-0.5" />
                   <div className="text-sm text-blue-800">

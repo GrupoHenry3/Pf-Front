@@ -1,4 +1,3 @@
-// components/PrivateRoute.tsx
 "use client";
 
 import { useEffect } from "react";
@@ -10,13 +9,11 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
   const router = useRouter();
 
   useEffect(() => {
-    // Solo redirigir si ya se inicializó y no hay usuario
     if (isInitialized && !isUserLoading && !user) {
       router.replace("/auth");
     }
   }, [isInitialized, isUserLoading, user, router]);
 
-  // Mientras se inicializa o está cargando, mostrar spinner
   if (!isInitialized || isUserLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -28,7 +25,6 @@ export default function PrivateRoute({ children }: { children: React.ReactNode }
     );
   }
 
-  // Si ya se inicializó y no hay usuario, no mostrar nada (ya se redirigió)
   if (!user) return null;
 
   return <>{children}</>;

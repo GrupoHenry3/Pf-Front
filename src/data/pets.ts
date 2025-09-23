@@ -1,4 +1,3 @@
-// src/data/pets.ts
 import type { Pet } from "@/interfaces/Pet";
 
 export const PETS: Pet[] = [

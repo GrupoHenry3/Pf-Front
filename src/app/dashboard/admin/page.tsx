@@ -100,7 +100,6 @@ export default function AdminDashboard() {
 
   const COLORS = ["#10B981", "#3B82F6", "#F59E0B"];
 
-  // Función helper para obtener el título de cada vista
   const getViewTitle = (view: AdminView): string => {
     const titles = {
       dashboard: "Panel de Administración",
@@ -117,7 +116,6 @@ export default function AdminDashboard() {
     return titles[view];
   };
 
-  // Función helper para obtener la descripción de cada vista
   const getViewDescription = (view: AdminView): string => {
     const descriptions = {
       dashboard: "Resumen general y estadísticas del sistema",
@@ -134,20 +132,17 @@ export default function AdminDashboard() {
     return descriptions[view];
   };
 
-  // Función para renderizar el contenido según la vista actual
   const renderCurrentView = () => {
     switch (currentView) {
       case "dashboard":
         return (
           <>
-            {/* Alertas */}
             <Alert className="mb-8 border-l-4 border-green-500 bg-green-50">
               <AlertDescription>
                 🎉 ¡Has alcanzado un nuevo récord de adopciones este mes!
               </AlertDescription>
             </Alert>
 
-            {/* Stats */}
             <div className="grid gap-6 mb-8 sm:grid-cols-2 lg:grid-cols-4">
               {stats.map((stat, i) => (
                 <Card key={i}>
@@ -162,7 +157,6 @@ export default function AdminDashboard() {
               ))}
             </div>
 
-            {/* Tabs con gráficos y tablas */}
             <Tabs defaultValue="overview" className="space-y-6">
               <TabsList>
                 <TabsTrigger value="overview">Resumen</TabsTrigger>
@@ -170,7 +164,6 @@ export default function AdminDashboard() {
                 <TabsTrigger value="recent">Recientes</TabsTrigger>
               </TabsList>
 
-              {/* Tab Resumen */}
               <TabsContent value="overview" className="grid gap-6 md:grid-cols-2">
                 <Card>
                   <CardHeader>
@@ -208,7 +201,6 @@ export default function AdminDashboard() {
                 </Card>
               </TabsContent>
 
-              {/* Tab Analíticas */}
               <TabsContent value="analytics">
                 <Card>
                   <CardHeader>
@@ -228,7 +220,6 @@ export default function AdminDashboard() {
                 </Card>
               </TabsContent>
 
-              {/* Tab Recientes */}
               <TabsContent value="recent">
                 <Card>
                   <CardHeader>
@@ -375,13 +366,10 @@ export default function AdminDashboard() {
   
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar con lógica de roles */}
-        <AdminSidebar user={user} onViewChange={setCurrentView} />
+        <AdminSidebar user={user} onViewChange={(view: AdminView) => setCurrentView(view)} />
 
-      {/* Contenido principal */}
       <div className="flex-1 lg:ml-64 p-6">
         <div className="mx-auto max-w-7xl">
-          {/* Header dinámico */}
           <div className="mb-8 flex items-center justify-between">
             <div>
               <h1 className="text-3xl text-gray-900">{getViewTitle(currentView)}</h1>
@@ -410,7 +398,6 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Contenido de la vista actual */}
           {renderCurrentView()}
         </div>
       </div>

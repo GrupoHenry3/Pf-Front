@@ -81,8 +81,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.error("Error fetching profile:", error);
             setUser(null);
             setIsProfileLoaded(true);
-            // No establecer error aquí para evitar mostrar errores en la inicialización
-            // Solo establecer error si es una operación manual del usuario
         } finally {
             setIsUserLoading(false);
         }
@@ -103,7 +101,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }
 
-    // Inicialización automática del perfil al cargar la aplicación
     useEffect(() => {
         const initializeUser = async () => {
             try {

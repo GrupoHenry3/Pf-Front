@@ -19,13 +19,9 @@ interface WelcomeProps {
 }
  function welcome({}: WelcomeProps) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-orange-50">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 sm:py-24 lg:py-32">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-orange-50"><section className="relative overflow-hidden py-20 sm:py-24 lg:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Text Content */}
-            <div className="max-w-2xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"><div className="max-w-2xl">
               <div className="flex items-center space-x-2 mb-6">
                 <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
                   <Heart className="w-7 h-7 text-white" />
@@ -68,10 +64,7 @@ interface WelcomeProps {
                   </Link>
                 </Button>
               </div>
-            </div>
-
-            {/* Hero Image */}
-            <div className="relative">
+            </div><div className="relative">
               <div className="relative z-10 rounded-2xl overflow-hidden shadow-2xl">
                 <ImageWithFallback
                   src="https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=600&h=600&fit=crop&crop=faces"
@@ -84,10 +77,7 @@ interface WelcomeProps {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-16 bg-white">
+      </section><section className="py-16 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl mb-4 text-gray-900">
@@ -142,10 +132,7 @@ interface WelcomeProps {
             ))}
           </div>
         </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-16 bg-gray-50">
+      </section><section className="py-16 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             {[
@@ -174,10 +161,7 @@ interface WelcomeProps {
             ))}
           </div>
         </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-green-500 to-green-600">
+      </section><section className="py-20 bg-gradient-to-r from-green-500 to-green-600">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl sm:text-4xl mb-6 text-white">
             ¿Listo para dar el siguiente paso?

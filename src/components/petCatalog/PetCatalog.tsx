@@ -16,7 +16,6 @@ import { Badge } from "@/components/ui/badge";
 import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
 import type { Pet } from "@/interfaces/Pet";
 
-// 👉 importa los datos mock
 import { PETS } from "@/data/pets";
 import Link from "next/link";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
@@ -36,7 +35,6 @@ export function PetCatalog() {
   const [showFilters, setShowFilters] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
-  // ---- FILTROS ----
   const filteredPets = PETS.filter((pet) => {
     const matchesSearch =
       pet.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -68,7 +66,6 @@ export function PetCatalog() {
     );
   });
 
-  // ---- FAVORITOS ----
   const toggleFavorite = (petId: string, e: React.MouseEvent) => {
     e.stopPropagation();
     const newFavorites = new Set(favorites);
@@ -111,27 +108,16 @@ export function PetCatalog() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-  
-      {/* Contenido principal */}
-      <div className="flex-1">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-          {/* Header */}
-          <div className="mb-8">
+    <div className="flex min-h-screen bg-gray-50"><div className="flex-1">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8"><div className="mb-8">
             <h1 className="text-3xl text-gray-900 mb-2">
               Encuentra tu compañero perfecto
             </h1>
             <p className="text-lg text-gray-600">
               {filteredPets.length} mascotas esperando un hogar
             </p>
-          </div>
-          
-          {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
-          <div className="flex flex-col lg:flex-row gap-4 items-center">
-            
-            {/* Search */}
-            <div className="relative flex-1 w-full">
+          </div><div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+          <div className="flex flex-col lg:flex-row gap-4 items-center"><div className="relative flex-1 w-full">
               <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
               <Input
                 placeholder="Buscar por nombre, raza o ubicación..."
@@ -139,10 +125,7 @@ export function PetCatalog() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
               />
-            </div>
-
-            {/* Quick Filters */}
-            <div className="flex flex-wrap gap-3 items-center">
+            </div><div className="flex flex-wrap gap-3 items-center">
               <Select value={selectedType} onValueChange={setSelectedType}>
                 <SelectTrigger className="w-32">
                   <SelectValue placeholder="Tipo" />
@@ -218,19 +201,14 @@ export function PetCatalog() {
               </DropdownMenu>
             </div>
           </div>
-        </div>
-
-          {/* Grid de mascotas */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        </div><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPets.map((pet) => (
               <Link
                 key={pet.id}
                 href={`/petDetail/${pet.id}`} // ✅ ruta dinámica según el id de la mascota
                 className="block"
               >
-                <Card className="overflow-hidden hover:shadow-lg transition cursor-pointer" onClick={() => handlePetDetail(pet)}>
-                  {/* Imagen */}
-                  <div className="h-48 w-full overflow-hidden">
+                <Card className="overflow-hidden hover:shadow-lg transition cursor-pointer" onClick={() => handlePetDetail(pet)}><div className="h-48 w-full overflow-hidden">
                     <ImageWithFallback
                       src={pet.images[0]}
                       alt={pet.name}

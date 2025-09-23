@@ -1,7 +1,6 @@
 import axios from "axios";
 import { getApiUrl } from "@/config/environment";
 
-// Interfaces para las mascotas
 export interface Pet {
   id: string;
   name: string;
@@ -80,24 +79,11 @@ export interface PetFilters {
 const BASE_URL = getApiUrl();
 
 export const petsService = {
-  /**
-   * Crear una nueva mascota
-   * Endpoint: POST /pets
-   * Autenticación: No requiere (público)
-   * Descripción: Permite crear una nueva mascota en el sistema
-   */
   create: async (data: CreatePetDTO): Promise<Pet> => {
     const response = await axios.post(`${BASE_URL}/pets`, data);
     return response.data;
   },
 
-  /**
-   * Obtener todas las mascotas activas (público)
-   * Endpoint: GET /pets
-   * Autenticación: No requiere (público)
-   * Descripción: Retorna una lista paginada de mascotas activas disponibles para adopción
-   * Incluye relaciones con shelter, breed y species
-   */
   findAll: async (filters: PetFilters = {}): Promise<PetWithRelations[]> => {
     const params = new URLSearchParams();
     if (filters.skip !== undefined) params.set("skip", filters.skip.toString());
@@ -108,13 +94,6 @@ export const petsService = {
     return response.data;
   },
 
-  /**
-   * Obtener todas las mascotas (activas e inactivas) - Solo Administradores
-   * Endpoint: GET /pets/all
-   * Autenticación: Requiere JWT + permisos de administrador
-   * Descripción: Retorna todas las mascotas del sistema, incluyendo las inactivas
-   * Solo usuarios con privilegios de administrador pueden acceder
-   */
   findAllWithInactive: async (filters: PetFilters = {}): Promise<PetWithRelations[]> => {
     const params = new URLSearchParams();
     if (filters.skip !== undefined) params.set("skip", filters.skip.toString());
@@ -122,49 +101,27 @@ export const petsService = {
 
     const url = `${BASE_URL}/pets/all${params.toString() ? `?${params.toString()}` : ""}`;
     const response = await axios.get<PetWithRelations[]>(url, {
-      withCredentials: true, // Envía cookies para autenticación
+      withCredentials: true,
     });
     return response.data;
   },
 
-  /**
-   * Obtener una mascota por ID
-   * Endpoint: GET /pets/:id
-   * Autenticación: No requiere (público)
-   * Descripción: Retorna los detalles completos de una mascota específica
-   * Incluye relaciones con shelter, breed y species
-   */
   findOne: async (id: string): Promise<PetWithRelations> => {
     const response = await axios.get(`${BASE_URL}/pets/${id}`);
     return response.data;
   },
 
-  /**
-   * Actualizar una mascota - Solo Administradores
-   * Endpoint: PATCH /pets/:id
-   * Autenticación: Requiere JWT + permisos de administrador
-   * Descripción: Permite actualizar la información de una mascota existente
-   * Solo usuarios con privilegios de administrador pueden realizar esta acción
-   */
   update: async (id: string, data: UpdatePetDTO): Promise<PetWithRelations> => {
     const response = await axios.patch(`${BASE_URL}/pets/${id}`, data, {
-      withCredentials: true, // Envía cookies para autenticación
+      withCredentials: true,
       headers: { "Content-Type": "application/json" },
     });
     return response.data;
   },
 
-  /**
-   * Desactivar una mascota (soft delete) - Solo Administradores
-   * Endpoint: DELETE /pets/:id
-   * Autenticación: Requiere JWT + permisos de administrador
-   * Descripción: Marca una mascota como inactiva en lugar de eliminarla físicamente
-   * Esto permite mantener el historial y reactivar la mascota si es necesario
-   * Solo usuarios con privilegios de administrador pueden realizar esta acción
-   */
   remove: async (id: string): Promise<{ message: string; pet: PetWithRelations }> => {
     const response = await axios.delete(`${BASE_URL}/pets/${id}`, {
-      withCredentials: true, // Envía cookies para autenticación
+      withCredentials: true,
     });
     return response.data;
   },

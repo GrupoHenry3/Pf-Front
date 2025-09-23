@@ -95,25 +95,6 @@ export default function AdoptionPageWrapper({pet}: AdoptionApplicationProps) {
     router.push(`${PATHROUTES.DASHBOARD}/adopter`);
   };
 
-  // useEffect(() => {
-  //   if (!petId) return;
-
-  //   const fetchPet = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const res = await fetch(`/api/pets/${petId}`);
-  //       if (!res.ok) throw new Error("Mascota no encontrada");
-  //       const pet: Pet = await res.json();
-  //       setFetchedPet(pet);
-  //     } catch (error) {
-  //       console.error(error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchPet();
-  // }, [petId]);
 
   const renderStep = () => {
     switch (currentStep) {
@@ -147,10 +128,7 @@ export default function AdoptionPageWrapper({pet}: AdoptionApplicationProps) {
               Volver
             </Link>
           </Button>
-        </div> */}
-
-        {/* Progreso */}
-        <div className="mb-8">
+        </div> */}<div className="mb-8">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-gray-600">
               Paso {currentStep} de {totalSteps}
@@ -160,10 +138,7 @@ export default function AdoptionPageWrapper({pet}: AdoptionApplicationProps) {
             </span>
           </div>
           <Progress value={getProgress()} className="h-2 rounded-full" />
-        </div>
-
-        {/* Info de mascota */}
-        {pet && (
+        </div>{pet && (
           <Card className="mb-8 shadow-md">
             <CardContent className="p-6 flex flex-col sm:flex-row items-center sm:items-start">
               <Image
@@ -186,15 +161,9 @@ export default function AdoptionPageWrapper({pet}: AdoptionApplicationProps) {
               </div>
             </CardContent>
           </Card>
-        )}
-
-        {/* Formulario del paso */}
-        <Card className="shadow-lg mb-8">
+        )}<Card className="shadow-lg mb-8">
           <CardContent className="p-6">{renderStep()}</CardContent>
-        </Card>
-
-        {/* Navegación de pasos */}
-        <div className="flex flex-col sm:flex-row justify-between mt-6 gap-2 sm:gap-0">
+        </Card><div className="flex flex-col sm:flex-row justify-between mt-6 gap-2 sm:gap-0">
           <Button
             variant="outline"
             onClick={handleBackStep}
@@ -221,10 +190,7 @@ export default function AdoptionPageWrapper({pet}: AdoptionApplicationProps) {
               Enviar Solicitud <Send className="w-4 h-4 ml-2" />
             </Button>
           )}
-        </div>
-
-        {/* Alerta final */}
-        {currentStep === totalSteps && validateStep(currentStep) && (
+        </div>{currentStep === totalSteps && validateStep(currentStep) && (
           <Alert className="border-green-200 bg-green-50 mt-6 flex items-center gap-2">
             <Check className="w-4 h-4 text-green-600" />
             <AlertDescription>

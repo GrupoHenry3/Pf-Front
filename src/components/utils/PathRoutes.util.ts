@@ -6,6 +6,5 @@ const PATHROUTES = {
   CATALOG: "/pet-catalog",
   PET_DETAIL: "/petDetail",
   ADOPTION: "/adoption",
-  // PET: (id: number | string) => `/pet/${id}`
 };
 export default PATHROUTES;
