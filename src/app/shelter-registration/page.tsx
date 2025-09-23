@@ -8,9 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Building2, MapPin, Phone, FileText, ArrowLeft } from "lucide-react";
-import { sheltersService } from "@/services/shelters/sheltersService";
 import { useUser } from "@/context/UserContext";
 import { toast } from "sonner";
+import { useShelter } from "@/context/ShelterContext";
 
 interface ShelterFormData {
   name: string;
@@ -26,6 +26,7 @@ interface ShelterFormData {
 export default function ShelterRegistrationPage() {
   const router = useRouter();
   const { user } = useUser();
+  const { createShelter } = useShelter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<ShelterFormData>({
     name: "",
@@ -63,7 +64,6 @@ export default function ShelterRegistrationPage() {
 
     try {
       const shelterData = {
-        userID: user.id,
         name: formData.name,
         country: formData.country,
         state: formData.state,
@@ -74,7 +74,7 @@ export default function ShelterRegistrationPage() {
         description: formData.description || undefined,
       };
 
-      await sheltersService.create(shelterData);
+      await createShelter(shelterData);
       
       toast.success("¡Refugio creado exitosamente! Ahora puedes gestionar mascotas.");
       router.push("/dashboard/shelter");

@@ -1,4 +1,4 @@
-import { Shelter } from "./Organization";
+import { Shelter } from "./Shelter";
 import { Pet } from "./Pet";
 
 

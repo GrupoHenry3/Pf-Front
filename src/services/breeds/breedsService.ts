@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getApiUrl } from "@/config/environment";
 
 // Interfaces para las razas
 export interface Breed {
@@ -25,7 +26,7 @@ export interface UpdateBreedDTO {
   speciesID?: string;
 }
 
-const BASE_URL = "https://petadoption-back-dev.onrender.com/";
+const BASE_URL = getApiUrl();
 
 export const breedsService = {
   /**

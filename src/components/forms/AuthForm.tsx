@@ -10,7 +10,9 @@ import RegisterForm from "./RegisterForm";
 import { LoginFormValues, RegisterFormValues } from "@/validators/loginSchema";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
-import { getRedirectUrlByUserType } from "@/utils/redirectUtils";
+import { getRedirectUrl } from "../utils/Redirect";
+// Función para determinar la URL de redirección basada en el tipo de usuario
+
 
 export function AuthForm() {
 
@@ -41,7 +43,7 @@ export function AuthForm() {
 
   useEffect(() => {
     if (user && user.userType) {
-      const redirectUrl = getRedirectUrlByUserType(user.userType);
+      const redirectUrl = getRedirectUrl(user);
       router.push(redirectUrl);
     }
   }, [user, router]);

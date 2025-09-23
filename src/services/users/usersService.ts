@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getApiUrl } from "@/config/environment";
 
 export interface GetUsersFilters {
   active?: boolean;
@@ -41,7 +42,7 @@ export interface UpdateUserDTO {
   isActive?: boolean;
 }
 
-const BASE_URL = "https://petadoption-back-dev.onrender.com/";
+const BASE_URL = getApiUrl();
 
 export const usersService = {
   /**
@@ -90,7 +91,7 @@ export const usersService = {
    */
   getCurrentUser: async () => {
     const response = await axios.get(`${BASE_URL}/users/me`, {
-      withCredentials: true, // Para enviar cookies
+      withCredentials: true,
     });
     console.log(response.data);
     return response.data;
