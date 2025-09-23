@@ -1,13 +1,14 @@
 import { Credential } from "./Credential";
 
 export interface Shelter {
-  id: number;
+  id?: number;
   name: string;
-  email: string;
   phoneNumber: string;
   address: string;
   website?: string;
   description?: string;
   credentialId?: Credential;
-  AdoptionFee: number;
+  country: string;
+  state: string;
+  city: string;
 }

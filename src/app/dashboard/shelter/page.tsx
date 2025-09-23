@@ -74,42 +74,6 @@ function ShelterDashboard({
   //   },
   // ];
 
-  const recentApplications = [
-    {
-      id: "1",
-      petName: "Charlie",
-      petImage:
-        "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=300&h=300&fit=crop",
-      applicantName: "María González",
-      applicantLocation: "Madrid, España",
-      applicationDate: "2024-03-18",
-      status: "new",
-      score: 92,
-    },
-    {
-      id: "2",
-      petName: "Buddy",
-      petImage:
-        "https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop",
-      applicantName: "Carlos Ruiz",
-      applicantLocation: "Barcelona, España",
-      applicationDate: "2024-03-17",
-      status: "reviewing",
-      score: 87,
-    },
-    {
-      id: "3",
-      petName: "Buddy",
-      petImage:
-        "https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop",
-      applicantName: "Ana López",
-      applicantLocation: "Valencia, España",
-      applicationDate: "2024-03-16",
-      status: "interview",
-      score: 95,
-    },
-  ];
-
   // const getStatusColor = (status: string) => {
   //   switch (status) {
   //     case "available":
@@ -295,57 +259,7 @@ function ShelterDashboard({
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentApplications.map((app) => (
-                  <div
-                    key={app.id}
-                    className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
-                  >
-                    <ImageWithFallback
-                      src={app.petImage}
-                      alt={app.petName}
-                      className="w-16 h-16 rounded-lg object-cover"
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-lg text-gray-900">
-                          {app.applicantName}
-                        </h4>
-                        <Badge className={getApplicationStatusColor(app.status)}>
-                          {getApplicationStatusLabel(app.status)}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-gray-600 mb-1">
-                        Interesado en{" "}
-                        <span className="font-medium">{app.petName}</span>
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center text-xs text-gray-500">
-                          <MapPin className="w-3 h-3 mr-1" />
-                          {app.applicantLocation}
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <span className="text-xs text-gray-500">
-                            Compatibilidad:
-                          </span>
-                          <Badge
-                            variant="outline"
-                            className="text-green-600 border-green-600"
-                          >
-                            {app.score}%
-                          </Badge>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex space-x-2">
-                      <Button size="sm" variant="outline">
-                        Ver perfil
-                      </Button>
-                      <Button size="sm" className="bg-primary hover:bg-green-600">
-                        Contactar
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+       
               </div>
             </CardContent>
           </Card>

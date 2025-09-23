@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getApiUrl } from "@/config/environment";
 
  interface LoginData {
     email: string,
@@ -13,7 +14,7 @@ interface RegisterData {
 }
 
 const apiClient = axios.create({
-    baseURL: "https://petadoption-back-dev.onrender.com/",
+    baseURL: getApiUrl(),
     withCredentials: true, 
     headers: {
         'Content-Type': 'application/json'

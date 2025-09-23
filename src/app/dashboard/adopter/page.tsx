@@ -39,50 +39,50 @@ function AdopterDashboard({ onViewCatalog, onViewMessages }: AdopterDashboardPro
   } = useUser();
 
   const recentlyViewed = [
-    {
-      id: '1',
-      name: 'Luna',
-      type: 'dog',
-      breed: 'Golden Retriever',
-      age: 2,
-      image: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop',
-      location: 'Madrid, España',
-      shelterName: 'Refugio San Francisco'
-    },
-    {
-      id: '2',
-      name: 'Milo',
-      type: 'cat',
-      breed: 'Maine Coon',
-      age: 1,
-      image: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=300&h=300&fit=crop',
-      location: 'Barcelona, España',
-      shelterName: 'Gatitos Felices'
-    }
+    // {
+    //   id: '1',
+    //   name: 'Luna',
+    //   type: 'dog',
+    //   breed: 'Golden Retriever',
+    //   age: 2,
+    //   image: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop',
+    //   location: 'Madrid, España',
+    //   shelterName: 'Refugio San Francisco'
+    // },
+    // {
+    //   id: '2',
+    //   name: 'Milo',
+    //   type: 'cat',
+    //   breed: 'Maine Coon',
+    //   age: 1,
+    //   image: 'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=300&h=300&fit=crop',
+    //   location: 'Barcelona, España',
+    //   shelterName: 'Gatitos Felices'
+    // }
   ];
 
 
   const recommendations = [
-    {
-      id: '3',
-      name: 'Rocky',
-      type: 'dog',
-      breed: 'Labrador Mix',
-      age: 3,
-      image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=300&fit=crop',
-      match: 95,
-      reason: 'Ideal para familias con niños'
-    },
-    {
-      id: '4',
-      name: 'Whiskers',
-      type: 'cat',
-      breed: 'Siamese',
-      age: 2,
-      image: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=300&h=300&fit=crop',
-      match: 88,
-      reason: 'Perfecto para apartamentos'
-    }
+    // {
+    //   id: '3',
+    //   name: 'Rocky',
+    //   type: 'dog',
+    //   breed: 'Labrador Mix',
+    //   age: 3,
+    //   image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=300&fit=crop',
+    //   match: 95,
+    //   reason: 'Ideal para familias con niños'
+    // },
+    // {
+    //   id: '4',
+    //   name: 'Whiskers',
+    //   type: 'cat',
+    //   breed: 'Siamese',
+    //   age: 2,
+    //   image: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=300&h=300&fit=crop',
+    //   match: 88,
+    //   reason: 'Perfecto para apartamentos'
+    // }
   ];
 
   const router = useRouter();
@@ -109,6 +109,9 @@ if (!isInitialized || isUserLoading || !isProfileLoaded) {
 }
 
 if (isInitialized && isProfileLoaded && !user) {
+  return null;
+}
+if(user && user.userType !== "User") {
   return null;
 }
 

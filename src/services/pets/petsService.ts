@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getApiUrl } from "@/config/environment";
 
 // Interfaces para las mascotas
 export interface Pet {
@@ -76,7 +77,7 @@ export interface PetFilters {
   take?: number;
 }
 
-const BASE_URL = "https://petadoption-back-dev.onrender.com/";
+const BASE_URL = getApiUrl();
 
 export const petsService = {
   /**
