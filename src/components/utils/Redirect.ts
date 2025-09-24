@@ -6,13 +6,13 @@ export const getRedirectUrl = (user: UserInterface) => {
       return '/dashboard/admin';
     }
     switch (user.userType) {
-      case 'adopter':
-        return '/dashboard/adopter';
-      case 'shelter':
+      case 'User':
+        return '/dashboard/user';
+      case 'Shelter':
         return '/dashboard/shelter';
-      case 'admin':
+      case 'Admin':
         return '/dashboard/admin';
       default:
-        return '/dashboard/adopter';
+        return '/dashboard/user';
     }
   };

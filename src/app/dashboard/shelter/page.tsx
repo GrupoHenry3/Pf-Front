@@ -7,6 +7,7 @@ import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
 import { Badge } from "@/components/ui/badge";
 import { useUser } from "@/context/UserContext";
 import { ShelterSidebar } from "@/components/sidebar/ShelterSidebar";
+import ProtectedRoute from "@/components/ProtectedRouter/ProtectedRoute";
 
 interface ShelterDashboardProps {
   onAddPet: () => void;
@@ -91,6 +92,7 @@ function ShelterDashboard({
   }
 
   return (
+    <ProtectedRoute allowedUserTypes={["Shelter"]}>
     <div className="flex min-h-screen">
       <div className="w-64 border-r bg-white shadow-sm">
         <ShelterSidebar user={user} embedded={true} />
@@ -243,9 +245,10 @@ function ShelterDashboard({
             </CardContent>
           </Card>
         </div>
+        </div>
       </div>
     </div>
-    </div>
+    </ProtectedRoute>
   );
 
 }

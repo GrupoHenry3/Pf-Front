@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { useUser } from '@/context/UserContext';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { useRouter } from 'next/navigation';
+import ProtectedRoute from '@/components/ProtectedRouter/ProtectedRoute';
 
 interface AdopterDashboardProps {
   onViewCatalog: () => void;
@@ -78,8 +79,8 @@ if (isInitialized && isProfileLoaded && !user) {
 if(user && user.userType !== "User") {
   return null;
 }
-
   return (
+    <ProtectedRoute allowedUserTypes={["User"]}>
     <div className="flex min-h-screen">
       <div className="w-64 border-r bg-white shadow-sm">
         <Sidebar 
@@ -275,6 +276,7 @@ if(user && user.userType !== "User") {
         </div>
       </div>
     </div>
+  </ProtectedRoute>
   );
 }
 
