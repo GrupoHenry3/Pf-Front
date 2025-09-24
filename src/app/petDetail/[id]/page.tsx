@@ -1,6 +1,6 @@
 "use client";
 import * as React from 'react';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ArrowLeft,
   Heart,
@@ -22,22 +22,42 @@ import { AvatarImage } from "@radix-ui/react-avatar";
 import { Separator } from "@/components/ui/separator";
 import { useUser } from "@/context/UserContext";
 import PATHROUTES from "@/components/utils/PathRoutes.util";
-import { PETS } from "@/data/pets";
-
-
+import { PetWithRelations } from "@/interfaces/Pet";
+import { petsService } from "@/services/pets/petsService";
 
  function PetDetail({params}: {params: Promise<{id: string}>}) {
 
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [pet, setPet] = useState<PetWithRelations | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const {id} = React.use(params);
   const {user} = useUser();
 
-  const pet = PETS.find((pet) => pet.id === id);
+  // Cargar datos de la mascota
+  useEffect(() => {
+    const loadPet = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const petData = await petsService.findOne(id);
+        setPet(petData);
+      } catch (error) {
+        console.error("Error al cargar mascota:", error);
+        setError("No se pudo cargar la información de la mascota");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (id) {
+      loadPet();
+    }
+  }, [id]);
    
 
   const getSizeLabel = (size: string) => {
-    switch (size) {
+    switch (size.toLowerCase()) {
       case "small":
         return "Pequeño";
       case "medium":
@@ -49,19 +69,21 @@ import { PETS } from "@/data/pets";
     }
   };
 
-  const getTypeLabel = (type: string) => {
-    switch (type) {
+  const getTypeLabel = (speciesName: string) => {
+    switch (speciesName.toLowerCase()) {
       case "dog":
+      case "perro":
         return "Perro";
       case "cat":
+      case "gato":
         return "Gato";
       default:
-        return type;
+        return speciesName;
     }
   };
 
   const getGenderLabel = (gender: string) => {
-    switch (gender) {
+    switch (gender.toLowerCase()) {
       case "male":
         return "Macho";
       case "female":
@@ -71,10 +93,36 @@ import { PETS } from "@/data/pets";
     }
   };
 
-
-  if (!pet) {
-    return <div>No se encontró información de la mascota.</div>;
+  // Estados de carga y error
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando información de la mascota...</p>
+        </div>
+      </div>
+    );
   }
+
+  if (error || !pet) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl text-gray-900 mb-4">Mascota no encontrada</h1>
+          <p className="text-gray-600 mb-6">{error || "La mascota que buscas no existe o ha sido removida."}</p>
+          <Button asChild>
+            <Link href={PATHROUTES.CATALOG}>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Volver al catálogo
+            </Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -119,34 +167,17 @@ import { PETS } from "@/data/pets";
               <CardContent className="p-0">
                 <div className="relative">
                   <ImageWithFallback
-                    src={pet.images[currentImageIndex]}
+                    src={pet.breed.avatarURL || "/placeholder-pet.jpg"}
                     alt={pet.name}
                     className="w-full h-96 object-cover rounded-t-lg"
                   />
 
                   {/* Status Badge */}
                   <div className="absolute top-4 left-4">
-                    <Badge className="bg-green-500 text-white">
-                      Disponible para adopción
+                    <Badge className={pet.isAdopted ? "bg-red-500 text-white" : "bg-green-500 text-white"}>
+                      {pet.isAdopted ? "Adoptado" : "Disponible para adopción"}
                     </Badge>
                   </div>
-
-                  {/* Image navigation dots */}
-                  {pet.images.length > 1 && (
-                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-                      {pet.images.map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setCurrentImageIndex(index)}
-                          className={`w-3 h-3 rounded-full transition-colors ${
-                            index === currentImageIndex
-                              ? "bg-white"
-                              : "bg-white/50"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  )}
                 </div>
               </CardContent>
             </Card>
@@ -160,7 +191,7 @@ import { PETS } from "@/data/pets";
                       {pet.name}
                     </CardTitle>
                     <div className="flex items-center space-x-4 text-gray-600">
-                      <span>{pet.breed}</span>
+                      <span>{pet.breed.name}</span>
                       <span>•</span>
                       <span>{pet.age} años</span>
                       <span>•</span>
@@ -170,7 +201,7 @@ import { PETS } from "@/data/pets";
                     </div>
                   </div>
                   <Badge variant="outline" className="text-sm">
-                    {getTypeLabel(pet.type)}
+                    {getTypeLabel(pet.species.name)}
                   </Badge>
                 </div>
               </CardHeader>
@@ -178,12 +209,12 @@ import { PETS } from "@/data/pets";
                 <div className="flex items-center space-x-4 text-gray-600 mb-6">
                   <div className="flex items-center">
                     <MapPin className="w-4 h-4 mr-1" />
-                    {pet.location}
+                    {pet.shelter.city}, {pet.shelter.state}
                   </div>
                   <div className="flex items-center">
                     <Calendar className="w-4 h-4 mr-1" />
                     Disponible desde{" "}
-                    {new Date(pet.dateAdded).toLocaleDateString()}
+                    {new Date(pet.createdAt).toLocaleDateString()}
                   </div>
                 </div>
 
@@ -192,7 +223,7 @@ import { PETS } from "@/data/pets";
                       Sobre {pet.name}
                   </h3>
                   <p className="text-gray-700 leading-relaxed">
-                    {pet.description}
+                    {pet.breed.description}
                   </p>
                 </div>
 
@@ -202,9 +233,22 @@ import { PETS } from "@/data/pets";
                     Características
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
-                    
-                  {pet.vaccinated}
-            
+                    <div className="flex items-center space-x-2">
+                      <span className="text-gray-600">Tamaño:</span>
+                      <span className="text-gray-900">{getSizeLabel(pet.size)}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-gray-600">Género:</span>
+                      <span className="text-gray-900">{getGenderLabel(pet.gender)}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-gray-600">Especie:</span>
+                      <span className="text-gray-900">{getTypeLabel(pet.species.name)}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-gray-600">Raza:</span>
+                      <span className="text-gray-900">{pet.breed.name}</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -221,13 +265,13 @@ import { PETS } from "@/data/pets";
               <CardContent>
                 <div className="flex items-center space-x-3 mb-4">
                   <Avatar className="w-12 h-12">
-                    <AvatarImage src="" alt={pet.shelterName} />
+                    <AvatarImage src="" alt={pet.shelter.name} />
                     <AvatarFallback className="bg-green-500 text-white">
-                      {pet.shelterName.slice(0, 2).toUpperCase()}
+                      {pet.shelter.name.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h4 className="text-gray-900">{pet.shelterName}</h4>
+                    <h4 className="text-gray-900">{pet.shelter.name}</h4>
                     <p className="text-sm text-gray-500">Refugio verificado</p>
                   </div>
                 </div>
@@ -263,9 +307,9 @@ import { PETS } from "@/data/pets";
                 <Separator className="my-4" />
 
                 <div className="text-sm text-gray-600">
-                  <p className="mb-2">📍 {pet.location}</p>
-                  <p className="mb-2">⭐ 4.8/5 (124 reseñas)</p>
-                  <p>🏠 127 adopciones exitosas</p>
+                  <p className="mb-2">📍 {pet.shelter.address}, {pet.shelter.city}</p>
+                  <p className="mb-2">📞 {pet.shelter.phoneNumber}</p>
+                  {pet.shelter.website && <p className="mb-2">🌐 {pet.shelter.website}</p>}
                 </div>
               </CardContent>
             </Card>
@@ -273,27 +317,34 @@ import { PETS } from "@/data/pets";
             {/* Adoption Action */}
             <Card className="border-0 shadow-md">
               <CardContent className="p-6">
-                {user ? (
+                {pet.isAdopted ? (
+                  <div className="text-center">
+                    <p className="text-gray-600 mb-4">
+                      {pet.name} ya ha sido adoptado
+                    </p>
+                    <Button variant="outline" className="w-full" disabled>
+                      <Heart className="w-4 h-4 mr-2" />
+                      Adoptado
+                    </Button>
+                  </div>
+                ) : user ? (
                   <div className="space-y-4">
-                    
-                      <Button
-                        asChild
-                        className="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl flex items-center justify-center"
+                    <Button
+                      asChild
+                      className="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl flex items-center justify-center"
+                    >
+                      <Link
+                        href={`${PATHROUTES.ADOPTION}/${pet.id}`}
                       >
-                        <Link
-                          href={`${PATHROUTES.ADOPTION}/${pet.id}`}
-                        >
-                          <Heart className="w-4 h-4 mr-2" />
-                          ¡Quiero adoptar a {pet.name}!
-                        </Link>
-                      </Button>
-  
+                        <Heart className="w-4 h-4 mr-2" />
+                        ¡Quiero adoptar a {pet.name}!
+                      </Link>
+                    </Button>
                     <Button variant="outline" className="w-full">
                       Programar visita
                     </Button>
                   </div>
-                  )
-                 : (
+                ) : (
                   <div className="text-center">
                     <p className="text-gray-600 mb-4">
                       Inicia sesión para adoptar a {pet.name}
@@ -325,12 +376,12 @@ import { PETS } from "@/data/pets";
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tipo:</span>
                   <span className="text-gray-900">
-                    {getTypeLabel(pet.type)}
+                    {getTypeLabel(pet.species.name)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Raza:</span>
-                  <span className="text-gray-900">{pet.breed}</span>
+                  <span className="text-gray-900">{pet.breed.name}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Edad:</span>

@@ -15,7 +15,7 @@ export function ImageWithFallback(
     setDidError(true)
   }
 
-  const { src, alt, style, className, width = 300, height = 300 } = props
+  const { src, alt, style, className } = props
 
   if (!src || typeof src !== "string" || didError) {
     return (

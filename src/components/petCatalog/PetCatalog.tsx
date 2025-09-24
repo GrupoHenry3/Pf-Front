@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   Filter,
@@ -14,9 +14,9 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
-import type { Pet } from "@/interfaces/Pet";
+import { PetWithRelations } from "@/interfaces/Pet";
+import { petsService } from "@/services/pets/petsService";
 
-import { PETS } from "@/data/pets";
 import Link from "next/link";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
@@ -25,6 +25,8 @@ import { useRouter } from "next/navigation";
 
 
 export function PetCatalog() {
+  const [pets, setPets] = useState<PetWithRelations[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("all");
   const [selectedSize, setSelectedSize] = useState("all");
@@ -35,25 +37,42 @@ export function PetCatalog() {
   const [showFilters, setShowFilters] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
-  const filteredPets = PETS.filter((pet) => {
+  // Cargar mascotas del backend
+  useEffect(() => {
+    const loadPets = async () => {
+      try {
+        setIsLoading(true);
+        const petsData = await petsService.findAll();
+        setPets(petsData);
+      } catch (error) {
+        console.error("Error al cargar mascotas:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPets();
+  }, []);
+
+  const filteredPets = pets.filter((pet) => {
     const matchesSearch =
       pet.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pet.breed.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pet.location.toLowerCase().includes(searchTerm.toLowerCase());
+      pet.breed.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      pet.shelter.city?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesType = selectedType === "all" || pet.type === selectedType;
-    const matchesSize = selectedSize === "all" || pet.size === selectedSize;
+    const matchesType = selectedType === "all" || pet.species.name.toLowerCase() === selectedType;
+    const matchesSize = selectedSize === "all" || pet.size.toLowerCase() === selectedSize;
     const matchesAge =
       selectedAge === "all" ||
-      (selectedAge === "cachorro" && pet.age <= 1) ||
-      (selectedAge === "adolescente" && pet.age > 1 && pet.age <= 3) ||
-      (selectedAge === "adulto" && pet.age > 3);
+      (selectedAge === "young" && pet.age <= 2) ||
+      (selectedAge === "adult" && pet.age > 2 && pet.age <= 6) ||
+      (selectedAge === "senior" && pet.age > 6);
     const matchesGender =
-      selectedGender === "all" || pet.gender === selectedGender;
+      selectedGender === "all" || pet.gender.toLowerCase() === selectedGender;
     const matchesStatus =
-      selectedStatus === "all" || pet.status === selectedStatus;
+      selectedStatus === "all" || (pet.isAdopted ? "adopted" : "available") === selectedStatus;
     const matchesLocation =
-      selectedLocation === "all" || pet.location.includes(selectedLocation);
+      selectedLocation === "all" || pet.shelter.city?.includes(selectedLocation);
 
     return (
       matchesSearch &&
@@ -78,7 +97,7 @@ export function PetCatalog() {
   };
 
   const getSizeLabel = (size: string) => {
-    switch (size) {
+    switch (size.toLowerCase()) {
       case "small":
         return "Pequeño";
       case "medium":
@@ -90,21 +109,34 @@ export function PetCatalog() {
     }
   };
 
-  const getTypeLabel = (type: string) => {
-    switch (type) {
+  const getTypeLabel = (speciesName: string) => {
+    switch (speciesName.toLowerCase()) {
       case "dog":
+      case "perro":
         return "Perro";
       case "cat":
+      case "gato":
         return "Gato";
       default:
-        return type;
+        return speciesName;
     }
   };
 
   const router = useRouter();
 
-  const handlePetDetail = (pet: Pet) => {
+  const handlePetDetail = (pet: PetWithRelations) => {
     router.push(`/petDetail/${pet.id}`);
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen bg-gray-50 items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando mascotas...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -132,8 +164,8 @@ export function PetCatalog() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos</SelectItem>
-                  <SelectItem value="dog">Perros</SelectItem>
-                  <SelectItem value="cat">Gatos</SelectItem>
+                  <SelectItem value="perro">Perros</SelectItem>
+                  <SelectItem value="gato">Gatos</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -210,7 +242,7 @@ export function PetCatalog() {
               >
                 <Card className="overflow-hidden hover:shadow-lg transition cursor-pointer" onClick={() => handlePetDetail(pet)}><div className="h-48 w-full overflow-hidden">
                     <ImageWithFallback
-                      src={pet.images[0]}
+                      src={pet.breed.avatarURL || "/placeholder-pet.jpg"}
                       alt={pet.name}
                       className="h-full w-full object-cover"
                     />
@@ -219,31 +251,31 @@ export function PetCatalog() {
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="text-lg font-semibold text-gray-900">{pet.name}</h3>
-                      <Badge variant="secondary">{getTypeLabel(pet.type)}</Badge>
+                      <Badge variant="secondary">{getTypeLabel(pet.species.name)}</Badge>
                     </div>
 
                     <p className="text-sm text-gray-600 mb-2">
-                      {pet.breed} • {pet.age} años • {getSizeLabel(pet.size)}
+                      {pet.breed.name} • {pet.age} años • {getSizeLabel(pet.size)}
                     </p>
 
                     <p className="text-sm text-gray-500 line-clamp-2 mb-3">
-                      {pet.description}
+                      {pet.breed.description}
                     </p>
 
                     <div className="flex justify-between items-center">
                       <span className="flex items-center text-gray-500 text-sm">
-                        <MapPin className="w-4 h-4 mr-1" /> {pet.location}
+                        <MapPin className="w-4 h-4 mr-1" /> {pet.shelter.city}, {pet.shelter.state}
                       </span>
                       <Button
                         size="sm"
                         onClick={(e) => {
                           e.preventDefault(); // 👈 evita que el click dispare el Link
-                          toggleFavorite(pet.id, e);
+                          toggleFavorite(pet.id || "", e);
                         }}
                         variant="ghost"
                       >
                         <Heart
-                          className={`w-5 h-5 ${favorites.has(pet.id) ? "fill-red-500 text-red-500" : ""
+                          className={`w-5 h-5 ${favorites.has(pet.id || "") ? "fill-red-500 text-red-500" : ""
                             }`}
                         />
                       </Button>

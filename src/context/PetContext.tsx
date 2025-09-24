@@ -4,7 +4,7 @@
 import {  petsService } from "@/services/pets/petsService";
 import { createContext, useContext, useState, useEffect } from "react";
 import { useUser } from "./UserContext";
-import { Pet, PetWithRelations } from "@/interfaces/Pet";
+import {  PetWithRelations } from "@/interfaces/Pet";
 
 interface PetContextType {
     pets: PetWithRelations[];

@@ -66,7 +66,6 @@ export default function AdminDashboard() {
 
   const {user, isInitialized, isUserLoading, isProfileLoaded} = useUser();
   const {shelters} = useShelter();
-  const {pets} = usePet();
 
   const stats = [
     { title: "Adopciones", value: "256", change: "+12%" },

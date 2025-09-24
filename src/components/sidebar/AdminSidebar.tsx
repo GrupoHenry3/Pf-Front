@@ -9,16 +9,11 @@ import {
   Users,
   FileText,
   DollarSign,
-  BarChart3,
   Settings,
   LogOut,
   Bell,
   HelpCircle,
   Shield,
-  UserCheck,
-  AlertTriangle,
-  Database,
-  Activity,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

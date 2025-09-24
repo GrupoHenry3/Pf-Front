@@ -31,7 +31,7 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
     breed: "",
     age: 0,
     size: "small",
-    PetGender: "male",
+    gender: "male",
     description: "",
     images: [], 
     vaccinated: false,
@@ -107,7 +107,7 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
       const petData = {
         name: formData.name,
         age: Number(formData.age) || 0,
-        gender: formData.PetGender === 'male' ? 'Male' : 'Female', 
+        gender: formData.gender === 'male' ? 'Male' : 'Female', 
         size: formData.size === 'small' ? 'Small' : formData.size === 'medium' ? 'Medium' : 'Large', 
         avatarURL: avatarURL,
         shelterID: user?.shelter?.id,
@@ -143,7 +143,7 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
       case 1:
         return formData.name && formData.type && formData.breed && formData.age;
       case 2:
-        return formData.size && formData.PetGender && formData.description.length >= 50;
+        return formData.size && formData.gender && formData.description.length >= 50;
       case 3:
         return formData.images.length > 0;
       case 4:
@@ -263,8 +263,8 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
               <div>
                 <Label>Género *</Label>
                 <RadioGroup
-                  value={formData.PetGender}
-                  onValueChange={(value) => handleInputChange('PetGender', value)}
+                  value={formData.gender}
+                  onValueChange={(value) => handleInputChange('gender', value)}
                   className="grid grid-cols-2 gap-4 mt-2"
                 >
                   <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-3 hover:border-green-500 transition-colors">

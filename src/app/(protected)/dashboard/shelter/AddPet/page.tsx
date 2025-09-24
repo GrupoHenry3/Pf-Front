@@ -22,7 +22,7 @@ export default function AddPetPage() {
 
   return (
     <div>
-      <AddPet user={user} onBack={handleBack} onSuccess={handleSuccess} />
+      <AddPet onBack={handleBack} onSuccess={handleSuccess} />
     </div>
   );
 }

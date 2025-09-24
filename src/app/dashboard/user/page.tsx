@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, Search, MessageCircle, Calendar, MapPin, Star } from 'lucide-react';
+import { Heart, Search, MessageCircle, Calendar, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ImageWithFallback } from '@/components/utils/ImageWithFallback';
 import { Button } from '@/components/ui/button';

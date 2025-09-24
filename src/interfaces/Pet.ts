@@ -1,6 +1,3 @@
-import { Breed } from "./Breed";
-import { Shelter } from "./Shelter";
-import { Species } from "./Species";
 
 export interface Pet {
   id?: string;

@@ -9,7 +9,7 @@ import ProtectedRoute from "@/components/ProtectedRouter/ProtectedRoute";
 import { useRouter } from "next/navigation";
 import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
 import { usePet } from "@/context/PetContext";
-import { Pet, PetWithRelations } from "@/interfaces/Pet";
+import { PetWithRelations } from "@/interfaces/Pet";
 
 interface ShelterDashboardProps {
   onManageApplications: () => void;
