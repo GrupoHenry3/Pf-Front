@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Sidebar } from "@/components/sidebar/Sidebar"; 
 import { Settings } from "lucide-react";
 import {
   Alert,

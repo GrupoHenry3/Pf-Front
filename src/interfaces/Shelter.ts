@@ -1,7 +1,7 @@
 import { Credential } from "./Credential";
 
 export interface Shelter {
-  id?: number;
+  id?: string;
   name: string;
   phoneNumber: string;
   address: string;

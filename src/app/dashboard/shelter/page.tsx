@@ -1,22 +1,23 @@
 "use client";
 
-import { Users, Heart, MessageCircle, MapPin, Calendar, Plus } from "lucide-react";
+import { Users, Heart, MessageCircle, Calendar, Plus, Edit } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
-import { Badge } from "@/components/ui/badge";
 import { useUser } from "@/context/UserContext";
 import { ShelterSidebar } from "@/components/sidebar/ShelterSidebar";
+import ProtectedRoute from "@/components/ProtectedRouter/ProtectedRoute";
+import { useRouter } from "next/navigation";
+import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
+import { usePet } from "@/context/PetContext";
+import { PetWithRelations } from "@/interfaces/Pet";
 
 interface ShelterDashboardProps {
-  onAddPet: () => void;
   onManageApplications: () => void;
   onViewMessages: () => void;
 }
 
 
 function ShelterDashboard({
-  onAddPet,
   onManageApplications,
 }: ShelterDashboardProps) {
 
@@ -27,50 +28,19 @@ function ShelterDashboard({
     isInitialized, 
   } = useUser();
 
+  const { pets, isPetLoading } = usePet();
 
-  const stats = {
-    totalPets: 34,
-    adopted: 127,
-    pending: 8,
-    applications: 15,
+  const router = useRouter();
+    const stats = {
+    totalPets: pets.length,
+    adopted: pets.filter(pet => pet.isAdopted).length,
+    pending: pets.filter(pet => !pet.isAdopted && pet.isActive).length,
+    applications: 0, // TODO: Implementar cuando tengas el contexto de aplicaciones
   };
 
 
-  const getApplicationStatusColor = (status: string) => {
-    switch (status) {
-      case "new":
-        return "bg-blue-100 text-blue-800";
-      case "reviewing":
-        return "bg-orange-100 text-orange-800";
-      case "interview":
-        return "bg-green-100 text-green-800";
-      case "approved":
-        return "bg-green-100 text-green-800";
-      case "rejected":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
 
-  const getApplicationStatusLabel = (status: string) => {
-    switch (status) {
-      case "new":
-        return "Nueva";
-      case "reviewing":
-        return "Revisando";
-      case "interview":
-        return "Entrevista";
-      case "approved":
-        return "Aprobada";
-      case "rejected":
-        return "Rechazada";
-      default:
-        return status;
-    }
-  };
-
-  if (!isInitialized || isUserLoading || !isProfileLoaded) {
+  if (!isInitialized || isUserLoading || !isProfileLoaded || isPetLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -91,6 +61,7 @@ function ShelterDashboard({
   }
 
   return (
+    <ProtectedRoute allowedUserTypes={["Shelter"]}>
     <div className="flex min-h-screen">
       <div className="w-64 border-r bg-white shadow-sm">
         <ShelterSidebar user={user} embedded={true} />
@@ -105,7 +76,7 @@ function ShelterDashboard({
             </p>
           </div>
           <Button
-            onClick={onAddPet}
+            onClick={() => router.push("/dashboard/shelter/addPet")}
             variant="default"
             size="lg"
             className="mt-4 sm:mt-0 bg-primary hover:bg-primary/70"
@@ -196,56 +167,76 @@ function ShelterDashboard({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {myPets.map((pet) => (
-                  <div
-                    key={pet.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+              {pets.length === 0 ? (
+                <div className="text-center py-8">
+                  <Heart className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 mb-4">No tienes mascotas registradas</p>
+                  <Button
+                    onClick={() => router.push("/dashboard/shelter/addPet")}
+                    variant="outline"
+                    size="sm"
                   >
-                    <div className="relative mb-3">
-                      <ImageWithFallback
-                        src={pet.image}
-                        alt={pet.name}
-                        className="w-full h-40 rounded-lg object-cover"
-                      />
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        className="absolute top-2 right-2 p-2 bg-white/80 hover:bg-white"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                    </div>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Agregar primera mascota
+                  </Button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {pets.map((pet: PetWithRelations) => (
+                    <div
+                      key={pet.id}
+                      className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                    >
+                      <div className="relative mb-3">
+                        <ImageWithFallback
+                          src={pet.breed.avatarURL || "/placeholder-pet.jpg"}
+                          alt={pet.name}
+                          className="w-full h-40 rounded-lg object-cover"
+                        />
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          className="absolute top-2 right-2 p-2 bg-white/80 hover:bg-white"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                      </div>
 
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-lg text-gray-900">{pet.name}</h4>
-                      <Badge className={getStatusColor(pet.status)}>
-                        {getStatusLabel(pet.status)}
-                      </Badge>
-                    </div>
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-lg text-gray-900">{pet.name}</h4>
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          pet.isAdopted 
+                            ? "bg-green-100 text-green-800" 
+                            : "bg-blue-100 text-blue-800"
+                        }`}>
+                          {pet.isAdopted ? "Adoptado" : "Disponible"}
+                        </span>
+                      </div>
 
-                    <p className="text-sm text-gray-600 mb-3">
-                      {pet.breed} • {pet.age} años
-                    </p>
+                      <p className="text-sm text-gray-600 mb-3">
+                        {pet.breed.name} • {pet.age} años • {pet.size}
+                      </p>
 
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">
-                        {pet.applications} solicitudes
-                      </span>
-                      <span className="text-gray-500">
-                        Agregado el{" "}
-                        {new Date(pet.dateAdded).toLocaleDateString()}
-                      </span>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-500">
+                          {pet.species.name}
+                        </span>
+                        <span className="text-gray-500">
+                          Agregado el{" "}
+                          {new Date(pet.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div> */}
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
+        </div>
       </div>
     </div>
-    </div>
+    </ProtectedRoute>
   );
 
 }

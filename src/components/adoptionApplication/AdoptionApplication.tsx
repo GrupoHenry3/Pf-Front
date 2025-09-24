@@ -12,13 +12,13 @@ import { StepHousing } from "@/components/adoptionApplication/steps/StepHousing"
 import { StepLifestyle } from "@/components/adoptionApplication/steps/StepLifestyle";
 import { StepFamilyPets } from "@/components/adoptionApplication/steps/StepFamilyPets";
 import type { ApplicationData } from "@/interfaces/Adoption";
-import type { Pet } from "@/interfaces/Pet";
+import type { PetWithRelations } from "@/interfaces/Pet";
 import PATHROUTES from "../utils/PathRoutes.util";
 import { useUser } from "@/context/UserContext";
 import Image from "next/image";
 
 interface AdoptionApplicationProps {
-  pet: Pet | undefined;
+  pet: PetWithRelations | undefined;
 }
 
 export default function AdoptionPageWrapper({pet}: AdoptionApplicationProps) {
@@ -142,22 +142,22 @@ export default function AdoptionPageWrapper({pet}: AdoptionApplicationProps) {
           <Card className="mb-8 shadow-md">
             <CardContent className="p-6 flex flex-col sm:flex-row items-center sm:items-start">
               <Image
-                src={pet.images[0] || "/placeholder.png"}
+                src={pet.breed.avatarURL || "/placeholder.png"}
                 alt={pet.name}
                 className="w-32 h-32 object-cover rounded-lg mr-4 mb-4 sm:mb-0 shadow"
               />
               <div className="flex-1">
                 <h2 className="text-xl font-semibold">{pet.name}</h2>
                 <p className="text-gray-600 mt-1">
-                  {pet.breed} • {pet.age} años • {pet.gender}
+                  {pet.breed.name} • {pet.age} años • {pet.gender}
                 </p>
-                <p className="mt-2 text-gray-700">{pet.description}</p>
+                <p className="mt-2 text-gray-700">{pet.breed.description}</p>
                 <p className="mt-1 text-gray-500 text-sm">
-                  Ubicación: {pet.location}
+                  Ubicación: {pet.shelter.city}, {pet.shelter.state}
                 </p>
-                <p className="mt-1 text-gray-500 text-sm">
-                  Refugio: {pet.shelterName}
-                </p>
+                {/* <p className="mt-1 text-gray-500 text-sm">
+                  Refugio: {pet.name}
+                </p> */}
               </div>
             </CardContent>
           </Card>

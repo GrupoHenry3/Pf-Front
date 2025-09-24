@@ -1,16 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 import { getApiUrl } from "@/config/environment";
 
- interface LoginData {
-    email: string,
-    password: string
+interface LoginData {
+  email: string;
+  password: string;
 }
 
 interface RegisterData {
-    fullName: string,
-    email: string,
-    password: string,
-    confirmedPassword: string
+  fullName: string;
+  email: string;
+  password: string;
+  confirmedPassword: string;
 }
 
 const apiClient = axios.create({

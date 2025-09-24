@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, Search, MessageCircle, Calendar, MapPin, Star } from 'lucide-react';
+import { Heart, Search, MessageCircle, Calendar, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ImageWithFallback } from '@/components/utils/ImageWithFallback';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { useUser } from '@/context/UserContext';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { useRouter } from 'next/navigation';
+import ProtectedRoute from '@/components/ProtectedRouter/ProtectedRoute';
 
 interface AdopterDashboardProps {
   onViewCatalog: () => void;
@@ -78,8 +79,8 @@ if (isInitialized && isProfileLoaded && !user) {
 if(user && user.userType !== "User") {
   return null;
 }
-
   return (
+    <ProtectedRoute allowedUserTypes={["User"]}>
     <div className="flex min-h-screen">
       <div className="w-64 border-r bg-white shadow-sm">
         <Sidebar 
@@ -275,6 +276,7 @@ if(user && user.userType !== "User") {
         </div>
       </div>
     </div>
+  </ProtectedRoute>
   );
 }
 
