@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 import AdoptionApplication from "@/components/adoptionApplication/AdoptionApplication";
-import PATHROUTES from "@/components/utils/PathRoutes.util";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { PetWithRelations } from "@/interfaces/Pet";
 import { petsService } from "@/services/pets/petsService";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import PATHROUTES from "@/components/utils/PathRoutes.util";
 
 export default function AdopcionPage({params}: {params: {id: string}}) {
   const {id} = params;
