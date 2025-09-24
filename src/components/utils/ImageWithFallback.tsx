@@ -36,7 +36,6 @@ export function ImageWithFallback(
   }
 
   return (
-
     <div
       className={`relative ${className ?? ""}`}
       style={{ ...style, position: "relative" }}

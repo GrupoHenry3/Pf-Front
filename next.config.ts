@@ -1,18 +1,4 @@
-<<<<<<< HEAD
-import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-  },
-    images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        port: '',
-        pathname: '/**',
-=======
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -28,7 +14,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "cdn0.uncomo.com",
->>>>>>> origin/AddPet
+      },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
       },
     ],
   },

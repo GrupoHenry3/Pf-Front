@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Sidebar } from "@/components/sidebar/Sidebar"; 
 import { Settings } from "lucide-react";
 import {
   Alert,
@@ -67,6 +66,7 @@ export default function AdminDashboard() {
 
   const {user, isInitialized, isUserLoading, isProfileLoaded} = useUser();
   const {shelters} = useShelter();
+  const {pets} = usePet();
 
   const stats = [
     { title: "Adopciones", value: "256", change: "+12%" },

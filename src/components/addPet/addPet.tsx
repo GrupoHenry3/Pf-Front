@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-// 🔹 IMPORTANTE: instala y configura Cloudinary antes
-// npm install @cloudinary/url-gen @cloudinary/react
-
 "use client";
 
 import { useState } from "react";
@@ -12,52 +7,59 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import type { UserInterface } from "@/interfaces/User";
 import type { Pet } from "@/interfaces/Pet";
-import { uploadToCloudinary } from "../utils/uploadToCloudinary";
+import Image from "next/image";
+import { useUser } from "@/context/UserContext";
 
 interface AddPetProps {
-  user: UserInterface;
   onBack: () => void;
   onSuccess: () => void;
 }
 
-export function AddPet({ user, onBack, onSuccess }: AddPetProps) {
+export function AddPet({ onBack, onSuccess }: AddPetProps) {
   const [currentStep, setCurrentStep] = useState(1);
+  const { user } = useUser();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [formData, setFormData] = useState<Pet>({
     name: "",
-    type: "",
+    type: "other",
     breed: "",
-    age: "",
-    size: "",
-    gender: "",
+    age: 0,
+    size: "small",
+    PetGender: "male",
     description: "",
-    images: [], // 🔹 ahora guardaremos URLs de Cloudinary aquí
-    location: user.location || "",
+    images: [], 
     vaccinated: false,
     neutered: false,
     trained: false,
-    goodWithKids: false,
-    goodWithPets: false,
-    specialNeeds: "",
-    adoptionFee: "",
-    emergencyContact: "",
+    dateAdded: new Date().toISOString(),
+    shelter: user?.shelter?.id || "",
+    species:""
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  if (!user || user.userType !== 'Shelter' || !user.shelter?.id) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl text-gray-900 mb-2">Acceso no autorizado</h2>
+          <p className="text-gray-600 mb-4">Solo los refugios pueden agregar mascotas</p>
+          <Button onClick={onBack}>Volver</Button>
+        </div>
+      </div>
+    );
+  }
 
   const totalSteps = 4;
 
-  const handleInputChange = (field: keyof Pet, value: any) => {
+  const handleInputChange = (field: keyof Pet, value: string | number | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // 🔹 NUEVA FUNCIÓN: Subir imágenes a Cloudinary
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
@@ -68,7 +70,6 @@ export function AddPet({ user, onBack, onSuccess }: AddPetProps) {
       const formDataCloud = new FormData();
       formDataCloud.append("file", file);
 
-      // ⚠️ Reemplaza "tu_upload_preset" y "tu_cloud_name" con tus datos de Cloudinary
       formDataCloud.append("upload_preset", process.env.NEXT_PUBLIC_UPLOAD_PRESET as string);
 
       try {
@@ -85,8 +86,6 @@ export function AddPet({ user, onBack, onSuccess }: AddPetProps) {
         console.error("Error subiendo imagen a Cloudinary:", error);
       }
     }
-
-    // 🔹 Guardamos las URLs en el formData
     setFormData((prev) => ({
       ...prev,
       images: [...prev.images, ...uploadedUrls].slice(0, 5),
@@ -100,31 +99,26 @@ export function AddPet({ user, onBack, onSuccess }: AddPetProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     try {
-      // 1. Subir imagen si existe
-      let uploadedImageUrl = "";
-      const fileToUpload = (formData as any).image?.file;
-      if (fileToUpload) {
-        uploadedImageUrl = await uploadToCloudinary(fileToUpload);
-      }
+      const avatarURL = formData.images.length > 0 ? formData.images[0] : "";
 
-      // 2. Crear objeto con formato del back
       const petData = {
         name: formData.name,
         age: Number(formData.age) || 0,
-        gender: formData.gender,
-        size: formData.size,
-        adoptionFee: Number(formData.adoptionFee) || 0,
-        avatarURL: uploadedImageUrl,
-        shelterID: user.id,  // 🔹 viene del contexto global
-        breedID: "",         // 🔹 lo vas a implementar más adelante
-        speciesID: "",       // 🔹 idem
+        gender: formData.PetGender === 'male' ? 'Male' : 'Female', 
+        size: formData.size === 'small' ? 'Small' : formData.size === 'medium' ? 'Medium' : 'Large', 
+        avatarURL: avatarURL,
+        shelterID: user?.shelter?.id,
+        adoptionFee: 0,
+        breedID: "ms48xz5jljd5nasnllpyr2gd",
+        speciesID: "ammo592cgs0i8qqetgkoblu2",
+        neutered: formData.neutered,
       };
 
       console.log("PetData a enviar:", petData);
 
-      // 3. Enviar al back
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pets`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -135,11 +129,12 @@ export function AddPet({ user, onBack, onSuccess }: AddPetProps) {
         throw new Error("Error al crear la mascota");
       }
 
-      // 4. Avisar que se agregó con éxito
       onSuccess();
     } catch (error) {
       console.error(error);
       alert("Hubo un error al agregar la mascota.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -148,7 +143,7 @@ export function AddPet({ user, onBack, onSuccess }: AddPetProps) {
       case 1:
         return formData.name && formData.type && formData.breed && formData.age;
       case 2:
-        return formData.size && formData.gender && formData.description.length >= 50;
+        return formData.size && formData.PetGender && formData.description.length >= 50;
       case 3:
         return formData.images.length > 0;
       case 4:
@@ -268,8 +263,8 @@ export function AddPet({ user, onBack, onSuccess }: AddPetProps) {
               <div>
                 <Label>Género *</Label>
                 <RadioGroup
-                  value={formData.gender}
-                  onValueChange={(value) => handleInputChange('gender', value)}
+                  value={formData.PetGender}
+                  onValueChange={(value) => handleInputChange('PetGender', value)}
                   className="grid grid-cols-2 gap-4 mt-2"
                 >
                   <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-3 hover:border-green-500 transition-colors">
@@ -344,8 +339,7 @@ export function AddPet({ user, onBack, onSuccess }: AddPetProps) {
                   </div>
                 </div>
               </div>
-
-              <div>
+              {/* <div>
                 <Label htmlFor="specialNeeds">Necesidades especiales (opcional)</Label>
                 <Textarea
                   id="specialNeeds"
@@ -354,7 +348,7 @@ export function AddPet({ user, onBack, onSuccess }: AddPetProps) {
                   onChange={(e) => handleInputChange('specialNeeds', e.target.value)}
                   className="mt-2"
                 />
-              </div>
+              </div> */}
             </div>
           </div>
         );
@@ -394,9 +388,11 @@ export function AddPet({ user, onBack, onSuccess }: AddPetProps) {
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
                     {formData.images.map((url, index) => (
                       <div key={index} className="relative group">
-                        <img
+                        <Image
                           src={url}
                           alt={`Preview ${index + 1}`}
+                          width={200}
+                          height={128}
                           className="w-full h-32 object-cover rounded-lg border border-gray-200"
                         />
                         <Button
@@ -451,7 +447,7 @@ export function AddPet({ user, onBack, onSuccess }: AddPetProps) {
                 </div>
               </div>
 
-              <div>
+              {/* <div>
                 <Label htmlFor="adoptionFee">Tarifa de adopción (opcional)</Label>
                 <Input
                   id="adoptionFee"
@@ -464,8 +460,8 @@ export function AddPet({ user, onBack, onSuccess }: AddPetProps) {
                 <p className="text-sm text-gray-500 mt-1">
                   Esta tarifa ayuda a cubrir gastos veterinarios y cuidados
                 </p>
-              </div>
-
+              </div> */}
+{/* 
               <div>
                 <Label htmlFor="emergencyContact">Contacto de emergencia</Label>
                 <Input
@@ -475,7 +471,7 @@ export function AddPet({ user, onBack, onSuccess }: AddPetProps) {
                   onChange={(e) => handleInputChange('emergencyContact', e.target.value)}
                   className="mt-2"
                 />
-              </div>
+              </div> */}
 
               {/* Summary Card */}
               <Card className="border-2 border-green-200 bg-green-50">
@@ -515,6 +511,7 @@ export function AddPet({ user, onBack, onSuccess }: AddPetProps) {
     }
   };
 
+  
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
