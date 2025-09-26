@@ -94,7 +94,8 @@ export interface AdoptionWithRelations {
     id: string;
     fullName: string;
     email: string;
-    phone: string;
+    phoneNumber: string;
+    avatarURL: string;
   };
   pet: {
     id: string;
@@ -102,12 +103,20 @@ export interface AdoptionWithRelations {
     age: number;
     gender: string;
     size: string;
-    description: string;
-    images: string[];
+    avatarURL: string;
+    breed: {
+      name: string;
+    };
+    species: {
+      name: string;
+    };
   };
   shelter: {
     id: string;
     name: string;
+    city: string;
+    state: string;
+    country: string;
   };
 }
 

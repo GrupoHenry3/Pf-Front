@@ -2,21 +2,16 @@
 
 import { useState, useEffect } from "react";
 import {
-  Search,
-  Filter,
   Heart,
   MapPin,
-  ChevronDown,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { Checkbox } from "../ui/checkbox";
+import { PetFilters } from "@/components/ui/PetFilters";
+import { usePetFilters } from "@/hooks/usePetFilters";
 import { useRouter } from "next/navigation";
 import { usePet } from "@/context/PetContext";
 import { Pet } from "@/interfaces/Pet";
@@ -24,46 +19,26 @@ import { Pet } from "@/interfaces/Pet";
 
 export function PetCatalog() {
   const { petsToAdopt, isPetLoading } = usePet();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedType, setSelectedType] = useState("all");
-  const [selectedSize, setSelectedSize] = useState("all");
-  const [selectedAge, setSelectedAge] = useState("all");
-  const [selectedGender] = useState("all");
-  const [selectedStatus] = useState("all");
-  const [selectedLocation] = useState("all");
-  const [showFilters, setShowFilters] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
-  const filteredPets = petsToAdopt.filter((pet) => {
-    const matchesSearch =
-      pet.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pet.breed.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pet.shelter.city?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesType = selectedType === "all" || pet.species.name.toLowerCase() === selectedType;
-    const matchesSize = selectedSize === "all" || pet.size.toLowerCase() === selectedSize;
-    const matchesAge =
-      selectedAge === "all" ||
-      (selectedAge === "young" && pet.age <= 2) ||
-      (selectedAge === "adult" && pet.age > 2 && pet.age <= 6) ||
-      (selectedAge === "senior" && pet.age > 6);
-    const matchesGender =
-      selectedGender === "all" || pet.gender.toLowerCase() === selectedGender;
-    const matchesStatus =
-      selectedStatus === "all" || (pet.status ? "adopted" : "available") === selectedStatus;
-    const matchesLocation =
-      selectedLocation === "all" || pet.shelter.city?.includes(selectedLocation);
-
-    return (
-      matchesSearch &&
-      matchesType &&
-      matchesSize &&
-      matchesAge &&
-      matchesGender &&
-      matchesStatus &&
-      matchesLocation
-    );
-  });
+  const {
+    searchTerm,
+    setSearchTerm,
+    selectedType,
+    setSelectedType,
+    selectedSize,
+    setSelectedSize,
+    selectedAge,
+    setSelectedAge,
+    selectedGender,
+    setSelectedGender,
+    selectedStatus,
+    setSelectedStatus,
+    selectedLocation,
+    setSelectedLocation,
+    setAdvancedFilters,
+    filteredPets,
+  } = usePetFilters({ pets: petsToAdopt });
 
   const toggleFavorite = (petId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -132,92 +107,24 @@ export function PetCatalog() {
             <p className="text-lg text-gray-600">
               {filteredPets.length} mascotas esperando un hogar
             </p>
-          </div><div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
-          <div className="flex flex-col lg:flex-row gap-4 items-center"><div className="relative flex-1 w-full">
-              <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-              <Input
-                placeholder="Buscar por nombre, raza o ubicación..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div><div className="flex flex-wrap gap-3 items-center">
-              <Select value={selectedType} onValueChange={setSelectedType}>
-                <SelectTrigger className="w-32">
-                  <SelectValue placeholder="Tipo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  <SelectItem value="perro">Perros</SelectItem>
-                  <SelectItem value="gato">Gatos</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={selectedSize} onValueChange={setSelectedSize}>
-                <SelectTrigger className="w-32">
-                  <SelectValue placeholder="Tamaño" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  <SelectItem value="small">Pequeño</SelectItem>
-                  <SelectItem value="medium">Mediano</SelectItem>
-                  <SelectItem value="large">Grande</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Select value={selectedAge} onValueChange={setSelectedAge}>
-                <SelectTrigger className="w-32">
-                  <SelectValue placeholder="Edad" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Todas</SelectItem>
-                  <SelectItem value="young">Joven (0-2)</SelectItem>
-                  <SelectItem value="adult">Adulto (3-6)</SelectItem>
-                  <SelectItem value="senior">Senior (7+)</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" onClick={() => setShowFilters(!showFilters)}>
-                    <Filter className="w-4 h-4 mr-2" />
-                    Más filtros
-                    <ChevronDown className="w-4 h-4 ml-2" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64 p-4">
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="text-sm font-medium mb-3">Características</h4>
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="vaccinated" />
-                          <label htmlFor="vaccinated" className="text-sm">Vacunado</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="neutered" />
-                          <label htmlFor="neutered" className="text-sm">Esterilizado</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="trained" />
-                          <label htmlFor="trained" className="text-sm">Entrenado</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="goodWithKids" />
-                          <label htmlFor="goodWithKids" className="text-sm">Bueno con niños</label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Checkbox id="goodWithPets" />
-                          <label htmlFor="goodWithPets" className="text-sm">Bueno con otras mascotas</label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </div><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          </div>        <PetFilters
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          selectedType={selectedType}
+          setSelectedType={setSelectedType}
+          selectedSize={selectedSize}
+          setSelectedSize={setSelectedSize}
+          selectedAge={selectedAge}
+          setSelectedAge={setSelectedAge}
+          selectedGender={selectedGender}
+          setSelectedGender={setSelectedGender}
+          selectedStatus={selectedStatus}
+          setSelectedStatus={setSelectedStatus}
+          selectedLocation={selectedLocation}
+          setSelectedLocation={setSelectedLocation}
+          onAdvancedFiltersChange={setAdvancedFilters}
+          className="mb-8"
+        /><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPets.map((pet) => (
 
                 <Card key={pet.id} className="overflow-hidden hover:shadow-lg transition cursor-pointer" onClick={() => handlePetDetail(pet)}>

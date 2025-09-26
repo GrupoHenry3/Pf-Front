@@ -1,83 +1,69 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
+import { useUser } from "@/context/UserContext";
 import { usePet } from "@/context/PetContext";
-import { Edit } from "lucide-react";
+import ProtectedRoute from "@/components/ProtectedRouter/ProtectedRoute";
+import { useRouter } from "next/navigation";
+import { ShelterPets } from "@/components/shelter/ShelterPets";
+import { Pet } from "@/interfaces/Pet";
 
-const PetsPage = () => {
+export default function ShelterPetsPage() {
+  const { user, isProfileLoaded, isUserLoading, isInitialized } = useUser();
   const { pets, isPetLoading } = usePet();
+  const router = useRouter();
 
-	if (isPetLoading) {
-		return(
-			<div className="min-h-screen flex items-center justify-center">
+  // Filtrar mascotas del refugio actual
+  const shelterPets = pets.filter(pet => 
+    pet.shelter?.id === user?.shelter?.id
+  );
+
+  const handleAddPet = () => {
+    // Usar la ruta existente para agregar mascotas
+    router.push("/dashboard/addPet");
+  };
+
+  const handleEditPet = (pet: Pet) => {
+    router.push(`/dashboard/shelter/editPet/${pet.id}`);
+  };
+
+  if (!isInitialized || isUserLoading || !isProfileLoaded || isPetLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando tus mascotas...</p>
+          <p className="text-gray-600">Cargando mascotas...</p>
         </div>
       </div>
-		)
-	}
+    );
+  }
+
+  if (!user?.shelter) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Acceso no autorizado</h2>
+          <p className="text-gray-600">Solo los refugios pueden acceder a esta página.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <Card className="overflow-hidden h-full">
-      <CardHeader>
-        <CardTitle>Lista de Refugios</CardTitle>
-      </CardHeader>
-      <CardContent>
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ">
-        {pets?.map((pet) => (
-          <div
-					key={pet.id}
-					className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-				>
-					<div className="relative mb-3">
-						<ImageWithFallback
-							src={pet.breed.avatarURL || "/placeholder-pet.jpg"}
-							alt={pet.name}
-							className="w-full h-40 rounded-lg object-cover"
-						/>
-						<Button
-							size="sm"
-							variant="secondary"
-							className="absolute top-2 right-2 p-2 bg-white/80 hover:bg-white"
-						>
-							<Edit className="w-4 h-4" />
-						</Button>
-					</div>
-
-					<div className="flex items-center justify-between mb-2">
-						<h4 className="text-lg text-gray-900">{pet.name}</h4>
-						<span className={`px-2 py-1 rounded-full text-xs ${
-							pet.isAdopted 
-								? "bg-green-100 text-green-800" 
-								: "bg-blue-100 text-blue-800"
-						}`}>
-							{pet.isAdopted ? "Adoptado" : "Disponible"}
-						</span>
-					</div>
-
-					<p className="text-sm text-gray-600 mb-3">
-						{pet.breed.name} • {pet.age} años • {pet.size}
-					</p>
-
-					<div className="flex items-center justify-between text-sm">
-						<span className="text-gray-500">
-							{pet.species.name}
-						</span>
-						<span className="text-gray-500">
-							Agregado el{" "}
-							{new Date(pet.createdAt).toLocaleDateString()}
-						</span>
-					</div>
-				</div>
-        ))}
-				</div>
-      </CardContent>
-    </Card>
-				
+    <ProtectedRoute allowedUserTypes={["Shelter"]}>
+      <div className="flex min-h-screen">
+        <div className="flex-1 bg-gray-50">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+            <ShelterPets
+              pets={shelterPets}
+              isPetLoading={isPetLoading}
+              shelterId={user.shelter.id}
+              showAddButton={true}
+              onAddPet={handleAddPet}
+              onEditPet={handleEditPet}
+            />
+          </div>
+        </div>
+      </div>
+    </ProtectedRoute>
   );
-};
-
-export default PetsPage;
+}
