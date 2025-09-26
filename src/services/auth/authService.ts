@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios from "axios";
-import { getApiUrl } from "@/config/environment";
+import { apiClient } from "../apiClient";
 
 interface LoginData {
   email: string;
@@ -14,13 +13,7 @@ interface RegisterData {
   confirmedPassword: string;
 }
 
-const apiClient = axios.create({
-    baseURL: getApiUrl(),
-    withCredentials: true, 
-    headers: {
-        'Content-Type': 'application/json'
-    }
-});
+
 
 export const authService = {
     login: async (data: LoginData) => {

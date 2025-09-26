@@ -15,6 +15,9 @@ import type { Pet } from "@/interfaces/Pet";
 import Image from "next/image";
 import { useUser } from "@/context/UserContext";
 
+import { useSpecies } from "@/context/SpeciesContext";
+import { useBreeds } from "@/context/BreedContext";
+
 interface AddPetProps {
   onBack: () => void;
   onSuccess: () => void;
@@ -24,23 +27,33 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const { user } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { species,  isSpeciesLoading, createSpecies } = useSpecies();
+  const { breeds,  isBreedsLoading, createBreed } = useBreeds();
+  
+  // Estados para manejar selecciones
+  const [selectedSpeciesId, setSelectedSpeciesId] = useState<string>("");
+  const [selectedBreedId, setSelectedBreedId] = useState<string>("");
+  const [newSpeciesName, setNewSpeciesName] = useState<string>("");
+  const [newBreedName, setNewBreedName] = useState<string>("");
+  const [newBreedDescription, setNewBreedDescription] = useState<string>("");
+  const [newBreedAvatarURL, setNewBreedAvatarURL] = useState<string>("");
+  const [showNewSpeciesInput, setShowNewSpeciesInput] = useState(false);
+  const [showNewBreedInput, setShowNewBreedInput] = useState(false);
 
-  const [formData, setFormData] = useState<Pet>({
+  const [formData, setFormData] = useState<Partial<Pet>>({
     name: "",
-    type: "other",
-    breed: "",
     age: 0,
     size: "small",
     gender: "male",
     description: "",
-    images: [], 
+    photos: [], 
     vaccinated: false,
     neutered: false,
     trained: false,
     dateAdded: new Date().toISOString(),
-    shelter: user?.shelter?.id || "",
-    species:""
+    location: "",
   });
+
 
   if (!user || user.userType !== 'Shelter' || !user.shelter?.id) {
     return (
@@ -58,6 +71,75 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
 
   const handleInputChange = (field: keyof Pet, value: string | number | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleCreateSpecies = async () => {
+    if (!newSpeciesName.trim()) return;
+    
+    try {
+      const newSpecies = await createSpecies({ name: newSpeciesName.trim() });
+      setSelectedSpeciesId(newSpecies.id || "");
+      setNewSpeciesName("");
+      setShowNewSpeciesInput(false);
+    } catch (error) {
+      console.error("Error creando especie:", error);
+      alert("Error al crear la especie");
+    }
+  };
+
+  const handleCreateBreed = async () => {
+    if (!newBreedName.trim() || !newBreedDescription.trim() || !newBreedAvatarURL.trim() || !selectedSpeciesId) return;
+    
+    try {
+      const breedData = {
+        name: newBreedName.trim(),
+        description: newBreedDescription.trim(),
+        speciesID: selectedSpeciesId,
+        avatarURL: newBreedAvatarURL.trim(),
+      };
+      const newBreed = await createBreed(breedData);
+      setSelectedBreedId(newBreed.id || "");
+      setNewBreedName("");
+      setNewBreedDescription("");
+      setNewBreedAvatarURL("");
+      setShowNewBreedInput(false);
+    } catch (error) {
+      console.error("Error creando raza:", error);
+      alert("Error al crear la raza");
+    }
+  };
+
+  // Función para manejar selección de especie
+  const handleSpeciesChange = (value: string) => {
+    if (value === "other") {
+      setShowNewSpeciesInput(true);
+      setSelectedSpeciesId("");
+    } else {
+      setSelectedSpeciesId(value);
+      setShowNewSpeciesInput(false);
+      setNewSpeciesName("");
+      // Limpiar raza seleccionada cuando cambia la especie
+      setSelectedBreedId("");
+      setShowNewBreedInput(false);
+    }
+  };
+
+  // Función para manejar selección de raza
+  const handleBreedChange = (value: string) => {
+    if (value === "other") {
+      if (!selectedSpeciesId) {
+        alert("Primero debes seleccionar una especie antes de crear una nueva raza");
+        return;
+      }
+      setShowNewBreedInput(true);
+      setSelectedBreedId("");
+    } else {
+      setSelectedBreedId(value);
+      setShowNewBreedInput(false);
+      setNewBreedName("");
+      setNewBreedDescription("");
+      setNewBreedAvatarURL("");
+    }
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,13 +170,13 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
     }
     setFormData((prev) => ({
       ...prev,
-      images: [...prev.images, ...uploadedUrls].slice(0, 5),
+      photos: [...(prev.photos || []), ...uploadedUrls].slice(0, 5),
     }));
   };
 
   const removeImage = (index: number) => {
-    const newImages = formData.images.filter((_, i) => i !== index);
-    setFormData((prev) => ({ ...prev, images: newImages }));
+    const newImages = (formData.photos || []).filter((_: string, i: number) => i !== index);
+    setFormData((prev) => ({ ...prev, photos: newImages }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -102,7 +184,7 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
     setIsSubmitting(true);
 
     try {
-      const avatarURL = formData.images.length > 0 ? formData.images[0] : "";
+      const avatarURL = (formData.photos && formData.photos.length > 0) ? formData.photos[0] : "";
 
       const petData = {
         name: formData.name,
@@ -112,8 +194,8 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
         avatarURL: avatarURL,
         shelterID: user?.shelter?.id,
         adoptionFee: 0,
-        breedID: "ms48xz5jljd5nasnllpyr2gd",
-        speciesID: "ammo592cgs0i8qqetgkoblu2",
+        breedID: selectedBreedId,
+        speciesID: selectedSpeciesId,
         neutered: formData.neutered,
       };
 
@@ -141,11 +223,11 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
   const canProceedToNext = () => {
     switch (currentStep) {
       case 1:
-        return formData.name && formData.type && formData.breed && formData.age;
+        return formData.name && selectedSpeciesId && selectedBreedId && formData.age;
       case 2:
-        return formData.size && formData.gender && formData.description.length >= 50;
+        return formData.size && formData.gender && (formData.description?.length || 0) >= 50;
       case 3:
-        return formData.images.length > 0;
+        return (formData.photos && formData.photos.length > 0);
       case 4:
         return formData.location;
       default:
@@ -173,37 +255,138 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
                   className="mt-2"
                 />
               </div>
+              
               <div>
-                <Label>Tipo de animal *</Label>
-                <RadioGroup
-                  value={formData.type}
-                  onValueChange={(value) => handleInputChange('type', value)}
-                  className="grid grid-cols-3 gap-4 mt-2"
-                >
-                  <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-3 hover:border-green-500">
-                    <RadioGroupItem value="dog" id="dog" />
-                    <Label htmlFor="dog">🐕 Perro</Label>
+                <Label>Especie *</Label>
+                {isSpeciesLoading ? (
+                  <div className="mt-2 text-gray-500">Cargando especies...</div>
+                ) : (
+                  <RadioGroup
+                    value={selectedSpeciesId}
+                    onValueChange={handleSpeciesChange}
+                    className="grid grid-cols-2 gap-3 mt-2"
+                  >
+                    {species.filter(spec => spec.id).map((spec) => (
+                      <div key={spec.id} className="flex items-center space-x-2 border border-gray-200 rounded-lg p-3 hover:border-green-500 transition-colors">
+                        <RadioGroupItem value={spec.id!} id={`species-${spec.id}`} />
+                        <Label htmlFor={`species-${spec.id}`} className="cursor-pointer">
+                          {spec.name}
+                        </Label>
+                      </div>
+                    ))}
+                    <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-3 hover:border-green-500 transition-colors">
+                      <RadioGroupItem value="other" id="species-other" />
+                      <Label htmlFor="species-other" className="cursor-pointer">
+                        ➕ Otro
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                )}
+                
+                {showNewSpeciesInput && (
+                  <div className="mt-3 p-3 border border-green-200 rounded-lg bg-green-50">
+                    <Label htmlFor="newSpecies">Nombre de la nueva especie *</Label>
+                    <div className="flex gap-2 mt-2">
+                      <Input
+                        id="newSpecies"
+                        placeholder="Ej: Conejo, Hámster, etc."
+                        value={newSpeciesName}
+                        onChange={(e) => setNewSpeciesName(e.target.value)}
+                      />
+                      <Button 
+                        type="button" 
+                        onClick={handleCreateSpecies}
+                        disabled={!newSpeciesName.trim()}
+                        size="sm"
+                      >
+                        Agregar
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-3 hover:border-green-500">
-                    <RadioGroupItem value="cat" id="cat" />
-                    <Label htmlFor="cat">🐱 Gato</Label>
-                  </div>
-                  <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-3 hover:border-green-500">
-                    <RadioGroupItem value="other" id="other" />
-                    <Label htmlFor="other">🐰 Otro</Label>
-                  </div>
-                </RadioGroup>
+                )}
               </div>
+
               <div>
-                <Label htmlFor="breed">Raza *</Label>
-                <Input
-                  id="breed"
-                  placeholder="Ej: Golden Retriever, Mestizo, etc."
-                  value={formData.breed}
-                  onChange={(e) => handleInputChange('breed', e.target.value)}
-                  className="mt-2"
-                />
+                <Label>Raza *</Label>
+                {isBreedsLoading ? (
+                  <div className="mt-2 text-gray-500">Cargando razas...</div>
+                ) : (
+                  <RadioGroup
+                    value={selectedBreedId}
+                    onValueChange={handleBreedChange}
+                    className="grid grid-cols-2 gap-3 mt-2"
+                  >
+                    {breeds
+                      .filter(breed => breed.id && breed.speciesID === selectedSpeciesId)
+                      .map((breed) => (
+                        <div key={breed.id} className="flex items-center space-x-2 border border-gray-200 rounded-lg p-3 hover:border-green-500 transition-colors">
+                          <RadioGroupItem value={breed.id!} id={`breed-${breed.id}`} />
+                          <Label htmlFor={`breed-${breed.id}`} className="cursor-pointer">
+                            {breed.name}
+                          </Label>
+                        </div>
+                      ))}
+                    <div className="flex items-center space-x-2 border border-gray-200 rounded-lg p-3 hover:border-green-500 transition-colors">
+                      <RadioGroupItem value="other" id="breed-other" />
+                      <Label htmlFor="breed-other" className="cursor-pointer">
+                        ➕ Otro
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                )}
+                
+                {!selectedSpeciesId && (
+                  <p className="mt-2 text-sm text-gray-500">Primero selecciona una especie para ver las razas disponibles</p>
+                )}
+                
+                {showNewBreedInput && (
+                  <div className="mt-3 p-3 border border-green-200 rounded-lg bg-green-50">
+                    <div className="space-y-3">
+                      <div>
+                        <Label htmlFor="newBreed">Nombre de la nueva raza *</Label>
+                        <Input
+                          id="newBreed"
+                          placeholder="Ej: Golden Retriever, Mestizo, etc."
+                          value={newBreedName}
+                          onChange={(e) => setNewBreedName(e.target.value)}
+                          className="mt-1"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="newBreedDescription">Descripción de la raza *</Label>
+                        <Textarea
+                          id="newBreedDescription"
+                          placeholder="Describe las características principales de esta raza..."
+                          value={newBreedDescription}
+                          onChange={(e) => setNewBreedDescription(e.target.value)}
+                          className="mt-1"
+                          rows={3}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="newBreedAvatarURL">URL de imagen de la raza *</Label>
+                        <Input
+                          id="newBreedAvatarURL"
+                          placeholder="https://ejemplo.com/imagen-raza.jpg"
+                          value={newBreedAvatarURL}
+                          onChange={(e) => setNewBreedAvatarURL(e.target.value)}
+                          className="mt-1"
+                        />
+                      </div>
+                      <Button 
+                        type="button" 
+                        onClick={handleCreateBreed}
+                        disabled={!newBreedName.trim() || !newBreedDescription.trim() || !newBreedAvatarURL.trim()}
+                        size="sm"
+                        className="w-full"
+                      >
+                        Agregar Raza
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
+              
               <div>
                 <Label htmlFor="age">Edad *</Label>
                 <Input
@@ -283,13 +466,13 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
                 <Textarea
                   id="description"
                   placeholder="Cuéntanos sobre la personalidad de tu mascota, qué le gusta hacer, cómo es con las personas, etc. (mínimo 50 caracteres)"
-                  value={formData.description}
+                  value={formData.description || ""}
                   onChange={(e) => handleInputChange('description', e.target.value)}
                   className="mt-2 min-h-32"
                 />
                 <div className="mt-1 text-right">
-                  <span className={`text-xs ${formData.description.length >= 50 ? 'text-green-600' : 'text-gray-500'}`}>
-                    {formData.description.length}/50 caracteres mínimo
+                  <span className={`text-xs ${(formData.description?.length || 0) >= 50 ? 'text-green-600' : 'text-gray-500'}`}>
+                    {formData.description?.length || 0}/50 caracteres mínimo
                   </span>
                 </div>
               </div>
@@ -382,11 +565,11 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
                 </label>
               </div>
 
-              {formData.images.length > 0 && (
+              {(formData.photos && formData.photos.length > 0) && (
                 <div>
-                  <Label>Fotos seleccionadas ({formData.images.length}/5)</Label>
+                  <Label>Fotos seleccionadas ({(formData.photos || []).length}/5)</Label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
-                    {formData.images.map((url, index) => (
+                    {(formData.photos || []).map((url: string, index: number) => (
                       <div key={index} className="relative group">
                         <Image
                           src={url}
@@ -484,18 +667,24 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
                     <span className="text-green-900">{formData.name}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-green-700">Tipo:</span>
+                    <span className="text-green-700">Especie:</span>
                     <span className="text-green-900">
-                      {formData.type === 'dog' ? 'Perro' : formData.type === 'cat' ? 'Gato' : 'Otro'}
+                      {species.find(s => s.id === selectedSpeciesId)?.name || 'No seleccionada'}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-green-700">Raza:</span>
-                    <span className="text-green-900">{formData.breed}</span>
+                    <span className="text-green-900">
+                      {breeds.find(b => b.id === selectedBreedId)?.name || 'No seleccionada'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-green-700">Edad:</span>
+                    <span className="text-green-900">{formData.age} años</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-green-700">Fotos:</span>
-                    <span className="text-green-900">{formData.images.length} imagen(es)</span>
+                    <span className="text-green-900">{(formData.photos || []).length} imagen(es)</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-green-700">Ubicación:</span>

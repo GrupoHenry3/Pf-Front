@@ -5,6 +5,6 @@ const PATHROUTES = {
   REGISTER: "/auth",
   CATALOG: "/pet-catalog",
   PET_DETAIL: "/petDetail",
-  ADOPTION: "/adoption",
+  ADOPTION: "/dashboard/adoption",
 };
 export default PATHROUTES;

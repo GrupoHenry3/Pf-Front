@@ -4,12 +4,13 @@ import { Users, Heart, MessageCircle, Calendar, Plus, Edit } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/context/UserContext";
-import { ShelterSidebar } from "@/components/sidebar/ShelterSidebar";
 import ProtectedRoute from "@/components/ProtectedRouter/ProtectedRoute";
 import { useRouter } from "next/navigation";
 import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
 import { usePet } from "@/context/PetContext";
 import { PetWithRelations } from "@/interfaces/Pet";
+import { AdoptionWithRelations } from "@/services/adoptions/adoptionsService";
+import { useAdoption } from "@/context/AdoptionContext";
 
 interface ShelterDashboardProps {
   onManageApplications: () => void;
@@ -28,8 +29,8 @@ function ShelterDashboard({
     isInitialized, 
   } = useUser();
 
-  const { pets, isPetLoading } = usePet();
-
+  const { pets, isPetLoading, latestPets } = usePet();
+  const { latestAdoptions } = useAdoption();
   const router = useRouter();
     const stats = {
     totalPets: pets.length,
@@ -63,9 +64,7 @@ function ShelterDashboard({
   return (
     <ProtectedRoute allowedUserTypes={["Shelter"]}>
     <div className="flex min-h-screen">
-      <div className="w-64 border-r bg-white shadow-sm">
-        <ShelterSidebar user={user} embedded={true} />
-      </div><div className="flex-1 bg-gray-50">
+     <div className="flex-1 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8"><div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
           <div>
             <h1 className="text-3xl text-gray-900 mb-2">
@@ -154,14 +153,29 @@ function ShelterDashboard({
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-       
+                {latestAdoptions.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Heart className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500 mb-4">No hay solicitudes de adopción recientes</p>
+                  </div>
+                ) : (
+                  <div>
+
+                {latestAdoptions.map((adoption: AdoptionWithRelations) => (
+                  <div key={adoption.id}>
+                    <p>{adoption.pet.name}</p>
+                    </div>
+                  ))}
+                  </div>
+                )}
               </div>
             </CardContent>
-          </Card><Card className="border-0 shadow-md">
+          </Card>
+          <Card className="border-0 shadow-md">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span>Mis Mascotas</span>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => router.push("/dashboard/shelter/pets")}>
                   Ver todas
                 </Button>
               </CardTitle>
@@ -182,7 +196,7 @@ function ShelterDashboard({
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {pets.map((pet: PetWithRelations) => (
+                  {latestPets.map((pet: PetWithRelations) => (
                     <div
                       key={pet.id}
                       className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"

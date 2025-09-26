@@ -14,19 +14,16 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
-import { PetWithRelations } from "@/interfaces/Pet";
-import { petsService } from "@/services/pets/petsService";
-
-import Link from "next/link";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Checkbox } from "../ui/checkbox";
 import { useRouter } from "next/navigation";
+import { usePet } from "@/context/PetContext";
+import { Pet } from "@/interfaces/Pet";
 
 
 export function PetCatalog() {
-  const [pets, setPets] = useState<PetWithRelations[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { petsToAdopt, isPetLoading } = usePet();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedType, setSelectedType] = useState("all");
   const [selectedSize, setSelectedSize] = useState("all");
@@ -37,24 +34,7 @@ export function PetCatalog() {
   const [showFilters, setShowFilters] = useState(false);
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
-  // Cargar mascotas del backend
-  useEffect(() => {
-    const loadPets = async () => {
-      try {
-        setIsLoading(true);
-        const petsData = await petsService.findAll();
-        setPets(petsData);
-      } catch (error) {
-        console.error("Error al cargar mascotas:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadPets();
-  }, []);
-
-  const filteredPets = pets.filter((pet) => {
+  const filteredPets = petsToAdopt.filter((pet) => {
     const matchesSearch =
       pet.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       pet.breed.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -70,7 +50,7 @@ export function PetCatalog() {
     const matchesGender =
       selectedGender === "all" || pet.gender.toLowerCase() === selectedGender;
     const matchesStatus =
-      selectedStatus === "all" || (pet.isAdopted ? "adopted" : "available") === selectedStatus;
+      selectedStatus === "all" || (pet.status ? "adopted" : "available") === selectedStatus;
     const matchesLocation =
       selectedLocation === "all" || pet.shelter.city?.includes(selectedLocation);
 
@@ -97,7 +77,7 @@ export function PetCatalog() {
   };
 
   const getSizeLabel = (size: string) => {
-    switch (size.toLowerCase()) {
+    switch (size) {
       case "small":
         return "Pequeño";
       case "medium":
@@ -124,11 +104,15 @@ export function PetCatalog() {
 
   const router = useRouter();
 
-  const handlePetDetail = (pet: PetWithRelations) => {
-    router.push(`/petDetail/${pet.id}`);
+  useEffect(() => {
+    console.log(petsToAdopt);
+  }, [petsToAdopt]);
+
+  const handlePetDetail = (pet: Pet) => {
+    router.push(`/dashboard/petDetail/${pet.id}`);
   }
 
-  if (isLoading) {
+  if (isPetLoading) {
     return (
       <div className="flex min-h-screen bg-gray-50 items-center justify-center">
         <div className="text-center">
@@ -235,14 +219,11 @@ export function PetCatalog() {
           </div>
         </div><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredPets.map((pet) => (
-              <Link
-                key={pet.id}
-                href={`/petDetail/${pet.id}`} // ✅ ruta dinámica según el id de la mascota
-                className="block"
-              >
-                <Card className="overflow-hidden hover:shadow-lg transition cursor-pointer" onClick={() => handlePetDetail(pet)}><div className="h-48 w-full overflow-hidden">
+
+                <Card key={pet.id} className="overflow-hidden hover:shadow-lg transition cursor-pointer" onClick={() => handlePetDetail(pet)}>
+                  <div className="h-48 w-full overflow-hidden">
                     <ImageWithFallback
-                      src={pet.breed.avatarURL || "/placeholder-pet.jpg"}
+                      src={pet.avatarURL}
                       alt={pet.name}
                       className="h-full w-full object-cover"
                     />
@@ -251,25 +232,25 @@ export function PetCatalog() {
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="text-lg font-semibold text-gray-900">{pet.name}</h3>
-                      <Badge variant="secondary">{getTypeLabel(pet.species.name)}</Badge>
+                      <Badge variant="secondary">{getTypeLabel(pet.name)}</Badge>
                     </div>
 
                     <p className="text-sm text-gray-600 mb-2">
-                      {pet.breed.name} • {pet.age} años • {getSizeLabel(pet.size)}
+                      {pet.breed?.name} • {pet.age} años • {getSizeLabel(pet.size)}
                     </p>
 
                     <p className="text-sm text-gray-500 line-clamp-2 mb-3">
-                      {pet.breed.description}
+                      {pet.breed?.description}
                     </p>
 
                     <div className="flex justify-between items-center">
                       <span className="flex items-center text-gray-500 text-sm">
-                        <MapPin className="w-4 h-4 mr-1" /> {pet.shelter.city}, {pet.shelter.state}
+                        <MapPin className="w-4 h-4 mr-1" /> {pet.shelter?.city}, {pet.shelter?.state}
                       </span>
                       <Button
                         size="sm"
                         onClick={(e) => {
-                          e.preventDefault(); // 👈 evita que el click dispare el Link
+                          e.preventDefault(); 
                           toggleFavorite(pet.id || "", e);
                         }}
                         variant="ghost"
@@ -282,8 +263,6 @@ export function PetCatalog() {
                     </div>
                   </CardContent>
                 </Card>
-              </Link>
-
             ))}
           </div>
         </div>

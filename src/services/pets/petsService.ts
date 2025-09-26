@@ -1,20 +1,14 @@
-import axios from "axios";
-import { getApiUrl } from "@/config/environment";
+import { apiClient } from "../apiClient";
 import { Pet, PetWithRelations } from "@/interfaces/Pet";
-
-// Interfaz para mascotas con relaciones del backend
-
 
 export interface PetFilters {
   skip?: number;
   take?: number;
 }
 
-const BASE_URL = getApiUrl();
-
 export const petsService = {
   create: async (data: Pet): Promise<Pet> => {
-    const response = await axios.post(`${BASE_URL}/pets`, data);
+    const response = await apiClient.post('/pets', data);
     return response.data;
   },
 
@@ -23,18 +17,28 @@ export const petsService = {
     if (filters.skip !== undefined) params.set("skip", filters.skip.toString());
     if (filters.take !== undefined) params.set("take", filters.take.toString());
 
-    const url = `${BASE_URL}/pets${params.toString() ? `?${params.toString()}` : ""}`;
-    const response = await axios.get<PetWithRelations[]>(url);
+    const url = `/pets${params.toString() ? `?${params.toString()}` : ""}`;
+    const response = await apiClient.get<PetWithRelations[]>(url);
+    return response.data;
+  },
+
+  findAllWithRelations: async (filters: PetFilters = {}): Promise<PetWithRelations[]> => {
+    const params = new URLSearchParams();
+    if (filters.skip !== undefined) params.set("skip", filters.skip.toString());
+    if (filters.take !== undefined) params.set("take", filters.take.toString());
+
+    const url = `/pets/with-relations${params.toString() ? `?${params.toString()}` : ""}`;
+    const response = await apiClient.get<PetWithRelations[]>(url);
     return response.data;
   },
 
   findAllByShelter: async (id: string): Promise<PetWithRelations[]> => {
-    const response = await axios.get(`${BASE_URL}/pets/shelter/${id}`);
+    const response = await apiClient.get(`/pets/shelter/${id}`);
     return response.data;
   },
 
   findOne: async (id: string): Promise<PetWithRelations> => {
-    const response = await axios.get(`${BASE_URL}/pets/${id}`);
+    const response = await apiClient.get(`/pets/${id}`);
     return response.data;
   },
 
@@ -43,10 +47,8 @@ export const petsService = {
     if (filters.skip !== undefined) params.set("skip", filters.skip.toString());
     if (filters.take !== undefined) params.set("take", filters.take.toString());
 
-    const url = `${BASE_URL}/pets/all${params.toString() ? `?${params.toString()}` : ""}`;
-    const response = await axios.get<Pet[]>(url, {
-      withCredentials: true,
-    });
+    const url = `/pets/all${params.toString() ? `?${params.toString()}` : ""}`;
+    const response = await apiClient.get<Pet[]>(url);
     return response.data;
   },
 

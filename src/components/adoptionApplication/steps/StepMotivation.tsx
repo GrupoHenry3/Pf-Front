@@ -3,18 +3,11 @@ import { Label } from "../../ui/label";
 import { Input } from "../../ui/input";
 import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import { useState } from "react";
-
-interface MotivationData {
-  dni: string;
-  birthDate: string;
-  adoptionReason: string;
-  expectations: string;
-  petExperience: string;
-}
+import { ApplicationData } from "@/interfaces/Pet";
 
 interface StepProps {
-  data: MotivationData;
-  update: (field: keyof MotivationData, value: string) => void;
+  data: ApplicationData;
+  update: (field: string, value: string) => void;
 }
 
 export function StepMotivation({ data, update }: StepProps) {

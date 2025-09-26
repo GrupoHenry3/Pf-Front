@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Settings } from "lucide-react";
+import { Edit, Settings } from "lucide-react";
 import {
   Alert,
   AlertDescription,
@@ -47,6 +47,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUser } from "@/context/UserContext";
 import { AdminSidebar } from "@/components/sidebar/AdminSidebar";
 import { useShelter } from "@/context/ShelterContext";
+import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
 
 export type AdminView = 
   | "dashboard" 
@@ -261,13 +262,32 @@ export default function AdminDashboard() {
               <CardTitle>Lista de Refugios</CardTitle>
             </CardHeader>
             <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {shelters?.map((shelter) => (
-                <div key={shelter.id}>
-                  <h3>{shelter.name}</h3>
-                  <p>{shelter.address}</p>
-                  <p>{shelter.phoneNumber}</p>
-                </div>
+                    <div
+                    key={shelter.id}
+                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                  >
+                    <div className="relative mb-3">
+                      <ImageWithFallback
+                        src={shelter.avatarURL || "/placeholder-pet.jpg"}
+                        alt={shelter.name}
+                        className="w-full h-40 rounded-lg object-cover"
+                      />
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="absolute top-2 right-2 p-2 bg-white/80 hover:bg-white"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="text-lg text-gray-900">{shelter.name}</h4>
+                    </div>
+                  </div>
               ))}
+              </div>
             </CardContent>
           </Card>
         );

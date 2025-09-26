@@ -1,26 +1,15 @@
 "use client"
 
 import { UserInterface } from "@/interfaces/User"
-import { authService } from "@/services/auth/authService";
 import { usersService } from "@/services/users/usersService";
 import { createContext, useContext, useState, useEffect } from "react";
 
-interface AxiosError {
-    response?: {
-        status?: number;
-        data?: {
-            message?: string;
-        };
-    };
-}
+
 
 interface UserContextType {
     user: UserInterface | null;
     setUser: (user: UserInterface | null) => void;
     getProfile: () => Promise<void>;
-    login: (email: string, password: string) => Promise<void>;
-    logout: () => Promise<void>;
-    register: (name: string, email: string, password: string, confirmedPassword: string) => Promise<UserInterface>;
     isProfileLoaded: boolean;
     isUserLoading: boolean;
     isInitialized: boolean;
@@ -39,35 +28,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const clearError = () => setError(null);
 
-    const login = async (email: string, password: string) => {
-        try {
-            clearError();
-            console.log("Attempting login...");
-            const loginResponse = await authService.login({ email, password });
-            console.log("Login response:", loginResponse);
-            console.log("Getting profile after login...");
-            await getProfile();
-        } catch (error: unknown) {
-            console.error("Error during login:", error);
-            const errorMessage = (error as AxiosError)?.response?.data?.message || "Error al iniciar sesión";
-            setError(errorMessage);
-            throw error;
-        }
-    }
-
-    const register = async (fullName: string, email: string, password: string, confirmedPassword: string): Promise<UserInterface> => {
-        try {
-            clearError();
-            const newUser = await authService.register({ fullName, email, password, confirmedPassword });
-            await getProfile();
-            return newUser;
-        } catch (error: unknown) {
-            console.error("Error during registration:", error);
-            const errorMessage = (error as AxiosError)?.response?.data?.message || "Error al registrarse";
-            setError(errorMessage);
-            throw error;
-        }
-    }
+   
 
     const getProfile = async () => {
         try {
@@ -83,21 +44,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setIsProfileLoaded(true);
         } finally {
             setIsUserLoading(false);
-        }
-    }
-
-    const logout = async () => {
-        try {
-            clearError();
-            await authService.logout();
-        } catch (error: unknown) {
-            console.error("Error during logout:", error);
-            const errorMessage = (error as AxiosError)?.response?.data?.message || "Error al cerrar sesión";
-            setError(errorMessage);
-        } finally {
-            setUser(null);
-            setIsProfileLoaded(false);
-            setIsInitialized(true);
         }
     }
 
@@ -118,11 +64,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return (
         <UserContext.Provider value={{ 
             user, 
-            setUser, 
-            register, 
-            logout, 
+            setUser,  
             getProfile, 
-            login, 
             isUserLoading, 
             isProfileLoaded, 
             isInitialized,

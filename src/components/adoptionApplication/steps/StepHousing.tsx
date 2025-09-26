@@ -2,17 +2,11 @@ import { Textarea } from "../../ui/textarea";
 import { Label } from "../../ui/label";
 import { RadioGroup, RadioGroupItem } from "../../ui/radio-group";
 import { useState } from "react";
-
-interface HousingData {
-  housingType: string;
-  housingOwnership: string;
-  yardSize: string;
-  livingSpace: string;
-}
+import { ApplicationData } from "@/interfaces/Pet";
 
 interface StepProps {
-  data: HousingData;
-  update: (field: keyof HousingData, value: string) => void;
+  data: ApplicationData;
+  update: (field: string, value: string) => void;
 }
 
 export function StepHousing({ data, update }: StepProps) {
