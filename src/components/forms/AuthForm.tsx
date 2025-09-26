@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
@@ -9,14 +9,14 @@ import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 import { LoginFormValues, RegisterFormValues } from "@/validators/loginSchema";
 import { useRouter } from "next/navigation";
-import { useUser } from "@/context/UserContext";
-import { getRedirectUrl } from "../utils/Redirect";
+import { useAuth } from "@/context/AuthContext";
 
 
 export function AuthForm() {
 
-  const {login, register, user} = useUser()
+  const {login, register } = useAuth()
   const router = useRouter();
+
   const [isLogin, setIsLogin] = useState(true);
 
   const [loginFormData, setLoginFormData] = useState<LoginFormValues>({
@@ -40,35 +40,31 @@ export function AuthForm() {
     setRegisterFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  useEffect(() => {
-    if (user && user.userType) {
-      const redirectUrl = getRedirectUrl(user);
-      router.push(redirectUrl);
-    }
-  }, [user, router]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isLogin) {
       try{
         console.log(isLogin)
-        await login(loginFormData.email, loginFormData.password)  
+        await login(loginFormData.email, loginFormData.password)
+        router.push("/dashboard");
       }
       catch(error){
-        console.error("Login failed:", error);
-      
+        alert(error);
+        return;
     }
     }
     else{
 
       try{
         await register(registerFormData.fullName, registerFormData.email, registerFormData.password, registerFormData.confirmedPassword || "")
+        setIsLogin(true);
       }
       catch(error){
-        console.error("Registration failed:", error);
+        alert(error);
+        return;
       }
     }
-
+ 
   };
 
   return (

@@ -1,17 +1,20 @@
+import { Breed } from "./Breed";
+import { Shelter } from "./Shelter";
+import { Species } from "./Species";
 
 export interface Pet {
   id?: string;
   name: string;
-  type: 'dog' | 'cat' | 'other';
-  breed: string;
+  species: Species;
+  breed: Breed;
   age: number;
   size: 'small' | 'medium' | 'large';
   gender: 'male' | 'female';
   description: string;
-  images: string[];
+  avatarURL: string;
+  photos: string[];
   location?: string;
-  shelter: string;
-  species: string;
+  shelter: Shelter;
   vaccinated?: boolean;
   neutered: boolean;
   trained?: boolean;
@@ -40,42 +43,4 @@ export interface ApplicationData {
   currentPets: string;
   petHistory: string;
   additionalInfo: string;
-}
-
-export interface PetWithRelations {
-  id: string;
-  name: string;
-  age: number;
-  gender: 'Male' | 'Female';
-  size: 'Small' | 'Medium' | 'Large';
-  adoptionFee: number;
-  isAdopted: boolean;
-  isActive: boolean;
-  shelterID: string;
-  breedID: string;
-  adoptionID?: string;
-  createdAt: string;
-  updatedAt: string;
-  shelter: {
-    id: string;
-    name: string;
-    country: string;
-    state: string;
-    city: string;
-    address: string;
-    phoneNumber: string;
-    website?: string;
-    description?: string;
-  };
-  breed: {
-    id: string;
-    name: string;
-    description: string;
-    avatarURL: string;
-    speciesID: string;
-  };
-  species: {
-    id: string;
-    name: string;
-  };
 }

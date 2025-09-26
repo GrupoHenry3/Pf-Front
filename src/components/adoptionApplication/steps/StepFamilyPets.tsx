@@ -1,18 +1,11 @@
 import { Textarea } from "../../ui/textarea";
 import { Label } from "../../ui/label";
 import { useState } from "react";
-
-interface FamilyPetsData {
-  householdMembers: string;
-  childrenAges: string;
-  currentPets: string;
-  petHistory: string;
-  additionalInfo: string;
-}
+import { ApplicationData } from "@/interfaces/Pet";
 
 interface StepProps {
-  data: FamilyPetsData;
-  update: (field: keyof FamilyPetsData, value: string) => void;
+  data: ApplicationData;
+  update: (field: string, value: string) => void;
 }
 
 export function StepFamilyPets({ data, update }: StepProps) {

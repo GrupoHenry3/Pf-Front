@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import {
   Menu,
   Home,
-  
   Heart,
   MessageCircle,
   Settings,
@@ -15,9 +14,6 @@ import {
   Bell,
   HelpCircle,
   Building2,
-  Users,
-  BarChart3,
-  Calendar,
   Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -34,7 +30,6 @@ import {
 } from "@/components/ui/sheet";
 import { UserInterface } from "@/interfaces/User";
 import { useRouter } from "next/navigation";
-import { useUser } from "@/context/UserContext";
 
 export type ShelterCurrentView =
   | "shelter-dashboard"
@@ -53,17 +48,16 @@ export type ShelterCurrentView =
 
 interface ShelterSidebarProps {
   user: UserInterface | null;
-  embedded?: boolean; // Para usar dentro de un contenedor
+  embedded?: boolean; 
 }
 
 export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  const { logout } = useUser();
 
   const handleLogout = async () => {
     try {
-      await logout();
+      // await logout();
       router.push("/auth");
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
@@ -88,9 +82,6 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
       { id: "manage-applications", label: "Solicitudes", icon: FileText, badge: 5 },
       { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 2 },
       { id: "donations", label: "Donaciones", icon: DollarSign, badge: null },
-      { id: "analytics", label: "Estadísticas", icon: BarChart3, badge: null },
-      { id: "volunteers", label: "Voluntarios", icon: Users, badge: null },
-      { id: "events", label: "Eventos", icon: Calendar, badge: null },
     ];
   };
 
@@ -130,18 +121,6 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
       case "messages":
         router.push("/dashboard/shelter/messages");
         break;
-      case "donations":
-        router.push("/dashboard/shelter/donations");
-        break;
-      case "analytics":
-        router.push("/dashboard/shelter/analytics");
-        break;
-      case "volunteers":
-        router.push("/dashboard/shelter/volunteers");
-        break;
-      case "events":
-        router.push("/dashboard/shelter/events");
-        break;
       case "profile":
         router.push("/dashboard/shelter/profile");
         break;
@@ -177,13 +156,13 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
                 {user.shelter?.name || "Refugio"}
               </p>
               <div className="flex items-center mt-1">
-                <Shield className="w-3 h-3 text-green-500 mr-1" />
-                <span className="text-xs text-green-600 font-medium">Refugio Verificado</span>
+                {user.shelter?.isVerified === true ? ( <Shield className="w-3 h-3 text-green-500 mr-1" /> ) : ( <Shield className="w-3 h-3 text-red-500 mr-1" /> )}
+                {user.shelter?.isVerified === true ? (<span className="text-xs text-green-600 font-medium">Refugio Verificado</span>) : (<span className="text-xs text-red-600 font-medium">Refugio No Verificado</span>)}
               </div>
             </div>
           </div>
         </div>
-      )}<div className="flex-1 overflow-y-auto">
+      )}<div className="flex-1 overflow-y-auto overflow-x-hidden">
         <nav className="p-4 space-y-2">
           {navigationItems.map((item) => (
             <Button
@@ -222,7 +201,7 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
       </div><div className="p-4 border-t border-gray-200">
         <Button
           variant="ghost"
-          className="w-full justify-start text-red-600 hover:bg-red-50"
+          className="w-full justify-start text-red-600 hover:bg-red-90"
           onClick={handleLogout}
         >
           <LogOut className="w-4 h-4 mr-3" />

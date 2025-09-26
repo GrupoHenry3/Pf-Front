@@ -1,5 +1,4 @@
-import axios from "axios";
-import { getApiUrl } from "@/config/environment";
+import { apiClient } from "../apiClient";
 
 export interface GetUsersFilters {
   active?: boolean;
@@ -42,8 +41,6 @@ export interface UpdateUserDTO {
   isActive?: boolean;
 }
 
-const BASE_URL = getApiUrl();
-
 export const usersService = {
   list: async (filters: GetUsersFilters = {}): Promise<UserSummary[]> => {
     const params = new URLSearchParams();
@@ -52,41 +49,29 @@ export const usersService = {
     if (filters.type) params.set("type", filters.type);
     if (filters.search) params.set("search", filters.search);
 
-    const url = `${BASE_URL}/users${params.toString() ? `?${params.toString()}` : ""}`;
-    const response = await axios.get<UserSummary[]>(url, {
-      withCredentials: true,
-    });
+    const url = `/users${params.toString() ? `?${params.toString()}` : ""}`;
+    const response = await apiClient.get<UserSummary[]>(url);
     return response.data;
   },
 
-
   getCurrentUser: async () => {
-    const response = await axios.get(`${BASE_URL}/users/me`, {
-      withCredentials: true,
-    });
+    const response = await apiClient.get(`/users/me`);
     console.log(response.data);
     return response.data;
   },
 
   update: async (data: UpdateUserDTO): Promise<UserSummary> => {
-    const response = await axios.patch(`${BASE_URL}/users`, data, {
-      withCredentials: true,
-      headers: { "Content-Type": "application/json" },
-    });
+    const response = await apiClient.patch(`/users`, data);
     return response.data;
   },
 
   remove: async (): Promise<{ id: string; isActive: boolean; createdAt: string; updatedAt: string }> => {
-    const response = await axios.delete(`${BASE_URL}/users`, {
-      withCredentials: true,
-    });
+    const response = await apiClient.delete(`/users`);
     return response.data;
   },
 
   updateStatus: async (id: string): Promise<UserSummary> => {
-    const response = await axios.patch(`${BASE_URL}/users/${id}/status`, {}, {
-      withCredentials: true,
-    });
+    const response = await apiClient.patch(`/users/${id}/status`);
     return response.data;
   },
 };

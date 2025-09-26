@@ -10,6 +10,9 @@ import { useUser } from '@/context/UserContext';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { useRouter } from 'next/navigation';
 import ProtectedRoute from '@/components/ProtectedRouter/ProtectedRoute';
+import { usePet } from '@/context/PetContext';
+import { Shelter } from '@/interfaces/Shelter';
+import { Pet } from '@/interfaces/Pet';
 
 interface AdopterDashboardProps {
   onViewCatalog: () => void;
@@ -18,13 +21,12 @@ interface AdopterDashboardProps {
 
 interface AdoptionApplication {
   id: string;
-  petName: string;
-  petImage: string;
-  shelterName: string;
   status: string;
   statusLabel: string;
   appliedDate: string;
   nextStep: string;
+  pet: Pet;
+  shelter: Shelter;
 }
 
 
@@ -38,6 +40,8 @@ function AdopterDashboard({ onViewCatalog, onViewMessages }: AdopterDashboardPro
     error, 
     clearError 
   } = useUser();
+
+  const { petsToAdopt } = usePet();
 
   const recommendations = [
     {
@@ -54,7 +58,7 @@ function AdopterDashboard({ onViewCatalog, onViewMessages }: AdopterDashboardPro
   const router = useRouter();
 
   const handleViewCatalog = () => {
-    router.push("/pet-catalog");
+    router.push("/dashboard/pet-catalog");
   }
   
 if (!isInitialized || isUserLoading || !isProfileLoaded) {
@@ -82,11 +86,7 @@ if(user && user.userType !== "User") {
   return (
     <ProtectedRoute allowedUserTypes={["User"]}>
     <div className="flex min-h-screen">
-      <div className="w-64 border-r bg-white shadow-sm">
-        <Sidebar 
-          user={user} 
-        />
-      </div><div className="flex-1 bg-gray-50">
+      <div className="flex-1 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">{error && (
             <ErrorAlert error={error} onClear={clearError} />
           )}
@@ -111,7 +111,7 @@ if(user && user.userType !== "User") {
                   </div>
                   <div>
                     <h3 className="text-lg text-gray-900 mb-1">Buscar Mascotas</h3>
-                    <p className="text-sm text-gray-500">1,247 disponibles</p>
+                    <p className="text-sm text-gray-500">{petsToAdopt.length} disponibles</p>
                   </div>
                 </div>
               </CardContent>
@@ -160,13 +160,13 @@ if(user && user.userType !== "User") {
                             className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg"
                           >
                             <ImageWithFallback
-                              src={app.petImage}
-                              alt={app.petName}
+                              src={app.pet.avatarURL}
+                              alt={app.pet.name}
                               className="w-16 h-16 rounded-lg object-cover"
                             />
                             <div className="flex-1">
                               <div className="flex items-center justify-between mb-2">
-                                <h4 className="text-lg text-gray-900">{app.petName}</h4>
+                                <h4 className="text-lg text-gray-900">{app.pet.name}</h4>
                                 <Badge
                                   variant={app.status === 'approved' ? 'default' : 'secondary'}
                                   className={
@@ -175,10 +175,10 @@ if(user && user.userType !== "User") {
                                       : 'bg-orange-100 text-orange-800'
                                   }
                                 >
-                                  {app.statusLabel}
+                                  {app.status}
                                 </Badge>
                               </div>
-                              <p className="text-sm text-gray-600 mb-1">{app.shelterName}</p>
+                              <p className="text-sm text-gray-600 mb-1">{app.shelter.name}</p>
                               <p className="text-sm text-gray-500">{app.nextStep}</p>
                             </div>
                           </div>

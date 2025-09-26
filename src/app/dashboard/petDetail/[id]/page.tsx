@@ -22,13 +22,13 @@ import { AvatarImage } from "@radix-ui/react-avatar";
 import { Separator } from "@/components/ui/separator";
 import { useUser } from "@/context/UserContext";
 import PATHROUTES from "@/components/utils/PathRoutes.util";
-import { PetWithRelations } from "@/interfaces/Pet";
 import { petsService } from "@/services/pets/petsService";
+import { Pet } from "@/interfaces/Pet";
 
  function PetDetail({params}: {params: Promise<{id: string}>}) {
 
   const [isFavorite, setIsFavorite] = useState(false);
-  const [pet, setPet] = useState<PetWithRelations | null>(null);
+  const [pet, setPet] = useState<Pet | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const {id} = React.use(params);
@@ -122,8 +122,6 @@ import { petsService } from "@/services/pets/petsService";
     );
   }
 
-
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8">
@@ -174,8 +172,8 @@ import { petsService } from "@/services/pets/petsService";
 
                   {/* Status Badge */}
                   <div className="absolute top-4 left-4">
-                    <Badge className={pet.isAdopted ? "bg-red-500 text-white" : "bg-green-500 text-white"}>
-                      {pet.isAdopted ? "Adoptado" : "Disponible para adopción"}
+                    <Badge className={pet.status === "adopted" ? "bg-red-500 text-white" : "bg-green-500 text-white"}>
+                      {pet.status === "adopted" ? "Adoptado" : "Disponible para adopción"}
                     </Badge>
                   </div>
                 </div>
@@ -214,7 +212,7 @@ import { petsService } from "@/services/pets/petsService";
                   <div className="flex items-center">
                     <Calendar className="w-4 h-4 mr-1" />
                     Disponible desde{" "}
-                    {new Date(pet.createdAt).toLocaleDateString()}
+                    {new Date(pet.dateAdded).toLocaleDateString()}
                   </div>
                 </div>
 
@@ -317,7 +315,7 @@ import { petsService } from "@/services/pets/petsService";
             {/* Adoption Action */}
             <Card className="border-0 shadow-md">
               <CardContent className="p-6">
-                {pet.isAdopted ? (
+                {pet.status === "adopted" ? (
                   <div className="text-center">
                     <p className="text-gray-600 mb-4">
                       {pet.name} ya ha sido adoptado

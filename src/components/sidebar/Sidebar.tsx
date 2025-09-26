@@ -107,43 +107,6 @@ export function Sidebar({
       { id: "shelter-mode", label: "Modo Refugio", icon: Building2, badge: null },
       { id: "profile", label: "Mi Perfil", icon: User, badge: null },
     ];
-
-    /*
-    switch (user.role) {
-      case "adopter":
-        return [
-          { id: "adopter-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Buscar Mascotas", icon: Search, badge: null },
-          { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 3 },
-          ...commonItems,
-          { id: "profile", label: "Mi Perfil", icon: User, badge: null },
-        ];
-
-      case "shelter":
-        return [
-          { id: "shelter-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Mis Mascotas", icon: Heart, badge: null },
-          { id: "add-pet", label: "Agregar Mascota", icon: Plus, badge: null },
-          { id: "manage-applications", label: "Solicitudes", icon: FileText, badge: 5 },
-          { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 2 },
-          { id: "donations", label: "Donaciones Recibidas", icon: DollarSign, badge: null },
-          { id: "profile", label: "Mi Perfil", icon: User, badge: null },
-        ];
-
-      case "admin":
-        return [
-          { id: "admin-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Mascotas", icon: Search, badge: null },
-          { id: "manage-applications", label: "Solicitudes", icon: FileText, badge: 12 },
-          { id: "donations", label: "Donaciones Sistema", icon: DollarSign, badge: null },
-          ...commonItems,
-          { id: "profile", label: "Mi Perfil", icon: User, badge: null },
-        ];
-
-      default:
-        return [];
-    }
-    */
   };
 
   const getSupportItems = () => [

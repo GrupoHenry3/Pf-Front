@@ -1,7 +1,9 @@
 import { Species } from "./Species";
 
 export interface Breed {
-  id: number;
+  id?: string;
   name: string;
-  species: Species;
+  description: string;
+  avatarURL: string;
+  speciesID: string;
 }   
