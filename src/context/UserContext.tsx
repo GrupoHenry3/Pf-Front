@@ -15,6 +15,7 @@ interface UserContextType {
     isInitialized: boolean;
     error: string | null;
     clearError: () => void;
+    totalUsers: UserInterface[];
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -25,10 +26,24 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [isUserLoading, setIsUserLoading] = useState(false);
     const [isInitialized, setIsInitialized] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [totalUsers, setTotalUsers] = useState<UserInterface[]>([]);
 
     const clearError = () => setError(null);
 
-   
+    const getTotalUsers = async () => {
+        const response = await usersService.list();
+        setTotalUsers(response);
+    }
+
+   useEffect(() => {
+    if (user && user.siteAdmin === true) {
+        try{
+            getTotalUsers();
+        } catch (error) {
+            console.error("Error al obtener el total de usuarios:", error);
+        }
+        }
+   }, [user]);
 
     const getProfile = async () => {
         try {
@@ -70,6 +85,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             isProfileLoaded, 
             isInitialized,
             error,
+            totalUsers,
             clearError
         }}>
             {children}

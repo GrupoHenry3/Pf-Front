@@ -10,6 +10,7 @@ interface ShelterContextType {
     shelters: Shelter[];
     createShelter: (shelter: Shelter) => void;
     setShelters: (shelters: Shelter[]) => void;
+    getShelters: () => Promise<void>;
 }
 
 const ShelterContext = createContext<ShelterContextType | undefined>(undefined);
@@ -19,15 +20,16 @@ export const ShelterProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const [shelters, setShelters] = useState<Shelter[]>([]);
     const { getProfile } = useUser();
 
-    useEffect(() => {
-        const getShelters = async ()=>{
-            try {
+    const getShelters = async () => {
+        try {
             const shelters = await sheltersService.findAll();
             setShelters(shelters);    
-            } catch (error) {
-               console.error("Error fetching shelters:", error);
-            }           
-        }
+        } catch (error) {
+            console.error("Error fetching shelters:", error);
+        }           
+    }
+
+    useEffect(() => {
         getShelters();
     }, []);
 
@@ -45,7 +47,7 @@ export const ShelterProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
 
     return(
-        <ShelterContext.Provider value={{ shelters, setShelters, createShelter }}>
+        <ShelterContext.Provider value={{ shelters, setShelters, createShelter, getShelters }}>
             {children}
         </ShelterContext.Provider>
     )

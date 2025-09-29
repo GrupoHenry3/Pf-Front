@@ -11,4 +11,7 @@ export interface Shelter {
   country: string;
   state: string;
   city: string;
+  isVerified?: boolean;
+  isActive?: boolean;
+  avatarURL?: string;
 }

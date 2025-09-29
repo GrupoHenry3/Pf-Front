@@ -33,6 +33,7 @@ import {  UserInterface } from "@/interfaces/User";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 import { ShelterSidebar } from "./ShelterSidebar";
+import { useAuth } from "@/context/AuthContext";
 
 export type CurrentView =
   | "catalog"
@@ -60,7 +61,7 @@ export function Sidebar({
 }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  const { logout } = useUser();
+  const { logout } = useAuth();
 
   useEffect(() => {
     const handleResize = () => {

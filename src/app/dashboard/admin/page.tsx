@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Edit, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 import {
   Alert,
   AlertDescription,
@@ -47,7 +47,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUser } from "@/context/UserContext";
 import { AdminSidebar } from "@/components/sidebar/AdminSidebar";
 import { useShelter } from "@/context/ShelterContext";
-import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
+import { usePet } from "@/context/PetContext";
+import { SheltersManagementView } from "@/components/admin/SheltersManagementView";
+import { UsersManagementView } from "@/components/admin/UsersManagementView";
+import { PetsManagementView } from "@/components/admin/PetsManagementView";
+import { DonationsView } from "@/components/admin/DonationsView";
+import { ApplicationsView } from "@/components/admin/ApplicationsView";
 
 export type AdminView = 
   | "dashboard" 
@@ -56,10 +61,7 @@ export type AdminView =
   | "users" 
   | "applications" 
   | "donations" 
-  | "analytics" 
-  | "reports" 
-  | "moderation" 
-  | "logs";
+
 
 export default function AdminDashboard() {
   const [selectedPeriod, setSelectedPeriod] = useState("30");
@@ -67,12 +69,12 @@ export default function AdminDashboard() {
 
   const {user, isInitialized, isUserLoading, isProfileLoaded} = useUser();
   const {shelters} = useShelter();
+  const {pets} = usePet();
 
   const stats = [
-    { title: "Adopciones", value: "256", change: "+12%" },
-    { title: "Usuarios activos", value: "1,245", change: "+8%" },
-    { title: "Mascotas disponibles", value: "78", change: "-5%" },
-    { title: "Donaciones", value: "$4,250", change: "+15%" },
+    { title: "Adopciones", value: pets.filter((pet) => pet.status === "adopted").length },
+    { title: "Mascotas disponibles", value: pets.filter((pet) => pet.status === "available").length },
+    { title: "Refugios", value: shelters.length },
   ];
 
 
@@ -107,11 +109,7 @@ export default function AdminDashboard() {
       pets: "Gestión de Mascotas",
       users: "Gestión de Usuarios",
       applications: "Solicitudes de Adopción",
-      donations: "Donaciones del Sistema",
-      analytics: "Analíticas",
-      reports: "Reportes",
-      moderation: "Moderación",
-      logs: "Logs del Sistema"
+      donations: "Donaciones del Sistema"
     };
     return titles[view];
   };
@@ -123,11 +121,7 @@ export default function AdminDashboard() {
       pets: "Gestiona todas las mascotas del sistema",
       users: "Administra usuarios, roles y permisos",
       applications: "Revisa y gestiona solicitudes de adopción",
-      donations: "Monitorea donaciones y transacciones",
-      analytics: "Estadísticas detalladas y métricas",
-      reports: "Genera reportes del sistema",
-      moderation: "Herramientas de moderación y control",
-      logs: "Registros y actividad del sistema"
+      donations: "Monitorea donaciones y transacciones"
     };
     return descriptions[view];
   };
@@ -151,7 +145,6 @@ export default function AdminDashboard() {
                   </CardHeader>
                   <CardContent>
                     <p className="text-2xl font-bold">{stat.value}</p>
-                    <p className="text-sm text-green-600">{stat.change}</p>
                   </CardContent>
                 </Card>
               ))}
@@ -256,101 +249,20 @@ export default function AdminDashboard() {
         );
 
       case "shelters":
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Lista de Refugios</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {shelters?.map((shelter) => (
-                    <div
-                    key={shelter.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                  >
-                    <div className="relative mb-3">
-                      <ImageWithFallback
-                        src={shelter.avatarURL || "/placeholder-pet.jpg"}
-                        alt={shelter.name}
-                        className="w-full h-40 rounded-lg object-cover"
-                      />
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        className="absolute top-2 right-2 p-2 bg-white/80 hover:bg-white"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="text-lg text-gray-900">{shelter.name}</h4>
-                    </div>
-                  </div>
-              ))}
-              </div>
-            </CardContent>
-          </Card>
-        );
+        return <SheltersManagementView />;
 
       case "pets":
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Lista de Mascotas</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Aquí se mostrará la lista de todas las mascotas del sistema.</p>
-              </CardContent>
-          </Card>
-        );
+        return <PetsManagementView />;
 
       case "users":
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Lista de Usuarios</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Aquí se mostrará la lista de todos los usuarios registrados.</p>
-            </CardContent>
-          </Card>
-        );
+        return <UsersManagementView />;
 
       case "applications":
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Solicitudes de Adopción</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Aquí se mostrarán todas las solicitudes de adopción pendientes.</p>
-            </CardContent>
-          </Card>
-        );
+        return <ApplicationsView />;
 
       case "donations":
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Donaciones del Sistema</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Aquí se mostrarán todas las donaciones realizadas.</p>
-            </CardContent>
-          </Card>
-        );
+        return <DonationsView />;
 
-      case "reports":
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Reportes del Sistema</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">Aquí se podrán generar y descargar reportes.</p>
-            </CardContent>
-          </Card>
-        );
 
       default:
         return <div>Vista no encontrada</div>;

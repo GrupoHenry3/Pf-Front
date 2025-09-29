@@ -14,7 +14,6 @@ import { Badge } from "@/components/ui/badge";
 import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
 import { PetFilters } from "@/components/ui/PetFilters";
 import { usePetFilters } from "@/hooks/usePetFilters";
-import { useRouter } from "next/navigation";
 import { Pet } from "@/interfaces/Pet";
 
 interface ShelterPetsProps {
@@ -28,14 +27,12 @@ interface ShelterPetsProps {
 
 export function ShelterPets({ 
   pets, 
-  isPetLoading, 
-  shelterId, 
+  isPetLoading,  
   showAddButton = true,
   onAddPet,
   onEditPet 
 }: ShelterPetsProps) {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
-  const router = useRouter();
 
   const {
     searchTerm,
@@ -52,7 +49,6 @@ export function ShelterPets({
     setSelectedStatus,
     selectedLocation,
     setSelectedLocation,
-    advancedFilters,
     setAdvancedFilters,
     filteredPets,
     hasActiveFilters,
@@ -108,9 +104,6 @@ export function ShelterPets({
     return "default";
   };
 
-  const handlePetDetail = (pet: Pet) => {
-    router.push(`/dashboard/petDetail/${pet.id}`);
-  };
 
   const handleEditPet = (pet: Pet, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -201,7 +194,7 @@ export function ShelterPets({
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPets.map((pet) => (
-            <Card key={pet.id} className="overflow-hidden hover:shadow-lg transition cursor-pointer" onClick={() => handlePetDetail(pet)}>
+            <Card key={pet.id} className="overflow-hidden hover:shadow-lg transition cursor-pointer">
               <div className="h-48 w-full overflow-hidden relative">
                 <ImageWithFallback
                   src={pet.avatarURL}

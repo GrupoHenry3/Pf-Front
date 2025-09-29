@@ -1,4 +1,3 @@
-import { Species } from "./Species";
 
 export interface Breed {
   id?: string;

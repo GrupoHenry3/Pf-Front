@@ -153,7 +153,7 @@ export default function AdoptionPageWrapper() {
       window.alert("✅ Solicitud de adopción enviada con éxito");
       router.push("/dashboard/user");
     } catch (error: unknown) {
-      console.error("Error al enviar solicitud:", error);
+      alert(error);
       const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || "Error al enviar la solicitud de adopción";
       setSubmitError(errorMessage);
     } finally {

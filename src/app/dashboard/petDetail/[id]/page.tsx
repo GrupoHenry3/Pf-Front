@@ -34,7 +34,6 @@ import { Pet } from "@/interfaces/Pet";
   const {id} = React.use(params);
   const {user} = useUser();
 
-  // Cargar datos de la mascota
   useEffect(() => {
     const loadPet = async () => {
       try {
@@ -132,7 +131,7 @@ import { Pet } from "@/interfaces/Pet";
             variant="ghost"
             className="text-gray-600 hover:text-gray-900 flex items-center"
           >
-            <Link href={PATHROUTES.CATALOG}>
+            <Link href={"/dashboard/pet-catalog"}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Volver al catálogo
             </Link>
