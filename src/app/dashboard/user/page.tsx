@@ -4,7 +4,6 @@ import { Heart, Search, MessageCircle, Calendar, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ImageWithFallback } from '@/components/utils/ImageWithFallback';
 import { Button } from '@/components/ui/button';
-import { Sidebar } from '@/components/sidebar/Sidebar';
 import { Badge } from '@/components/ui/badge';
 import { useUser } from '@/context/UserContext';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';

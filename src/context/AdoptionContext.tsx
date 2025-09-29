@@ -51,7 +51,6 @@ export const AdoptionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
  useEffect(() => {
   setUserAdoptions(user?.adoptions || []);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
  }, [user]);
 
   useEffect(() => {

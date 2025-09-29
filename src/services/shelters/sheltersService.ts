@@ -68,6 +68,13 @@ export const sheltersService = {
     return response.data;
   },
 
+  verifyShelter: async (id: string): Promise<{ message: string; shelter: Shelter }> => {
+    const response = await axios.patch(`${BASE_URL}/shelters/${id}/verify`, {}, {
+      withCredentials: true,
+    });
+    return response.data;
+  },
+
   delete: async (id: string): Promise<{ message: string; shelter: Shelter }> => {
     const response = await axios.delete(`${BASE_URL}/shelters/${id}`, {
       withCredentials: true,

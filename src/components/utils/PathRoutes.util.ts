@@ -3,8 +3,8 @@ const PATHROUTES = {
   LOGIN: "/login",
   DASHBOARD: "/dashboard",
   REGISTER: "/auth",
-  CATALOG: "/pet-catalog",
-  PET_DETAIL: "/petDetail",
-  ADOPTION: "/dashboard/adoption",
+  CATALOG: "dashboard/pet-catalog",
+  PET_DETAIL: "dashboard/petDetail",
+  ADOPTION: "/dashboard/adoption-form",
 };
 export default PATHROUTES;

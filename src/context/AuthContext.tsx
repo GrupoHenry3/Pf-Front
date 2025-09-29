@@ -1,7 +1,7 @@
 "use client"
 import { UserInterface } from "@/interfaces/User";
 import { authService } from "@/services/auth/authService";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
 
 
 interface AuthContextType {
@@ -22,9 +22,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
-    const [error, setError] = useState<string | null>(null);
-
-    const clearError = () => setError(null);
+    const clearError = () => {
+        // Función para limpiar errores si es necesario en el futuro
+    };
 
     const login = async (email: string, password: string) => {
         try {
@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } catch (error: unknown) {
             console.error("Error during login:", error);
             const errorMessage = (error as AxiosError)?.response?.data?.message || "Error al iniciar sesión";
-            setError(errorMessage);
+            alert(errorMessage);
             throw error;
         }
     }
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } catch (error: unknown) {
             console.error("Error during registration:", error);
             const errorMessage = (error as AxiosError)?.response?.data?.message || "Error al registrarse";
-            setError(errorMessage);
+            alert(errorMessage);
             throw error;
         }
     }
@@ -60,7 +60,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } catch (error: unknown) {
             console.error("Error during logout:", error);
             const errorMessage = (error as AxiosError)?.response?.data?.message || "Error al cerrar sesión";
-            setError(errorMessage);
+            alert(errorMessage);
+            throw error;
         }
     }
 

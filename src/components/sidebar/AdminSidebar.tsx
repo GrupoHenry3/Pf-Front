@@ -29,8 +29,8 @@ import {
 } from "@/components/ui/sheet";
 import { UserInterface } from "@/interfaces/User";
 import { useRouter } from "next/navigation";
-import { useUser } from "@/context/UserContext";
 import { AdminView } from "@/app/dashboard/admin/page";
+import { useAuth } from "@/context/AuthContext";
 
 export type AdminCurrentView =
   | "admin-dashboard"
@@ -56,7 +56,7 @@ interface AdminSidebarProps {
 export function AdminSidebar({ user, embedded = false, onViewChange }: AdminSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  const { logout } = useUser();
+  const { logout } = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -85,7 +85,6 @@ export function AdminSidebar({ user, embedded = false, onViewChange }: AdminSide
       { id: "all-users", label: "Usuarios", icon: Users, badge: null },
       { id: "applications", label: "Solicitudes", icon: FileText, badge: 12 },
       { id: "donations", label: "Donaciones", icon: DollarSign, badge: null },
-
     ];
   };
 
