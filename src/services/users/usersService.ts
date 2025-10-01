@@ -23,7 +23,6 @@ export const usersService = {
 
   getCurrentUser: async () => {
     const response = await apiClient.get(`/users/me`);
-    console.log(response.data);
     return response.data;
   },
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useUser } from "@/context/UserContext";
 import ProtectedRoute from "@/components/ProtectedRouter/ProtectedRoute";
 import { useRouter } from "next/navigation";
@@ -21,15 +21,15 @@ import { Pet } from "@/interfaces/Pet";
 import Image from "next/image";
 
 interface EditPetPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function EditPetPage({ params }: EditPetPageProps) {
   const { user, isProfileLoaded, isUserLoading, isInitialized } = useUser();
   const router = useRouter();
-  const { id } = params;
+  const { id } = use(params);
   const { species, isSpeciesLoading, createSpecies } = useSpecies();
   const { breeds, isBreedsLoading, createBreed } = useBreeds();
 

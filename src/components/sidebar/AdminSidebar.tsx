@@ -31,6 +31,7 @@ import { UserInterface } from "@/interfaces/User";
 import { useRouter } from "next/navigation";
 import { AdminView } from "@/app/dashboard/admin/page";
 import { useAuth } from "@/context/AuthContext";
+import { useAdoption } from "@/context/AdoptionContext";
 
 export type AdminCurrentView =
   | "admin-dashboard"
@@ -57,7 +58,8 @@ export function AdminSidebar({ user, embedded = false, onViewChange }: AdminSide
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const { logout } = useAuth();
-
+  const { allAdoptions } = useAdoption();
+  
   const handleLogout = async () => {
     try {
       await logout();
@@ -83,7 +85,7 @@ export function AdminSidebar({ user, embedded = false, onViewChange }: AdminSide
       { id: "all-shelters", label: "Refugios", icon: Building2, badge: null },
       { id: "all-pets", label: "Mascotas", icon: Heart, badge: null },
       { id: "all-users", label: "Usuarios", icon: Users, badge: null },
-      { id: "applications", label: "Solicitudes", icon: FileText, badge: 12 },
+      { id: "applications", label: "Solicitudes", icon: FileText, badge: null },
       { id: "donations", label: "Donaciones", icon: DollarSign, badge: null },
     ];
   };
@@ -137,40 +139,19 @@ export function AdminSidebar({ user, embedded = false, onViewChange }: AdminSide
           router.push("/dashboard/admin");
           break;
         case "all-shelters":
-          router.push("/dashboard/admin/shelters");
+          router.push("/dashboard/admin/shelter");
           break;
         case "all-pets":
-          router.push("/dashboard/admin/pets");
+          router.push("/dashboard/admin/pet");
           break;
         case "all-users":
-          router.push("/dashboard/admin/users");
+          router.push("/dashboard/admin/user");
           break;
         case "applications":
-          router.push("/dashboard/admin/applications");
+          router.push("/dashboard/admin/adoptions");
           break;
         case "donations":
           router.push("/dashboard/admin/donations");
-          break;
-        case "analytics":
-          router.push("/dashboard/admin/analytics");
-          break;
-        case "reports":
-          router.push("/dashboard/admin/reports");
-          break;
-        case "moderation":
-          router.push("/dashboard/admin/moderation");
-          break;
-        case "system-logs":
-          router.push("/dashboard/admin/logs");
-          break;
-        case "help":
-          router.push("/dashboard/admin/help");
-          break;
-        case "notifications":
-          router.push("/dashboard/admin/notifications");
-          break;
-        case "settings":
-          router.push("/dashboard/admin/settings");
           break;
         default:
           break;
@@ -180,8 +161,8 @@ export function AdminSidebar({ user, embedded = false, onViewChange }: AdminSide
   };
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full bg-white border-r border-gray-200"><div className="p-6 border-b border-gray-200">
-        <div className="flex items-center space-x-3">
+    <div className="flex flex-col h-full bg-white border-r border-gray-200"><div className="p-6 border-b border-gray-200 ">
+        <div className="flex items-center space-x-3 ">
           <div className="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
             <Shield className="w-5 h-5 text-white" />
           </div>
@@ -191,7 +172,7 @@ export function AdminSidebar({ user, embedded = false, onViewChange }: AdminSide
           </div>
         </div>
       </div>{user && (
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-4 border-b border-gray-200 ">
           <div className="flex items-center space-x-3">
             <Avatar className="w-10 h-10">
               <AvatarImage src={user.avatarURL} alt={user.fullName} />
@@ -209,7 +190,7 @@ export function AdminSidebar({ user, embedded = false, onViewChange }: AdminSide
             </div>
           </div>
         </div>
-      )}<div className="flex-1 overflow-y-auto">
+      )}<div className="flex-1 overflow-y-auto overflow-x-hidden">
         <nav className="p-4 space-y-2">
           {navigationItems.map((item) => (
             <Button
@@ -291,7 +272,7 @@ export function AdminSidebar({ user, embedded = false, onViewChange }: AdminSide
           isOpen ? "translate-y-full" : "translate-y-0"
         }`}
       >
-        <nav className="flex items-center justify-around px-1 py-1 safe-area-pb">
+        <nav className="flex items-center justify-around px-1 py-1 safe-area-pb ">
           {quickAccessItems.map((item) => (
             <Button
               key={item.id}

@@ -9,18 +9,8 @@ import { Pet } from "@/interfaces/Pet";
 
 export default function ShelterPetsPage() {
   const { user, isProfileLoaded, isUserLoading, isInitialized } = useUser();
-  const { pets, isPetLoading } = usePet();
+  const { shelterPets, isPetLoading } = usePet();
   const router = useRouter();
-
-  // Filtrar mascotas del refugio actual
-  const shelterPets = pets.filter(pet => 
-    pet.shelter?.id === user?.shelter?.id
-  );
-
-  const handleAddPet = () => {
-    // Usar la ruta existente para agregar mascotas
-    router.push("/dashboard/addPet");
-  };
 
   const handleEditPet = (pet: Pet) => {
     router.push(`/dashboard/shelter/editPet/${pet.id}`);
@@ -52,13 +42,12 @@ export default function ShelterPetsPage() {
     <ProtectedRoute allowedUserTypes={["Shelter"]}>
       <div className="flex min-h-screen">
         <div className="flex-1 bg-gray-50">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+          <div className="mx-auto px-4 w-full py-8">
             <ShelterPets
               pets={shelterPets}
               isPetLoading={isPetLoading}
               shelterId={user.shelter.id}
               showAddButton={true}
-              onAddPet={handleAddPet}
               onEditPet={handleEditPet}
             />
           </div>

@@ -68,8 +68,8 @@ import { Pet } from "@/interfaces/Pet";
     }
   };
 
-  const getTypeLabel = (speciesName: string) => {
-    switch (speciesName.toLowerCase()) {
+  const getTypeLabel = (speciesName: string | undefined) => {
+    switch (speciesName?.toLowerCase()) {
       case "dog":
       case "perro":
         return "Perro";
@@ -82,7 +82,7 @@ import { Pet } from "@/interfaces/Pet";
   };
 
   const getGenderLabel = (gender: string) => {
-    switch (gender.toLowerCase()) {
+    switch (gender?.toLowerCase()) {
       case "male":
         return "Macho";
       case "female":
@@ -164,7 +164,7 @@ import { Pet } from "@/interfaces/Pet";
               <CardContent className="p-0">
                 <div className="relative">
                   <ImageWithFallback
-                    src={pet.breed.avatarURL || "/placeholder-pet.jpg"}
+                    src={pet.avatarURL}
                     alt={pet.name}
                     className="w-full h-96 object-cover rounded-t-lg"
                   />
@@ -198,23 +198,11 @@ import { Pet } from "@/interfaces/Pet";
                     </div>
                   </div>
                   <Badge variant="outline" className="text-sm">
-                    {getTypeLabel(pet.species.name)}
+                    {getTypeLabel(pet.species?.name)}
                   </Badge>
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center space-x-4 text-gray-600 mb-6">
-                  <div className="flex items-center">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    {pet.shelter.city}, {pet.shelter.state}
-                  </div>
-                  <div className="flex items-center">
-                    <Calendar className="w-4 h-4 mr-1" />
-                    Disponible desde{" "}
-                    {new Date(pet.dateAdded).toLocaleDateString()}
-                  </div>
-                </div>
-
                 <div className="mb-6">
                   <h3 className="text-lg text-gray-900 mb-3">
                       Sobre {pet.name}
@@ -224,7 +212,6 @@ import { Pet } from "@/interfaces/Pet";
                   </p>
                 </div>
 
-                {/* Characteristics */}
                 <div>
                   <h3 className="text-lg text-gray-900 mb-4">
                     Características
@@ -240,7 +227,7 @@ import { Pet } from "@/interfaces/Pet";
                     </div>
                     <div className="flex items-center space-x-2">
                       <span className="text-gray-600">Especie:</span>
-                      <span className="text-gray-900">{getTypeLabel(pet.species.name)}</span>
+                      <span className="text-gray-900">{getTypeLabel(pet.species?.name)}</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <span className="text-gray-600">Raza:</span>
@@ -252,9 +239,8 @@ import { Pet } from "@/interfaces/Pet";
             </Card>
           </div>
 
-          {/* Sidebar */}
+  
           <div className="space-y-6">
-            {/* Shelter Info */}
             <Card className="border-0 shadow-md">
               <CardHeader>
                 <CardTitle className="text-lg">Refugio</CardTitle>
@@ -273,34 +259,6 @@ import { Pet } from "@/interfaces/Pet";
                   </div>
                 </div>
 
-                <div className="space-y-2 mb-4">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full justify-start"
-                    
-                  >
-                    <MessageCircle className="w-4 h-4 mr-2" />
-                    Enviar mensaje
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full justify-start"
-                  >
-                    <Phone className="w-4 h-4 mr-2" />
-                    Llamar
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="w-full justify-start"
-                  >
-                    <Mail className="w-4 h-4 mr-2" />
-                    Email
-                  </Button>
-                </div>
-
                 <Separator className="my-4" />
 
                 <div className="text-sm text-gray-600">
@@ -310,8 +268,6 @@ import { Pet } from "@/interfaces/Pet";
                 </div>
               </CardContent>
             </Card>
-
-            {/* Adoption Action */}
             <Card className="border-0 shadow-md">
               <CardContent className="p-6">
                 {pet.status === "adopted" ? (
@@ -337,9 +293,6 @@ import { Pet } from "@/interfaces/Pet";
                         ¡Quiero adoptar a {pet.name}!
                       </Link>
                     </Button>
-                    <Button variant="outline" className="w-full">
-                      Programar visita
-                    </Button>
                   </div>
                 ) : (
                   <div className="text-center">
@@ -359,21 +312,15 @@ import { Pet } from "@/interfaces/Pet";
                 )}
               </CardContent>
             </Card>
-
-            {/* Quick Info */}
             <Card className="border-0 shadow-md">
               <CardHeader>
-                <CardTitle className="text-lg">Información Rápida</CardTitle>
+                <CardTitle className="text-lg">Características</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">ID:</span>
-                  <span className="text-gray-900">#{pet.id}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Tipo:</span>
+                  <span className="text-gray-600">Especie:</span>
                   <span className="text-gray-900">
-                    {getTypeLabel(pet.species.name)}
+                    {getTypeLabel(pet.species?.name)}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -399,23 +346,6 @@ import { Pet } from "@/interfaces/Pet";
               </CardContent>
             </Card>
 
-            {/* Emergency Contact */}
-            <Card className="border-0 shadow-md bg-orange-50">
-              <CardContent className="p-4">
-                <h4 className="text-orange-800 mb-2">🚨 ¿Emergencia?</h4>
-                <p className="text-sm text-orange-700 mb-3">
-                  Si has encontrado a {pet.name} perdido, contacta
-                  inmediatamente
-                </p>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="border-orange-300 text-orange-700 hover:bg-orange-100"
-                >
-                  Reportar hallazgo
-                </Button>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>

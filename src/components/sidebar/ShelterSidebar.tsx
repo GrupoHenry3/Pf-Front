@@ -30,6 +30,8 @@ import {
 } from "@/components/ui/sheet";
 import { UserInterface } from "@/interfaces/User";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 
 export type ShelterCurrentView =
   | "shelter-dashboard"
@@ -54,10 +56,11 @@ interface ShelterSidebarProps {
 export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const { logout } = useAuth();
 
   const handleLogout = async () => {
     try {
-      // await logout();
+      await logout();
       router.push("/auth");
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
@@ -79,29 +82,21 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
       { id: "shelter-dashboard", label: "Dashboard", icon: Home, badge: null },
       { id: "my-pets", label: "Mis Mascotas", icon: Heart, badge: null },
       { id: "add-pet", label: "Agregar Mascota", icon: Plus, badge: null },
-      { id: "manage-applications", label: "Solicitudes", icon: FileText, badge: 5 },
-      { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 2 },
+      { id: "manage-applications", label: "Solicitudes", icon: FileText, badge: null },
       { id: "donations", label: "Donaciones", icon: DollarSign, badge: null },
     ];
   };
-
-  const getSupportItems = () => [
-    { id: "help", label: "Ayuda", icon: HelpCircle },
-    { id: "notifications", label: "Notificaciones", icon: Bell },
-    { id: "settings", label: "Configuración", icon: Settings },
-  ];
 
   const getQuickAccessItems = () => {
     return [
       { id: "shelter-dashboard", label: "Dashboard", icon: Home, badge: null },
       { id: "my-pets", label: "Mascotas", icon: Heart, badge: null },
       { id: "add-pet", label: "Agregar", icon: Plus, badge: null },
-      { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 2 },
+      { id: "messages", label: "Mensajes", icon: MessageCircle, badge: null },
     ];
   };
 
   const navigationItems = getNavigationItems();
-  const supportItems = getSupportItems();
   const quickAccessItems = getQuickAccessItems();
 
   const handleNavigation = (itemId: string) => {
@@ -117,9 +112,6 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
         break;
       case "manage-applications":
         router.push("/dashboard/shelter/applications");
-        break;
-      case "messages":
-        router.push("/dashboard/shelter/messages");
         break;
       case "profile":
         router.push("/dashboard/shelter/profile");
@@ -145,10 +137,9 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <Avatar className="w-10 h-10">
-              <AvatarImage src={user.avatarURL} alt={user.fullName} />
-              <AvatarFallback className="bg-green-500 text-white">
-                {user.fullName?.slice(0, 2).toUpperCase()}
-              </AvatarFallback>
+              <div className="w-10 h-10">
+              <Image src={user.avatarURL || '/default-avatar.png'} alt={user.fullName || 'Default Avatar'} width={40} height={40} />
+              </div>
             </Avatar>
             <div className="flex-1 min-w-0">
               <p className="text-sm text-gray-900 truncate">{user.fullName}</p>
@@ -168,7 +159,7 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
             <Button
               key={item.id}
               variant="ghost"
-              className="w-full justify-start text-gray-700 hover:bg-gray-100"
+              className="w-full justify-start text-gray-700 hover:bg-gray-100 hover:text-black-500"
               onClick={() => handleNavigation(item.id)}
             >
               <item.icon className="w-4 h-4 mr-3" />
@@ -181,27 +172,10 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
             </Button>
           ))}
         </nav>
-
-        <Separator className="mx-4" /><nav className="p-4 space-y-2">
-          <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">
-            Soporte
-          </p>
-          {supportItems.map((item) => (
-            <Button
-              key={item.id}
-              variant="ghost"
-              className="w-full justify-start text-gray-700 hover:bg-gray-100"
-              onClick={() => setIsOpen(false)}
-            >
-              <item.icon className="w-4 h-4 mr-3" />
-              {item.label}
-            </Button>
-          ))}
-        </nav>
       </div><div className="p-4 border-t border-gray-200">
         <Button
           variant="ghost"
-          className="w-full justify-start text-red-600 hover:bg-red-90"
+          className="w-full justify-start text-red-600 hover:bg-red-90 hover:text-black-500"
           onClick={handleLogout}
         >
           <LogOut className="w-4 h-4 mr-3" />

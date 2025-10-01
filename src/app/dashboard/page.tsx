@@ -14,7 +14,8 @@ export default function DashboardRedirectPage() {
             router.replace(`/dashboard/admin`);
         }
         else{
-            router.replace(`/dashboard/${user.userType.toLowerCase()}`);
+            const redirectPath = user.userType === 'Shelter' ? '/dashboard/shelter' : '/dashboard/user';
+            router.replace(redirectPath);
         }
       
     }

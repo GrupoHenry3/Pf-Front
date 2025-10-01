@@ -10,6 +10,7 @@ interface UserContextType {
     user: UserInterface | null;
     setUser: (user: UserInterface | null) => void;
     getProfile: () => Promise<void>;
+    updateProfile: (userData: Partial<UserInterface>) => Promise<UserInterface>;
     isProfileLoaded: boolean;
     isUserLoading: boolean;
     isInitialized: boolean;
@@ -51,12 +52,29 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             clearError();
             console.log("Fetching user profile...");
             const response = await usersService.getCurrentUser();
+            console.log(response);
             setUser(response);
             setIsProfileLoaded(true);
         } catch (error: unknown) {
             console.error("Error fetching profile:", error);
             setUser(null);
             setIsProfileLoaded(true);
+        } finally {
+            setIsUserLoading(false);
+        }
+    }
+
+    const updateProfile = async (userData: Partial<UserInterface>): Promise<UserInterface> => {
+        try {
+            setIsUserLoading(true);
+            clearError();
+            console.log("Updating user profile...");
+            const updatedUser = await usersService.update(userData as UserInterface);
+            setUser(updatedUser);
+            return updatedUser;
+        } catch (error: unknown) {
+            console.error("Error updating profile:", error);
+            throw error;
         } finally {
             setIsUserLoading(false);
         }
@@ -80,7 +98,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         <UserContext.Provider value={{ 
             user, 
             setUser,  
-            getProfile, 
+            getProfile,
+            updateProfile,
             isUserLoading, 
             isProfileLoaded, 
             isInitialized,

@@ -118,8 +118,8 @@ export function SheltersManagementView() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2 text-4xl">
+            <Shield className="h-10 w-10" />
             Gestión de Refugios
           </CardTitle>
         </CardHeader>

@@ -33,7 +33,7 @@ import { Pet } from "@/interfaces/Pet";
 
 export function PetsManagementView() {
   const router = useRouter();
-  const { petsToAdopt } = usePet();
+  const { allPets } = usePet();
   const [isLoading] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState<{
     isOpen: boolean;
@@ -65,7 +65,7 @@ export function PetsManagementView() {
     filteredPets,
     hasActiveFilters,
     resetFilters,
-  } = useAdminPetFilters({ pets: petsToAdopt });
+  } = useAdminPetFilters({ pets: allPets });
 
   const handleViewDetails = (petId: string) => {
     router.push(`/dashboard/admin/pet/${petId}`);
@@ -126,8 +126,8 @@ export function PetsManagementView() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Heart className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2 text-4xl">
+            <Heart  className="h-10 w-10" />
             Gestión de Mascotas
           </CardTitle>
         </CardHeader>
@@ -188,7 +188,7 @@ export function PetsManagementView() {
                     </TableCell>
                     <TableCell>
                       <div>
-                        <div className="font-medium">{pet.age} años</div>
+                        <div className="font-medium">{pet.age?.toString()} años</div>
                         <div className="text-sm text-gray-500">{getSizeLabel(pet.size)}</div>
                       </div>
                     </TableCell>

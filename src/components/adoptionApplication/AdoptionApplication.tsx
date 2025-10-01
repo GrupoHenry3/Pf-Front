@@ -16,7 +16,7 @@ import Image from "next/image";
 import { useUser } from "@/context/UserContext";
 import { petsService } from "@/services/pets/petsService";
 import { useAdoption } from "@/context/AdoptionContext";
-import { AdoptionDTO } from "@/services/adoptions/adoptionsService";
+import { AdoptionDTO, adoptionsService } from "@/services/adoptions/adoptionsService";
 import { Pet } from "@/interfaces/Pet";
 import Link from "next/link";
 import PATHROUTES from "../utils/PathRoutes.util";
@@ -25,7 +25,6 @@ export default function AdoptionPageWrapper() {
   const params = useParams();
   const petId = params?.id;
   const { user } = useUser();
-  const { createAdoption } = useAdoption();
   const router = useRouter();
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -149,7 +148,7 @@ export default function AdoptionPageWrapper() {
         petID: fetchedPet.id,
       };
       console.log(adoptionData);
-      await createAdoption(adoptionData);
+      await adoptionsService.create(adoptionData);
       window.alert("✅ Solicitud de adopción enviada con éxito");
       router.push("/dashboard/user");
     } catch (error: unknown) {

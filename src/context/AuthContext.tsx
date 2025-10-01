@@ -22,14 +22,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
-    const clearError = () => {
-        // Función para limpiar errores si es necesario en el futuro
-    };
-
     const login = async (email: string, password: string) => {
         try {
             console.log("Attempting login...");
-            clearError();
+          
             const loginResponse = await authService.login({ email, password });
             console.log("Login response:", loginResponse);
             console.log("Getting profile after login...");
@@ -43,7 +39,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const register = async (fullName: string, email: string, password: string, confirmedPassword: string): Promise<UserInterface> => {
         try {
-            clearError();
             const newUser = await authService.register({ fullName, email, password, confirmedPassword });
             return newUser;
         } catch (error: unknown) {
@@ -55,7 +50,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
     const logout = async () => {
         try {
-            clearError();
             await authService.logout();
         } catch (error: unknown) {
             console.error("Error during logout:", error);

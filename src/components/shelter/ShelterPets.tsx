@@ -15,13 +15,13 @@ import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
 import { PetFilters } from "@/components/ui/PetFilters";
 import { usePetFilters } from "@/hooks/usePetFilters";
 import { Pet } from "@/interfaces/Pet";
+import { useRouter } from "next/navigation";
 
 interface ShelterPetsProps {
   pets: Pet[];
   isPetLoading: boolean;
   shelterId?: string;
   showAddButton?: boolean;
-  onAddPet?: () => void;
   onEditPet?: (pet: Pet) => void;
 }
 
@@ -29,7 +29,6 @@ export function ShelterPets({
   pets, 
   isPetLoading,  
   showAddButton = true,
-  onAddPet,
   onEditPet 
 }: ShelterPetsProps) {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
@@ -54,6 +53,8 @@ export function ShelterPets({
     hasActiveFilters,
     resetFilters,
   } = usePetFilters({ pets });
+
+  const router = useRouter();
 
   const toggleFavorite = (petId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -133,7 +134,7 @@ export function ShelterPets({
           </p>
         </div>
         {showAddButton && (
-          <Button onClick={onAddPet} className="flex items-center gap-2">
+          <Button onClick={() => router.push("/dashboard/add-pet")} className="flex items-center gap-2">
             <Plus className="w-4 h-4" />
             Agregar Mascota
           </Button>
@@ -185,7 +186,7 @@ export function ShelterPets({
             }
           </p>
           {!hasActiveFilters && showAddButton && (
-            <Button onClick={onAddPet} className="flex items-center gap-2">
+            <Button onClick={() => router.push("/dashboard/add-pet")} className="flex items-center gap-2">
               <Plus className="w-4 h-4" />
               Agregar Primera Mascota
             </Button>

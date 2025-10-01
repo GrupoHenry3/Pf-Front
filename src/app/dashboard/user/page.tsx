@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, Search, MessageCircle, Calendar, Star } from 'lucide-react';
+import { Heart, Search, MessageCircle, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ImageWithFallback } from '@/components/utils/ImageWithFallback';
 import { Button } from '@/components/ui/button';
@@ -42,16 +42,6 @@ function AdopterDashboard({ onViewCatalog, onViewMessages }: AdopterDashboardPro
 
   const { petsToAdopt } = usePet();
 
-  const recommendations = [
-    {
-      id: "1",
-      name: "Buddy",
-      image: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=300&h=300&fit=crop",
-      breed: "Labrador",
-      match: 95,
-      reason: "Buddy es un perro muy activo y juguetón, perfecto para una familia con niños.",
-    },
-  ];
 
 
   const router = useRouter();
@@ -79,11 +69,7 @@ if (!isInitialized || isUserLoading || !isProfileLoaded) {
 if (isInitialized && isProfileLoaded && !user) {
   return null;
 }
-if(user && user.userType !== "User") {
-  return null;
-}
   return (
-    <ProtectedRoute allowedUserTypes={["User"]}>
     <div className="flex min-h-screen">
       <div className="flex-1 bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">{error && (
@@ -101,7 +87,8 @@ if(user && user.userType !== "User") {
                 Conectado como: {user!.email}
               </p>
             )}
-          </div><div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <Card className="cursor-pointer hover:shadow-lg transition-shadow border-0 shadow-md">
               <CardContent className="p-6" onClick={handleViewCatalog}>
                 <div className="flex items-center space-x-4">
@@ -191,7 +178,7 @@ if(user && user.userType !== "User") {
                           Cuando apliques para adoptar una mascota, aparecerán aquí
                         </p>
                         <Button
-                          onClick={onViewCatalog}
+                          onClick={() => router.push('/dashboard/pet-catalog')}
                           className="bg-green-500 hover:bg-green-600"
                         >
                           Explorar Mascotas
@@ -211,47 +198,7 @@ if(user && user.userType !== "User") {
               </Card>
             </div>
             <div className="space-y-6">
-              <Card className="border-0 shadow-md">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Star className="w-5 h-5 text-orange-500" />
-                    <span>Recomendado para ti</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {recommendations.map((pet) => (
-                      <div
-                        key={pet.id}
-                        className="border border-gray-200 rounded-lg p-3 hover:shadow-md transition-shadow cursor-pointer"
-                      >
-                        <div className="flex items-center space-x-3 mb-3">
-                          <ImageWithFallback
-                            src={pet.image}
-                            alt={pet.name}
-                            className="w-12 h-12 rounded-lg object-cover"
-                          />
-                          <div className="flex-1">
-                            <h5 className="text-gray-900">{pet.name}</h5>
-                            <p className="text-sm text-gray-600">{pet.breed}</p>
-                          </div>
-                          <Badge className="bg-green-100 text-green-800">
-                            {pet.match}% match
-                          </Badge>
-                        </div>
-                        <p className="text-xs text-gray-500">{pet.reason}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <Button
-                    variant="outline"
-                    className="w-full mt-4"
-                    onClick={onViewCatalog}
-                  >
-                    Ver más recomendaciones
-                  </Button>
-                </CardContent>
-              </Card><Card className="border-0 shadow-md bg-gradient-to-br from-green-50 to-green-100">
+              <Card className="border-0 shadow-md bg-gradient-to-br from-green-50 to-green-100">
                 <CardHeader>
                   <CardTitle className="text-green-800">💡 Consejo del día</CardTitle>
                 </CardHeader>
@@ -275,7 +222,6 @@ if(user && user.userType !== "User") {
         </div>
       </div>
     </div>
-  </ProtectedRoute>
   );
 }
 
