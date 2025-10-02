@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useUser } from "@/context/UserContext";
-import { usersService } from "@/services/users/usersService";
 import { uploadToCloudinary } from "@/components/utils/uploadToCloudinary";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

@@ -4,14 +4,13 @@ import { AdminSidebar } from "@/components/sidebar/AdminSidebar";
 import { ShelterSidebar } from "@/components/sidebar/ShelterSidebar";
 import { Sidebar } from "@/components/sidebar/Sidebar";
 import { useUser } from "@/context/UserContext";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const { user, isInitialized, isUserLoading } = useUser();
   const router = useRouter();
-  const pathname = usePathname();
 
   useEffect(() => {
     if (isInitialized && !isUserLoading && !user) {

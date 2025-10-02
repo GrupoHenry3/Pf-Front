@@ -2,7 +2,7 @@ import ProtectedRoute from "@/components/ProtectedRouter/ProtectedRoute";
 
 function shelterLayout( { children }: { children: React.ReactNode }) {
     return(
-        <ProtectedRoute allowedUserTypes={["Shelter"]}>
+        <ProtectedRoute>
             {children}
         </ProtectedRoute>   
     )

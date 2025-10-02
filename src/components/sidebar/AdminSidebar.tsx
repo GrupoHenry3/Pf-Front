@@ -9,16 +9,12 @@ import {
   Users,
   FileText,
   DollarSign,
-  Settings,
   LogOut,
-  Bell,
-  HelpCircle,
   Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetContent,
@@ -31,7 +27,6 @@ import { UserInterface } from "@/interfaces/User";
 import { useRouter } from "next/navigation";
 import { AdminView } from "@/app/dashboard/admin/page";
 import { useAuth } from "@/context/AuthContext";
-import { useAdoption } from "@/context/AdoptionContext";
 
 export type AdminCurrentView =
   | "admin-dashboard"

@@ -1,6 +1,6 @@
 "use client";
 
-import { Heart, Search, MessageCircle, Calendar } from 'lucide-react';
+import { Heart, Search, Calendar } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ImageWithFallback } from '@/components/utils/ImageWithFallback';
 import { Button } from '@/components/ui/button';
@@ -8,15 +8,11 @@ import { Badge } from '@/components/ui/badge';
 import { useUser } from '@/context/UserContext';
 import { ErrorAlert } from '@/components/ui/ErrorAlert';
 import { useRouter } from 'next/navigation';
-import ProtectedRoute from '@/components/ProtectedRouter/ProtectedRoute';
 import { usePet } from '@/context/PetContext';
 import { Shelter } from '@/interfaces/Shelter';
 import { Pet } from '@/interfaces/Pet';
 
-interface AdopterDashboardProps {
-  onViewCatalog: () => void;
-  onViewMessages: () => void;
-}
+
 
 interface AdoptionApplication {
   id: string;
@@ -29,7 +25,7 @@ interface AdoptionApplication {
 }
 
 
-function AdopterDashboard({ onViewCatalog, onViewMessages }: AdopterDashboardProps) {
+function AdopterDashboard() {
 
   const { 
     user, 

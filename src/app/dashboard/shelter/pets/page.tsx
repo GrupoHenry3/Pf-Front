@@ -39,7 +39,7 @@ export default function ShelterPetsPage() {
   }
 
   return (
-    <ProtectedRoute allowedUserTypes={["Shelter"]}>
+    <ProtectedRoute>
       <div className="flex min-h-screen">
         <div className="flex-1 bg-gray-50">
           <div className="mx-auto px-4 w-full py-8">

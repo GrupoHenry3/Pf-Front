@@ -4,7 +4,7 @@ import { useState, useEffect, use } from "react";
 import { useUser } from "@/context/UserContext";
 import ProtectedRoute from "@/components/ProtectedRouter/ProtectedRoute";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Upload, X, Plus, MapPin, Heart } from "lucide-react";
+import { ArrowLeft, Upload, X, Plus, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -59,7 +59,6 @@ export default function EditPetPage({ params }: EditPetPageProps) {
     vaccinated: false,
     neutered: false,
     trained: false,
-    location: "",
   });
 
   // Cargar datos de la mascota
@@ -82,7 +81,6 @@ export default function EditPetPage({ params }: EditPetPageProps) {
           vaccinated: petData.vaccinated || false,
           neutered: petData.neutered || false,
           trained: petData.trained || false,
-          location: petData.location || "",
         });
 
         // Establecer especie y raza seleccionadas
@@ -177,7 +175,7 @@ export default function EditPetPage({ params }: EditPetPageProps) {
       const breedData = {
         name: newBreedName.trim(),
         description: newBreedDescription.trim(),
-        speciesID: selectedSpeciesId,
+        species: { id: selectedSpeciesId },
         avatarURL: newBreedAvatarURL.trim(),
       };
       const newBreed = await createBreed(breedData);
@@ -282,7 +280,6 @@ export default function EditPetPage({ params }: EditPetPageProps) {
         photos: formData.photos,
         vaccinated: formData.vaccinated,
         trained: formData.trained,
-        location: formData.location,
       };
 
       console.log("PetData a actualizar:", petData);
@@ -315,8 +312,6 @@ export default function EditPetPage({ params }: EditPetPageProps) {
         return formData.size && formData.gender && (formData.description?.length || 0) >= 50;
       case 3:
         return (formData.photos && formData.photos.length > 0);
-      case 4:
-        return formData.location;
       default:
         return false;
     }
@@ -404,7 +399,7 @@ export default function EditPetPage({ params }: EditPetPageProps) {
                     className="grid grid-cols-2 gap-3 mt-2"
                   >
                     {breeds
-                      .filter(breed => breed.id && breed.speciesID === selectedSpeciesId)
+                      .filter(breed => breed.id && breed.species.id === selectedSpeciesId)
                       .map((breed) => (
                         <div key={breed.id} className="flex items-center space-x-2 border border-gray-200 rounded-lg p-3 hover:border-green-500 transition-colors">
                           <RadioGroupItem value={breed.id!} id={`breed-${breed.id}`} />
@@ -694,22 +689,7 @@ export default function EditPetPage({ params }: EditPetPageProps) {
             </div>
 
             <div className="space-y-4">
-              <div>
-                <Label htmlFor="location">Ubicación *</Label>
-                <div className="relative mt-2">
-                  <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                  <Input
-                    id="location"
-                    placeholder="Ciudad, País"
-                    value={formData.location}
-                    onChange={(e) => handleInputChange('location', e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-
-              {/* Summary Card */}
-              <Card className="border-2 border-green-200 bg-green-50">
+             <Card className="border-2 border-green-200 bg-green-50">
                 <CardHeader>
                   <CardTitle className="text-lg text-green-800">Resumen del perfil actualizado</CardTitle>
                 </CardHeader>
@@ -740,7 +720,7 @@ export default function EditPetPage({ params }: EditPetPageProps) {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-green-700">Ubicación:</span>
-                    <span className="text-green-900">{formData.location}</span>
+                    <span className="text-green-900">{user?.shelter?.city}</span>
                   </div>
                 </CardContent>
               </Card>
@@ -754,7 +734,7 @@ export default function EditPetPage({ params }: EditPetPageProps) {
   };
 
   return (
-    <ProtectedRoute allowedUserTypes={["Shelter"]}>
+    <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between mb-8">

@@ -33,7 +33,7 @@ export default function ShelterDetailPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useUser();
-  const { shelters, getShelters } = useShelter();
+  const { shelters } = useShelter();
   const { petsToAdopt } = usePet();
   const [shelter, setShelter] = useState<Shelter | null>(null);
   const [isLoading] = useState(false);
@@ -71,8 +71,6 @@ export default function ShelterDetailPage() {
       onConfirm: async () => {
         try {
           await sheltersService.verifyShelter(shelter.id || "");
-          // Actualizar el contexto de refugios
-          await getShelters();
           setConfirmationModal({ ...confirmationModal, isOpen: false });
         } catch (error) {
           console.error("Error al verificar refugio:", error);
@@ -93,8 +91,6 @@ export default function ShelterDetailPage() {
       onConfirm: async () => {
         try {
           await sheltersService.updateStatus(shelter.id || "");
-          // Actualizar el contexto de refugios
-          await getShelters();
           setConfirmationModal({ ...confirmationModal, isOpen: false });
         } catch (error) {
           console.error("Error al desactivar refugio:", error);

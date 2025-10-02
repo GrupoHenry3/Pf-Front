@@ -47,7 +47,6 @@ export const AdoptionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
     };
     fetchAdoptionsByShelter();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   

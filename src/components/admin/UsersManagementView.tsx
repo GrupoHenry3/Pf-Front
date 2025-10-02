@@ -28,7 +28,6 @@ import {
   Shield,
   Mail,
   Phone,
-  MapPin
 } from "lucide-react";
 import { useUserFilters } from "@/hooks/useUserFilters";
 import { UserFilters } from "@/components/ui/UserFilters";
