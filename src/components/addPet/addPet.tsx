@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { ArrowLeft, Upload, X, Plus, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,7 +28,7 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
   const { user } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { species,  isSpeciesLoading, createSpecies } = useSpecies();
-  const { breeds,  isBreedsLoading, createBreed,setBreeds } = useBreeds();
+  const { breeds,  isBreedsLoading, createBreed} = useBreeds();
   
   const [selectedSpeciesId, setSelectedSpeciesId] = useState<string>("");
   const [selectedBreedId, setSelectedBreedId] = useState<string>("");

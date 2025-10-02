@@ -3,7 +3,6 @@
 import { Species } from "@/interfaces/Species";
 import { speciesService } from "@/services/species/speciesService";
 import { createContext, useContext, useState, useEffect } from "react";
-import { useUser } from "./UserContext";
 
 interface SpeciesContextType {
     species: Species[];
@@ -18,7 +17,6 @@ const SpeciesContext = createContext<SpeciesContextType | undefined>(undefined);
 export const SpeciesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => { 
     const [species, setSpecies] = useState<Species[]>([]);
     const [isSpeciesLoading, setIsSpeciesLoading] = useState(false);
-    const { user } = useUser();
     
     useEffect(() => {
         

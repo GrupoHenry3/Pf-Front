@@ -6,20 +6,16 @@ import {
   Home,
   Heart,
   MessageCircle,
-  Settings,
   LogOut,
   Plus,
   FileText,
   DollarSign,
-  Bell,
-  HelpCircle,
   Building2,
   Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
+import { Avatar } from "@/components/ui/avatar";
 import {
   Sheet,
   SheetContent,
