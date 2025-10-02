@@ -15,7 +15,6 @@ import type { ApplicationData } from "@/interfaces/Adoption";
 import Image from "next/image";
 import { useUser } from "@/context/UserContext";
 import { petsService } from "@/services/pets/petsService";
-import { useAdoption } from "@/context/AdoptionContext";
 import { AdoptionDTO, adoptionsService } from "@/services/adoptions/adoptionsService";
 import { Pet } from "@/interfaces/Pet";
 import Link from "next/link";
@@ -197,14 +196,14 @@ export default function AdoptionPageWrapper() {
   const getProgress = () => (currentStep / totalSteps) * 100;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-8xl mx-auto px-4 sm:px-6">
-        Botón único de Volver
-        <div className="mb-6">
+    <div className="py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        
+        <div className="mb-6 flex justify-start">
           <Button
             asChild
-            variant="ghost"
-            className="text-gray-600 hover:text-gray-900 flex items-left"
+            variant="default"
+            className="text-white hover:text-black hover:bg-accent flex items-left"
           >
             <Link href={PATHROUTES.DASHBOARD}>
               <ArrowLeft className="w-4 h-4 mr-2" />

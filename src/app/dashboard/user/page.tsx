@@ -111,21 +111,7 @@ if (isInitialized && isProfileLoaded && !user) {
                   </div>
                   <div>
                     <h3 className="text-lg text-gray-900 mb-1">Mis Favoritos</h3>
-                    <p className="text-sm text-gray-500">5 mascotas guardadas</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="cursor-pointer hover:shadow-lg transition-shadow border-0 shadow-md">
-              <CardContent className="p-6" onClick={onViewMessages}>
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <MessageCircle className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg text-gray-900 mb-1">Mensajes</h3>
-                    <p className="text-sm text-gray-500">3 conversaciones activas</p>
+                    <p className="text-sm text-gray-500">{user?.favoritePets?.length} mascotas guardadas</p>
                   </div>
                 </div>
               </CardContent>

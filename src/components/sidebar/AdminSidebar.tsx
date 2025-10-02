@@ -58,7 +58,6 @@ export function AdminSidebar({ user, embedded = false, onViewChange }: AdminSide
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const { logout } = useAuth();
-  const { allAdoptions } = useAdoption();
   
   const handleLogout = async () => {
     try {
@@ -90,11 +89,6 @@ export function AdminSidebar({ user, embedded = false, onViewChange }: AdminSide
     ];
   };
 
-  const getSupportItems = () => [
-    { id: "help", label: "Ayuda", icon: HelpCircle },
-    { id: "notifications", label: "Notificaciones", icon: Bell },
-    { id: "settings", label: "Configuración", icon: Settings },
-  ];
 
   const getQuickAccessItems = () => {
     return [
@@ -106,7 +100,6 @@ export function AdminSidebar({ user, embedded = false, onViewChange }: AdminSide
   };
 
   const navigationItems = getNavigationItems();
-  const supportItems = getSupportItems();
   const quickAccessItems = getQuickAccessItems();
 
   const handleNavigation = (itemId: string) => {
@@ -210,22 +203,6 @@ export function AdminSidebar({ user, embedded = false, onViewChange }: AdminSide
           ))}
         </nav>
 
-        <Separator className="mx-4" /><nav className="p-4 space-y-2">
-          <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">
-            Soporte
-          </p>
-          {supportItems.map((item) => (
-            <Button
-              key={item.id}
-              variant="ghost"
-              className="w-full justify-start text-gray-700 hover:bg-gray-100"
-              onClick={() => handleNavigation(item.id)}
-            >
-              <item.icon className="w-4 h-4 mr-3" />
-              {item.label}
-            </Button>
-          ))}
-        </nav>
       </div><div className="p-4 border-t border-gray-200">
         <Button
           variant="ghost"

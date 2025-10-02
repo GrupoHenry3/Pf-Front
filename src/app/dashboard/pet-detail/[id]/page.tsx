@@ -4,12 +4,7 @@ import { useState, useEffect } from "react";
 import {
   ArrowLeft,
   Heart,
-  Share2,
-  MapPin,
-  Calendar,
-  MessageCircle,
-  Phone,
-  Mail,
+  Share2
 } from "lucide-react";
 
 import Link from "next/link";
@@ -92,7 +87,6 @@ import { Pet } from "@/interfaces/Pet";
     }
   };
 
-  // Estados de carga y error
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -124,7 +118,6 @@ import { Pet } from "@/interfaces/Pet";
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <Button
             asChild
@@ -157,9 +150,7 @@ import { Pet } from "@/interfaces/Pet";
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Images and Main Info */}
           <div className="lg:col-span-2">
-            {/* Image Gallery */}
             <Card className="border-0 shadow-md mb-6">
               <CardContent className="p-0">
                 <div className="relative">
@@ -169,7 +160,6 @@ import { Pet } from "@/interfaces/Pet";
                     className="w-full h-96 object-cover rounded-t-lg"
                   />
 
-                  {/* Status Badge */}
                   <div className="absolute top-4 left-4">
                     <Badge className={pet.status === "adopted" ? "bg-red-500 text-white" : "bg-green-500 text-white"}>
                       {pet.status === "adopted" ? "Adoptado" : "Disponible para adopción"}
@@ -178,8 +168,6 @@ import { Pet } from "@/interfaces/Pet";
                 </div>
               </CardContent>
             </Card>
-
-            {/* Pet Information */}
             <Card className="border-0 shadow-md mb-6">
               <CardHeader>
                 <div className="flex items-start justify-between">

@@ -4,7 +4,6 @@ interface CreateDonationPayload {
   amount: number;
   message?: string;
   shelterID: string;
-  userID: string;
 }
 
 interface CreateDonationResponse {
@@ -23,13 +22,18 @@ export const donationsService = {
     return response.data;
   },
 
-  getMyDonations: async () => {
-    const response = await apiClient.get("/donations/my");
+  getAll: async () => {
+    const response = await apiClient.get("/donations");
     return response.data;
   },
 
-  getAll: async () => {
-    const response = await apiClient.get("/donations");
+  findByShelter: async () => {
+    const response = await apiClient.get(`/donations/shelter`);
+    return response.data;
+  },
+
+  findByUser: async () => {
+    const response = await apiClient.get(`/donations/user`);
     return response.data;
   },
 };

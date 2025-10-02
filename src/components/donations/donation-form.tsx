@@ -30,14 +30,12 @@ import { toast } from "sonner";
 import { loadStripe } from "@stripe/stripe-js";
 import { donationsService } from "@/services/donations/donationsService";
 import { useShelter } from "@/context/ShelterContext";
-import { useUser } from "@/context/UserContext";
 
 
 export default function DonationForm() {
   const [amount, setAmount] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const {shelters} = useShelter();
-  const {user} = useUser();
   const [selectedShelter, setSelectedShelter] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
@@ -65,7 +63,6 @@ export default function DonationForm() {
       const data = await donationsService.createDonation({
         amount: parseFloat(amount),
         message,
-        userID: user?.id || "",
         shelterID: selectedShelter,
       });
 

@@ -189,16 +189,14 @@ export interface AdoptionsByShelterResponse {
 }
 
 export const adoptionsService = {
-  // Crear solicitud de adopción
   create: async (data: AdoptionDTO): Promise<AdoptionResponse> => {
     const response = await apiClient.post<AdoptionResponse>('/adoptions', data);
     return response.data;
   },
 
-  // Obtener todas las adopciones
   findAll: async (): Promise<AdminAdoptions[]> => {
     const response = await apiClient.get('/adoptions');
-    return response.data.data;
+    return response.data;
   },
 
   // Obtener adopción por ID

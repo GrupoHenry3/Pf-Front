@@ -1,8 +1,9 @@
+import { Species } from "./Species";
 
 export interface Breed {
   id?: string;
   name: string;
   description: string;
   avatarURL: string;
-  speciesID: string;
+  species: Pick<Species, "id">;
 }   

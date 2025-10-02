@@ -9,17 +9,28 @@ export default function DashboardRedirectPage() {
   const router = useRouter();
 
   useEffect(() => {
+    // Solo redirigir si el usuario está autenticado y estamos en la ruta base /dashboard
     if (isInitialized && user) {
-        if(user.siteAdmin===true) {
-            router.replace(`/dashboard/admin`);
-        }
-        else{
-            const redirectPath = user.userType === 'Shelter' ? '/dashboard/shelter' : '/dashboard/user';
-            router.replace(redirectPath);
-        }
+      const currentPath = window.location.pathname;
       
+      // Solo redirigir si estamos exactamente en /dashboard (no en subrutas)
+      if (currentPath === '/dashboard') {
+        if (user.siteAdmin === true) {
+          router.replace('/dashboard/admin');
+        } else {
+          const redirectPath = user.userType === 'Shelter' ? '/dashboard/shelter' : '/dashboard/user';
+          router.replace(redirectPath);
+        }
+      }
     }
   }, [user, isInitialized, router]);
 
-  return null;
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+        <p className="text-gray-600">Redirigiendo al dashboard...</p>
+      </div>
+    </div>
+  );
 }

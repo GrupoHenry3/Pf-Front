@@ -158,7 +158,7 @@ export function ApplicationsView() {
                         />
                         <div>
                           <div className="font-medium">{application.pet.name}</div>
-                          <div className="text-sm text-gray-500">{application.pet.breed.name}</div>
+                          <div className="text-sm text-gray-500">{application.pet.breed.name}</div> 
                         </div>
                       </div>
                     </TableCell>
@@ -184,6 +184,7 @@ export function ApplicationsView() {
                           className="w-8 h-8 rounded-lg object-cover"
                         />
                         <div>
+
                           <div className="font-medium">{application.shelter.name}</div>
                         </div>
                       </div>

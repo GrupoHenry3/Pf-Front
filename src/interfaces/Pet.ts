@@ -13,7 +13,6 @@ export interface Pet {
   description: string;
   avatarURL: string;
   photos: string[];
-  location?: string;
   shelter: Shelter;
   vaccinated?: boolean;
   neutered: boolean;

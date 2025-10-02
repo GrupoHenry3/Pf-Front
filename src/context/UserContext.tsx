@@ -52,7 +52,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             clearError();
             console.log("Fetching user profile...");
             const response = await usersService.getCurrentUser();
-            console.log(response);
+            console.log("User profile fetched successfully:", response);
             setUser(response);
             setIsProfileLoaded(true);
         } catch (error: unknown) {
@@ -69,7 +69,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setIsUserLoading(true);
             clearError();
             console.log("Updating user profile...");
-            const updatedUser = await usersService.update(userData as UserInterface);
+            const updatedUser = await usersService.update(userData);
             setUser(updatedUser);
             return updatedUser;
         } catch (error: unknown) {
@@ -83,10 +83,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         const initializeUser = async () => {
             try {
+                console.log("UserContext - Initializing user...");
                 await getProfile();
+                console.log("UserContext - User initialized successfully");
             } catch (error) {
-                console.error("Error initializing user:", error);
+                console.error("UserContext - Error initializing user:", error);
             } finally {
+                console.log("UserContext - Setting isInitialized to true");
                 setIsInitialized(true);
             }
         };

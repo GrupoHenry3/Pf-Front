@@ -1,4 +1,4 @@
-import { UserInterface } from "@/interfaces/User";
+import { UpdateUser, UserInterface } from "@/interfaces/User";
 import { apiClient } from "../apiClient";
 
 export interface GetUsersFilters {
@@ -26,8 +26,26 @@ export const usersService = {
     return response.data;
   },
 
-  update: async (data: UserInterface): Promise<UserInterface> => {
-    const response = await apiClient.patch(`/users`, data);
+  update: async (data: UpdateUser): Promise<UserInterface> => {
+    // Filtrar solo los campos permitidos por el backend
+    const allowedFields: (keyof UpdateUser)[] = [
+      'fullName',
+      'email', 
+      'country',
+      'city',
+      'address',
+      'phoneNumber',
+      'avatarURL'
+    ];
+    
+    const filteredData = Object.keys(data)
+      .filter(key => allowedFields.includes(key as keyof UpdateUser))
+      .reduce((obj, key) => {
+        obj[key as keyof UpdateUser] = data[key as keyof UpdateUser];
+        return obj;
+      }, {} as UpdateUser);
+    
+    const response = await apiClient.patch(`/users`, filteredData);
     return response.data;
   },
 

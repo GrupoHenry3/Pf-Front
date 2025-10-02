@@ -138,7 +138,7 @@ export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) 
           <div className="flex items-center space-x-3">
             <Avatar className="w-10 h-10">
               <div className="w-10 h-10">
-              <Image src={user.avatarURL || '/default-avatar.png'} alt={user.fullName || 'Default Avatar'} width={40} height={40} />
+              <Image src={user.shelter?.avatarURL|| "/default-avatar.png"} alt={user.shelter?.name ||"Refugio"} width={40} height={40} />
               </div>
             </Avatar>
             <div className="flex-1 min-w-0">

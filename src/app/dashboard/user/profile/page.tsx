@@ -1,23 +1,28 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useUser } from "@/context/UserContext";
 import { usersService } from "@/services/users/usersService";
+import { uploadToCloudinary } from "@/components/utils/uploadToCloudinary";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Loader2, Save, User, Mail, Phone, MapPin, Globe } from "lucide-react";
+import { Loader2, Save, User, Mail, Phone, MapPin, Globe, Upload, X } from "lucide-react";
 import ProtectedRoute from "@/components/ProtectedRouter/ProtectedRoute";
 
 export default function UserProfilePage() {
-  const { user, isProfileLoaded, isUserLoading, isInitialized } = useUser();
+  const { user, isProfileLoaded, isUserLoading, isInitialized, updateProfile } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
+  const [avatarSuccess, setAvatarSuccess] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     phoneNumber: "",
@@ -52,20 +57,20 @@ export default function UserProfilePage() {
     setSaveSuccess(false);
 
     try {
-      const updatedUser = await usersService.update({
+      // Actualizar el usuario usando el contexto
+      await updateProfile({
         ...user,
         ...formData
       });
 
-      // Actualizar el contexto del usuario
       setSaveSuccess(true);
       setIsEditing(false);
       
       // Limpiar el mensaje de éxito después de 3 segundos
       setTimeout(() => setSaveSuccess(false), 3000);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error al actualizar perfil:", error);
-      setSaveError(error?.response?.data?.message || "Error al actualizar el perfil");
+      setSaveError(error as string || "Error al actualizar el perfil");
     } finally {
       setIsSaving(false);
     }
@@ -85,6 +90,73 @@ export default function UserProfilePage() {
     setSaveSuccess(false);
   };
 
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validar tipo de archivo
+    if (!file.type.startsWith('image/')) {
+      setAvatarError('Por favor selecciona un archivo de imagen válido');
+      return;
+    }
+
+    // Validar tamaño (máximo 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setAvatarError('La imagen debe ser menor a 5MB');
+      return;
+    }
+
+    setIsUploadingAvatar(true);
+    setAvatarError(null);
+    setAvatarSuccess(false);
+
+    try {
+      // Subir imagen a Cloudinary
+      const imageUrl = await uploadToCloudinary(file);
+      
+      // Actualizar el usuario con la nueva URL del avatar usando el contexto
+      await updateProfile({
+        ...user!,
+        avatarURL: imageUrl
+      });
+      
+      setAvatarSuccess(true);
+      // Limpiar el mensaje de éxito después de 3 segundos
+      setTimeout(() => setAvatarSuccess(false), 3000);
+      
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      setAvatarError(error as string || "Error al subir la imagen");
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    if (!user) return;
+
+    setIsUploadingAvatar(true);
+    setAvatarError(null);
+    setAvatarSuccess(false);
+
+    try {
+      // Actualizar el usuario removiendo el avatar usando el contexto
+      await updateProfile({
+        ...user,
+        avatarURL: undefined
+      });
+      
+      setAvatarSuccess(true);
+      setTimeout(() => setAvatarSuccess(false), 3000);
+      
+    } catch (error) {
+      console.error("Error removing avatar:", error);
+      setAvatarError("Error al quitar la imagen");
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  };
+
   if (!isInitialized || isUserLoading || !isProfileLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -101,7 +173,7 @@ export default function UserProfilePage() {
   }
 
   return (
-    <ProtectedRoute allowedUserTypes={["User"]}>
+    <ProtectedRoute>
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
@@ -130,6 +202,24 @@ export default function UserProfilePage() {
             </Alert>
           )}
 
+          {/* Avatar Success Alert */}
+          {avatarSuccess && (
+            <Alert className="mb-6 border-green-200 bg-green-50">
+              <AlertDescription className="text-green-800">
+                ✅ Foto de perfil actualizada exitosamente
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* Avatar Error Alert */}
+          {avatarError && (
+            <Alert className="mb-6 border-red-200 bg-red-50">
+              <AlertDescription className="text-red-800">
+                ❌ {avatarError}
+              </AlertDescription>
+            </Alert>
+          )}
+
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Información del Avatar */}
             <div className="lg:col-span-1">
@@ -141,23 +231,64 @@ export default function UserProfilePage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
-                  <Avatar className="w-24 h-24 mx-auto mb-4">
-                    <AvatarImage src={user.avatarURL} alt={user.fullName} />
-                    <AvatarFallback className="bg-green-500 text-white text-xl">
-                      {user.fullName?.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                  <div className="relative mb-4">
+                    <Avatar className="w-24 h-24 mx-auto">
+                      <AvatarImage src={user.avatarURL} alt={user.fullName} />
+                      <AvatarFallback className="bg-green-500 text-white text-xl">
+                        {user.fullName?.slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    {(isUploadingAvatar) && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
+                        <Loader2 className="w-6 h-6 text-white animate-spin" />
+                      </div>
+                    )}
+                  </div>
+                  
                   <h3 className="text-lg font-semibold text-gray-900">
                     {user.fullName}
                   </h3>
                   <p className="text-sm text-gray-500 mb-4">
                     {user.role === "adopter" && "Adoptante"}
                   </p>
-                  <Button variant="outline" size="sm" disabled>
-                    Cambiar Foto
-                  </Button>
+                  
+                  <div className="flex flex-col gap-2">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                      disabled={isUploadingAvatar}
+                    />
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploadingAvatar}
+                      className="flex items-center gap-2"
+                    >
+                      <Upload className="w-4 h-4" />
+                      {isUploadingAvatar ? 'Subiendo...' : 'Cambiar Foto'}
+                    </Button>
+                    
+                    {user.avatarURL && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleRemoveAvatar}
+                        disabled={isUploadingAvatar}
+                        className="flex items-center gap-2 text-red-600 hover:text-red-700"
+                      >
+                        <X className="w-4 h-4" />
+                        Quitar Foto
+                      </Button>
+                    )}
+                  </div>
+                  
                   <p className="text-xs text-gray-400 mt-2">
-                    Próximamente disponible
+                    JPG, PNG o GIF. Máximo 5MB
                   </p>
                 </CardContent>
               </Card>

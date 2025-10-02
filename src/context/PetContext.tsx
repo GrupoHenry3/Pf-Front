@@ -49,6 +49,9 @@ export const PetProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         }
     }, [user]); 
 
+    useEffect(()=>{
+        console.log(shelterPets);
+    }, [shelterPets]);
 
     useEffect(()=>{
         const getAllPets = async()=>{

@@ -20,16 +20,12 @@ import { Pet } from "@/interfaces/Pet";
 import { Badge } from "@/components/ui/badge";
 import { useEffect } from "react";
 
-interface ShelterDashboardProps {
-  onManageApplications: () => void;
-  onViewMessages: () => void;
-}
-
-function ShelterDashboard({ onManageApplications }: ShelterDashboardProps) {
+function ShelterDashboard() {
   const { user, isProfileLoaded, isUserLoading, isInitialized } = useUser();
 
   const { shelterPets, isPetLoading, latestPets } = usePet();
   const { latestAdoptions, shelterAdoptions } = useAdoption();
+  
   const router = useRouter();
   const stats = {
     totalPets: shelterPets.length,

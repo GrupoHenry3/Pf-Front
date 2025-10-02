@@ -1,23 +1,7 @@
 "use client";
-
-import { useState } from "react";
-import { Building2, Heart, PawPrint, Settings } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Building2, Heart, PawPrint } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  Line,
-  LineChart,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+
 import {
   Table,
   TableBody,
@@ -26,25 +10,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUser } from "@/context/UserContext";
-import { AdminSidebar } from "@/components/sidebar/AdminSidebar";
 import { useShelter } from "@/context/ShelterContext";
 import { usePet } from "@/context/PetContext";
-import { SheltersManagementView } from "@/components/admin/SheltersManagementView";
-import { UsersManagementView } from "@/components/admin/UsersManagementView";
-import { PetsManagementView } from "@/components/admin/PetsManagementView";
-import { DonationsView } from "@/components/admin/DonationsView";
-import { ApplicationsView } from "@/components/admin/ApplicationsView";
+
 import { useAdoption } from "@/context/AdoptionContext";
 
 export type AdminView =
@@ -56,18 +26,17 @@ export type AdminView =
   | "donations";
 
 export default function AdminDashboard() {
-  const [selectedPeriod, setSelectedPeriod] = useState("30");
-  const [currentView, setCurrentView] = useState<AdminView>("dashboard");
 
   const { user, isInitialized, isUserLoading, isProfileLoaded } = useUser();
   const { shelters } = useShelter();
   const { allPets } = usePet();
   const { allAdoptions } = useAdoption();
+  
 
   const stats = [
     {
       title: "Adopciones",
-      value: allAdoptions.length,
+      value: allAdoptions.length ,
       icon: <Heart className="bg-green-200 rounded-full p-1 w-10 h-10"/>,
     },
     {
@@ -78,22 +47,7 @@ export default function AdminDashboard() {
     { title: "Refugios", value: shelters.length, icon: <Building2 className="bg-blue-200 rounded-full p-1 w-10 h-10"/> },
   ];
 
-  const adoptionData = [
-    { month: "Ene", adopciones: 45 },
-    { month: "Feb", adopciones: 52 },
-    { month: "Mar", adopciones: 38 },
-    { month: "Abr", adopciones: 61 },
-    { month: "May", adopciones: 72 },
-    { month: "Jun", adopciones: 49 },
-  ];
 
-  const animalTypes = [
-    { name: "Perros", value: 45 },
-    { name: "Gatos", value: 30 },
-    { name: "Otros", value: 25 },
-  ];
-
-  const COLORS = ["#10B981", "#3B82F6", "#F59E0B"];
 
   if (!isInitialized || isUserLoading || !isProfileLoaded) {
     return (
@@ -148,65 +102,156 @@ export default function AdminDashboard() {
           <TabsTrigger value="recent">Recientes</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="grid gap-6 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Adopciones por mes</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={adoptionData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="adopciones" fill="#10B981" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <CardTitle>Resumen de refugios</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                    <span className="font-medium text-green-700">Verificados</span>
+                    <span className="text-2xl font-bold text-green-600">
+                      {shelters.filter(s => s.isVerified).length}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
+                    <span className="font-medium text-yellow-700">Pendientes</span>
+                    <span className="text-2xl font-bold text-yellow-600">
+                      {shelters.filter(s => !s.isVerified).length}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                    <span className="font-medium text-blue-700">Activos</span>
+                    <span className="text-2xl font-bold text-blue-600">
+                      {shelters.filter(s => s.isActive).length}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Distribución de mascotas</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie data={animalTypes} dataKey="value" label>
-                    {animalTypes.map((entry, index) => (
-                      <Cell key={index} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Resumen de mascotas</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                    <span className="font-medium text-green-700">Total</span>
+                    <span className="text-2xl font-bold text-green-600">{allPets.length}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                    <span className="font-medium text-blue-700">Adoptadas</span>
+                    <span className="text-2xl font-bold text-blue-600">{allAdoptions.length}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
+                    <span className="font-medium text-orange-700">Disponibles</span>
+                    <span className="text-2xl font-bold text-orange-600">{allPets.length - allAdoptions.length}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Resumen de adopciones</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+                    <span className="font-medium text-green-700">Total</span>
+                    <span className="text-2xl font-bold text-green-600">{allAdoptions.length}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                    <span className="font-medium text-blue-700">Esta semana</span>
+                    <span className="text-2xl font-bold text-blue-600">
+                      {allAdoptions.filter(adoption => {
+                        const adoptionDate = new Date(adoption.createdAt);
+                        const weekAgo = new Date();
+                        weekAgo.setDate(weekAgo.getDate() - 7);
+                        return adoptionDate > weekAgo;
+                      }).length}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
+                    <span className="font-medium text-purple-700">Este mes</span>
+                    <span className="text-2xl font-bold text-purple-600">
+                      {allAdoptions.filter(adoption => {
+                        const adoptionDate = new Date(adoption.createdAt);
+                        const monthAgo = new Date();
+                        monthAgo.setMonth(monthAgo.getMonth() - 1);
+                        return adoptionDate > monthAgo;
+                      }).length}
+                    </span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
-        <TabsContent value="analytics">
-          <Card>
-            <CardHeader>
-              <CardTitle>Tendencia de adopciones</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={adoptionData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="adopciones"
-                    stroke="#10B981"
-                    strokeWidth={2}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+        <TabsContent value="analytics" className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Estadísticas de mascotas</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span className="font-medium">Total de mascotas</span>
+                    <span className="text-2xl font-bold text-green-600">{allPets.length}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span className="font-medium">Mascotas adoptadas</span>
+                    <span className="text-2xl font-bold text-blue-600">{allAdoptions.length}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <span className="font-medium">Mascotas disponibles</span>
+                    <span className="text-2xl font-bold text-orange-600">{allPets.length - allAdoptions.length}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Actividad reciente</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-2 border-l-4 border-green-500 bg-green-50">
+                    <div>
+                      <div className="font-medium text-green-800">Nuevas adopciones</div>
+                      <div className="text-sm text-green-600">
+                        {allAdoptions.filter(adoption => {
+                          const adoptionDate = new Date(adoption.createdAt);
+                          const weekAgo = new Date();
+                          weekAgo.setDate(weekAgo.getDate() - 7);
+                          return adoptionDate > weekAgo;
+                        }).length} esta semana
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-2 border-l-4 border-blue-500 bg-blue-50">
+                    <div>
+                      <div className="font-medium text-blue-800">Refugios registrados</div>
+                      <div className="text-sm text-blue-600">
+                        {shelters.filter(shelter => {
+                          const shelterDate = new Date(shelter.createdAt || new Date());
+                          const monthAgo = new Date();
+                          monthAgo.setMonth(monthAgo.getMonth() - 1);
+                          return shelterDate > monthAgo;
+                        }).length} este mes
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         <TabsContent value="recent">
@@ -225,17 +270,28 @@ export default function AdminDashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {allAdoptions.length > 0 &&
-                    allAdoptions.map((adoption) => (
+                  {allAdoptions.length > 0 ? (
+                    allAdoptions.slice(-10).map((adoption) => (
                       <TableRow key={adoption.id}>
-                        <TableCell>{adoption.pet.name}</TableCell>
+                        <TableCell className="font-medium">{adoption.pet?.name || 'Sin nombre'}</TableCell>
+                        <TableCell>{adoption.pet?.species?.name || 'Sin especificar'}</TableCell>
+                        <TableCell>{adoption.user?.fullName || 'Usuario no encontrado'}</TableCell>
                         <TableCell>
-                          {/* <Badge variant="secondary">{adoption.type}</Badge> */}
+                          {new Date(adoption.createdAt).toLocaleDateString('es-ES', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
                         </TableCell>
-                        <TableCell>{adoption.user.fullName}</TableCell>
-                        <TableCell>{adoption.createdAt}</TableCell>
                       </TableRow>
-                    ))}
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                        No hay adopciones registradas
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </CardContent>

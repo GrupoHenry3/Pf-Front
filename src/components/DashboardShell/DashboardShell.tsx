@@ -14,32 +14,10 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   const pathname = usePathname();
 
   useEffect(() => {
-    if (isInitialized && !isUserLoading) {
-      if (!user) {
-        router.replace('/auth');
-        return;
-      }
-
-      const currentPath = pathname.toLowerCase();
-      
-      if (user.siteAdmin && !currentPath.includes('/admin')) {
-        router.replace('/dashboard/admin');
-        return;
-      }
-
-      if (user.userType === 'Shelter' && !currentPath.includes('/shelter')) {
-        router.replace('/dashboard/shelter');
-        return;
-      }
-      const allowedUserRoutes = ['/user', '/pet-catalog', '/pet-detail', '/donation'];
-      const isAllowedRoute = allowedUserRoutes.some(route => currentPath.includes(route));
-      
-      if (user.userType === 'User' && !isAllowedRoute) {
-        router.replace('/dashboard/user');
-        return;
-      }
+    if (isInitialized && !isUserLoading && !user) {
+      router.replace('/auth');
     }
-  }, [user, isInitialized, isUserLoading, router, pathname]);
+  }, [user, isInitialized, isUserLoading, router]);
 
   if (!isInitialized || isUserLoading) {
     return (
@@ -52,17 +30,25 @@ export default function DashboardShell({ children }: { children: React.ReactNode
     );
   }
 
-  // No mostrar nada si no hay usuario
   if (!user) {
     return null;
   }
 
+  const renderSidebar = () => {
+    if (user.siteAdmin === true) {
+      return <AdminSidebar user={user} />;
+    } else if (user.userType === 'Shelter') {
+      return <ShelterSidebar user={user} />;
+    } else if (user.userType === 'User') {
+      return <Sidebar user={user} />;
+    }
+    return null;
+  };
+
   return (
     <div className="flex min-h-screen px-4 bg-gray-50">
       <aside>
-        {user.userType === 'User' && <Sidebar user={user} />}
-        {user.userType === 'Shelter' && <ShelterSidebar user={user} />}
-        {user.siteAdmin === true && <AdminSidebar user={user} />}
+        {renderSidebar()}
       </aside>
       <main className="flex-1 bg-gray-50 ml-64">{children}</main>
     </div>

@@ -25,9 +25,6 @@ export const AdoptionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [latestAdoptions, setLatestAdoptions] = useState<AdoptionWithRelations[]>([]);
   const { user } = useUser();
 
-
-
-
   useEffect(() => {
     setLatestAdoptions(shelterAdoptions.slice(-4).reverse());
   }, [shelterAdoptions]);
@@ -53,9 +50,9 @@ export const AdoptionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
-
+  
   useEffect(() => {
-    if(user && user.siteAdmin ===true){
+    if(user && user.siteAdmin === true){
       const getAllAdoptions = async () => {
         const adoptions = await adoptionsService.findAll();
         setAllAdoptions(adoptions);

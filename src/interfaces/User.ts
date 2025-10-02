@@ -23,3 +23,14 @@ export interface UserInterface {
   favoritePets?: Pet[];
   shelter?: Shelter;
 }
+
+
+export interface UpdateUser{
+  fullName?: string;
+  email?: string;
+  phoneNumber?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  avatarURL?: string;
+}
