@@ -11,7 +11,6 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/context/UserContext";
-import ProtectedRoute from "@/components/ProtectedRouter/ProtectedRoute";
 import { useRouter } from "next/navigation";
 import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
 import { usePet } from "@/context/PetContext";
@@ -19,24 +18,25 @@ import { AdoptionWithRelations } from "@/services/adoptions/adoptionsService";
 import { useAdoption } from "@/context/AdoptionContext";
 import { Pet } from "@/interfaces/Pet";
 import { Badge } from "@/components/ui/badge";
+import { useEffect } from "react";
 
-interface ShelterDashboardProps {
-  onManageApplications: () => void;
-  onViewMessages: () => void;
-}
-
-function ShelterDashboard({ onManageApplications }: ShelterDashboardProps) {
+function ShelterDashboard() {
   const { user, isProfileLoaded, isUserLoading, isInitialized } = useUser();
 
-  const { pets, isPetLoading, latestPets } = usePet();
+  const { shelterPets, isPetLoading, latestPets } = usePet();
   const { latestAdoptions, shelterAdoptions } = useAdoption();
+  
   const router = useRouter();
   const stats = {
-    totalPets: pets.length,
-    adopted: pets.filter((pet) => pet.status === "adopted").length,
-    pending: pets.filter((pet) => pet.status === "pending").length,
-    applications: shelterAdoptions.length, // TODO: Implementar cuando tengas el contexto de aplicaciones
+    totalPets: shelterPets.length,
+    successfulAdoptions: shelterAdoptions.filter((adoption) => adoption.status === "Approved").length,
+    pendingAdoptions: shelterAdoptions.filter((adoption) => adoption.status === "Pending").length,
+    applications: shelterAdoptions.length,
   };
+
+  useEffect(()=>{
+    console.log(shelterAdoptions);
+  }, [shelterAdoptions]);
 
   if (!isInitialized || isUserLoading || !isProfileLoaded || isPetLoading) {
     return (
@@ -62,10 +62,9 @@ function ShelterDashboard({ onManageApplications }: ShelterDashboardProps) {
   }
 
   return (
-    <ProtectedRoute allowedUserTypes={["Shelter"]}>
       <div className="flex min-h-screen">
         <div className="flex-1 bg-gray-50">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+          <div className="mx-auto px-4 w-full py-8">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
               <div>
                 <h1 className="text-3xl text-gray-900 mb-2">
@@ -76,7 +75,7 @@ function ShelterDashboard({ onManageApplications }: ShelterDashboardProps) {
                 </p>
               </div>
               <Button
-                onClick={() => router.push("/dashboard/addPet")}
+                onClick={() => router.push("/dashboard/add-pet")}
                 variant="default"
                 size="lg"
                 className="mt-4 sm:mt-0 bg-primary hover:bg-primary/70"
@@ -85,7 +84,7 @@ function ShelterDashboard({ onManageApplications }: ShelterDashboardProps) {
                 Agregar Mascota
               </Button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 ">
               <Card className="border-0 shadow-md">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-4">
@@ -112,7 +111,7 @@ function ShelterDashboard({ onManageApplications }: ShelterDashboardProps) {
                       <p className="text-sm text-gray-500">
                         Adopciones Exitosas
                       </p>
-                      <p className="text-2xl text-gray-900">{stats.adopted}</p>
+                      <p className="text-2xl text-gray-900">{stats.successfulAdoptions}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -126,25 +125,7 @@ function ShelterDashboard({ onManageApplications }: ShelterDashboardProps) {
                     </div>
                     <div>
                       <p className="text-sm text-gray-500">En Proceso</p>
-                      <p className="text-2xl text-gray-900">{stats.pending}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-md">
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                      <MessageCircle className="w-6 h-6 text-purple-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">
-                        Solicitudes Pendientes
-                      </p>
-                      <p className="text-2xl text-gray-900">
-                        {stats.applications}
-                      </p>
+                      <p className="text-2xl text-gray-900">{stats.pendingAdoptions}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -161,7 +142,7 @@ function ShelterDashboard({ onManageApplications }: ShelterDashboardProps) {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={onManageApplications}
+                      onClick={() => router.push("/dashboard/shelter/applications")}
                     >
                       Ver todas
                     </Button>
@@ -184,7 +165,7 @@ function ShelterDashboard({ onManageApplications }: ShelterDashboardProps) {
                               <div
                                 key={adoption.id}
                                 className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg"
-                                onClick={() => router.push(`/dashboard/adoption/${adoption.id}`)}
+                                onClick={() => router.push(`/dashboard/shelter/adoption/${adoption.id}`)}
                               >
                                 <ImageWithFallback
                                   src={adoption.pet.avatarURL}
@@ -243,7 +224,7 @@ function ShelterDashboard({ onManageApplications }: ShelterDashboardProps) {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {pets.length === 0 ? (
+                  {shelterPets.length === 0 ? (
                     <div className="text-center py-8">
                       <Heart className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                       <p className="text-gray-500 mb-4">
@@ -268,7 +249,7 @@ function ShelterDashboard({ onManageApplications }: ShelterDashboardProps) {
                           <div className="relative mb-3">
                             <ImageWithFallback
                               src={
-                                pet.breed.avatarURL || "/placeholder-pet.jpg"
+                                  pet.avatarURL || "/placeholder-pet.jpg"
                               }
                               alt={pet.name}
                               className="w-full h-40 rounded-lg object-cover"
@@ -303,7 +284,7 @@ function ShelterDashboard({ onManageApplications }: ShelterDashboardProps) {
 
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-gray-500">
-                              {pet.species.name}
+                              {pet.species ? pet.species.name : "Desconocido"}
                             </span>
                             <span className="text-gray-500">
                               Agregado el{" "}
@@ -320,7 +301,6 @@ function ShelterDashboard({ onManageApplications }: ShelterDashboardProps) {
           </div>
         </div>
       </div>
-    </ProtectedRoute>
   );
 }
 

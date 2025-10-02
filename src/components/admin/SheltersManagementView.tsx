@@ -90,17 +90,20 @@ export function SheltersManagementView() {
   };
 
   const handleToggleActive = (shelter: Shelter) => {
+    const isActive = shelter.isActive;
     setConfirmationModal({
       isOpen: true,
-      title: "Desactivar Refugio",
-      description: `¿Estás seguro de que quieres desactivar el refugio "${shelter.name}"? Esto impedirá que aparezca en búsquedas.`,
-      type: "danger",
+      title: isActive ? "Desactivar Refugio" : "Activar Refugio",
+      description: isActive 
+        ? `¿Estás seguro de que quieres desactivar el refugio "${shelter.name}"? Esto impedirá que aparezca en búsquedas.`
+        : `¿Estás seguro de que quieres activar el refugio "${shelter.name}"? Esto permitirá que aparezca en búsquedas.`,
+      type: isActive ? "danger" : "success",
       onConfirm: async () => {
         try {
           await sheltersService.updateStatus(shelter.id || "");
           setConfirmationModal({ ...confirmationModal, isOpen: false });
         } catch (error) {
-          console.error("Error al desactivar refugio:", error);
+          console.error(`Error al ${isActive ? 'desactivar' : 'activar'} refugio:`, error);
           setConfirmationModal({ ...confirmationModal, isOpen: false });
         }
       },
@@ -108,18 +111,28 @@ export function SheltersManagementView() {
   };
 
   const getStatusBadge = (shelter: Shelter) => {
-    if (shelter.isVerified) {
-      return <Badge variant="default" className="bg-green-600">Verificado</Badge>;
-    }
-    return <Badge variant="secondary">No verificado</Badge>;
+    return (
+      <div className="flex flex-col gap-1">
+        {shelter.isVerified ? (
+          <Badge variant="default" className="bg-green-600">Verificado</Badge>
+        ) : (
+          <Badge variant="secondary">No verificado</Badge>
+        )}
+        {shelter.isActive ? (
+          <Badge variant="default" className="bg-blue-600">Activo</Badge>
+        ) : (
+          <Badge variant="outline" className="border-gray-400 text-gray-600">Inactivo</Badge>
+        )}
+      </div>
+    );
   };
 
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2 text-4xl">
+            <Shield className="h-10 w-10" />
             Gestión de Refugios
           </CardTitle>
         </CardHeader>
@@ -205,23 +218,38 @@ export function SheltersManagementView() {
                           <Eye className="w-4 h-4 mr-1" />
                           Ver
                         </Button>
+                        
+                        {/* Botón de verificación - solo mostrar si NO está verificado */}
+                        {!shelter.isVerified && (
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={() => handleVerifyShelter(shelter)}
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                            Verificar
+                          </Button>
+                        )}
+                        
+                        {/* Botón de activación/desactivación */}
                         <Button
                           size="sm"
-                          variant="default"
-                          onClick={() => handleVerifyShelter(shelter)}
-                          disabled={shelter.isVerified}
-                          className={shelter.isVerified ? "bg-gray-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"}
-                        >
-                          <CheckCircle className="w-4 h-4 mr-1" />
-                          {shelter.isVerified ? "Verificado" : "Verificar"}
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
+                          variant={shelter.isActive ? "destructive" : "default"}
                           onClick={() => handleToggleActive(shelter)}
+                          className={shelter.isActive ? "" : "bg-blue-600 hover:bg-blue-700"}
                         >
-                          <XCircle className="w-4 h-4 mr-1" />
-                          Desactivar
+                          {shelter.isActive ? (
+                            <>
+                              <XCircle className="w-4 h-4 mr-1" />
+                              Desactivar
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle className="w-4 h-4 mr-1" />
+                              Activar
+                            </>
+                          )}
                         </Button>
                       </div>
                     </TableCell>

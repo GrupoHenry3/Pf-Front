@@ -7,20 +7,14 @@ import {
   Search,
   Heart,
   MessageCircle,
-  Settings,
   LogOut,
-  Plus,
   User,
   FileText,
-  DollarSign,
-  Bell,
-  HelpCircle,
   Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetContent,
@@ -31,9 +25,9 @@ import {
 } from "@/components/ui/sheet";
 import {  UserInterface } from "@/interfaces/User";
 import { useRouter } from "next/navigation";
-import { useUser } from "@/context/UserContext";
 import { ShelterSidebar } from "./ShelterSidebar";
 import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 
 export type CurrentView =
   | "catalog"
@@ -93,7 +87,7 @@ export function Sidebar({
 
   const getNavigationItems = () => {
     const commonItems = [
-      { id: "donation-flow", label: "Hacer Donación", icon: Heart, badge: null },
+      { id: "donations", label: "Hacer Donación", icon: Heart, badge: null },
     ];
 
     if (!user) {
@@ -103,18 +97,12 @@ export function Sidebar({
     return [
       { id: "adopter-dashboard", label: "Dashboard", icon: Home, badge: null },
       { id: "catalog", label: "Buscar Mascotas", icon: Search, badge: null },
-      { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 3 },
+      { id: "my-applications", label: "Mis Solicitudes", icon: FileText, badge: null },
       ...commonItems,
       { id: "shelter-mode", label: "Modo Refugio", icon: Building2, badge: null },
       { id: "profile", label: "Mi Perfil", icon: User, badge: null },
     ];
   };
-
-  const getSupportItems = () => [
-    { id: "help", label: "Ayuda", icon: HelpCircle },
-    { id: "notifications", label: "Notificaciones", icon: Bell },
-    { id: "settings", label: "Configuración", icon: Settings },
-  ];
 
   const getQuickAccessItems = () => {
     if (!user) {
@@ -129,33 +117,16 @@ export function Sidebar({
         return [
           { id: "adopter-dashboard", label: "Dashboard", icon: Home, badge: null },
           { id: "catalog", label: "Buscar", icon: Search, badge: null },
+          { id: "my-applications", label: "Solicitudes", icon: FileText, badge: null },
           { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 3 },
           { id: "donation-flow", label: "Donar", icon: Heart, badge: null },
         ];
-
-      case "shelter":
-        return [
-          { id: "shelter-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Mascotas", icon: Heart, badge: null },
-          { id: "add-pet", label: "Agregar", icon: Plus, badge: null },
-          { id: "messages", label: "Mensajes", icon: MessageCircle, badge: 2 },
-        ];
-
-      case "admin":
-        return [
-          { id: "admin-dashboard", label: "Dashboard", icon: Home, badge: null },
-          { id: "catalog", label: "Mascotas", icon: Search, badge: null },
-          { id: "manage-applications", label: "Solicitudes", icon: FileText, badge: 12 },
-          { id: "donations", label: "Donaciones", icon: DollarSign, badge: null },
-        ];
-
       default:
         return [];
     }
   };
 
   const navigationItems = getNavigationItems();
-  const supportItems = getSupportItems();
   const quickAccessItems = getQuickAccessItems();
 
   const SidebarContent = () => (
@@ -166,38 +137,56 @@ export function Sidebar({
           </div>
           <div>
             <h1 className="text-xl text-gray-900">PetAdopt</h1>
-            <p className="text-sm text-gray-500">Encuentra tu compañero</p>
+            <p className="text-sm text-gray-700">Encuentra tu compañero</p>
           </div>
         </div>
       </div>{user && (
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center space-x-3">
             <Avatar className="w-10 h-10">
-              <AvatarImage src={user.avatarURL} alt={user.fullName} />
-              <AvatarFallback className="bg-green-500 text-white">
-                {user.fullName?.slice(0, 2).toUpperCase()}
-              </AvatarFallback>
+              {user.avatarURL ? (
+              <div className="w-10 h-10">
+                <Image src={user.avatarURL || '/default-avatar.png'} alt={user.fullName || 'Default Avatar'} width={40} height={40} />
+              </div>
+              ) : (
+                <AvatarFallback className="bg-green-500 text-white">
+                  {user.fullName?.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              )}
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-900 truncate">{user.fullName}</p>
-              <p className="text-xs text-gray-500 truncate">
-                {user.role === "adopter" && "Adoptante"}
-                {user.role === "shelter" && "Refugio"}
-                {user.role === "admin" && "Administrador"}
-              </p>
+              <p className="text-lg text-gray-900 truncate">{user.fullName}</p>
+              <Badge variant="outline" className="text-sm text-gray-700 truncate">
+                {user.userType === "User" && "Adoptante"}
+              </Badge>
             </div>
           </div>
         </div>
-      )}<div className="flex-1 overflow-y-auto">
+      )}<div className="flex-1 overflow-y-auto overflow-x-hidden">
         <nav className="p-4 space-y-2">
           {navigationItems.map((item) => (
             <Button
               key={item.id}
               variant= "ghost"
-              className= "w-full justify-start text-gray-700 hover:bg-gray-100"
+              className= "w-full justify-start text-gray-700 hover:bg-accent hover:text-black-500"
               onClick={() => {
                 if (item.id === "shelter-mode") {
-                  router.push("/shelter-registration");
+                  router.push("/dashboard/user/shelter-registration");
+                  setIsOpen(false);
+                } else if (item.id === "profile") {
+                  router.push("/dashboard/user/profile");
+                  setIsOpen(false);
+                } else if (item.id === "my-applications") {
+                  router.push("/dashboard/user/applications");
+                  setIsOpen(false);
+                } else if (item.id === "catalog") {
+                  router.push("/dashboard/pet-catalog");
+                  setIsOpen(false);
+                } else if (item.id === "adopter-dashboard") {
+                  router.push("/dashboard/user");
+                  setIsOpen(false);
+                } else if (item.id === "donations") {
+                  router.push("/dashboard/user/donations");
                   setIsOpen(false);
                 } else {
                   setIsOpen(false);
@@ -214,28 +203,11 @@ export function Sidebar({
             </Button>
           ))}
         </nav>
-
-        <Separator className="mx-4" /><nav className="p-4 space-y-2">
-          <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">
-            Soporte
-          </p>
-          {supportItems.map((item) => (
-            <Button
-              key={item.id}
-              variant="ghost"
-              className="w-full justify-start text-gray-700 hover:bg-gray-100"
-              onClick={() => setIsOpen(false)}
-            >
-              <item.icon className="w-4 h-4 mr-3" />
-              {item.label}
-            </Button>
-          ))}
-        </nav>
       </div><div className="p-4 border-t border-gray-200">
         {user ? (
           <Button
             variant="ghost"
-            className="w-full justify-start text-red-600 hover:bg-red-50"
+            className="w-full justify-start text-red-600 hover:bg-red-500"
             onClick={handleLogout}
           >
             <LogOut className="w-4 h-4 mr-3" />
@@ -257,7 +229,7 @@ export function Sidebar({
   );
 
   return (
-    <><div className="hidden lg:block w-64 h-screen fixed left-0 top-0 z-40">
+    <><div className="hidden lg:block w-80 h-screen fixed left-0 top-0 z-40 ">
         <SidebarContent />
       </div><div className="lg:hidden fixed top-4 left-4 z-50">
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -292,6 +264,18 @@ export function Sidebar({
               key={item.id}
               variant="ghost"
               size="sm"
+              onClick={() => {
+                if (item.id === "adopter-dashboard") {
+                  router.push("/dashboard/user");
+                } else if (item.id === "catalog") {
+                  router.push("/dashboard/pet-catalog");
+                } else if (item.id === "my-applications") {
+                  router.push("/dashboard/user/applications");
+                }else if (item.id === "donations") {
+                  router.push("/dashboard/user/donations");
+                }
+                setIsOpen(false);
+              }}
             >
               <div className="relative">
                 <item.icon

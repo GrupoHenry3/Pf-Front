@@ -34,7 +34,6 @@ export function AdoptionDetails({ adoptionId }: AdoptionDetailsProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // Determinar si el usuario actual es el dueño del refugio
   const isShelterOwner = user?.shelter?.id === adoption?.shelterID;
   const isAdoptionOwner = user?.id === adoption?.userID;
 
@@ -64,7 +63,6 @@ export function AdoptionDetails({ adoptionId }: AdoptionDetailsProps) {
         rejectionReason: rejectionReason
       });
       
-      // Actualizar el estado local
       if (adoption) {
         setAdoption({
           ...adoption,
@@ -180,7 +178,7 @@ export function AdoptionDetails({ adoptionId }: AdoptionDetailsProps) {
   // Verificar permisos
   if (!isAdoptionOwner && !isShelterOwner) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex ">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 mb-4">Acceso denegado</h2>
           <p className="text-gray-600 mb-4">No tienes permisos para ver esta solicitud de adopción.</p>

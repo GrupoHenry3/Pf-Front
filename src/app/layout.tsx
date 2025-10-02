@@ -32,11 +32,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <SpeciesProvider>
-            <BreedProvider>
               {children}
-            </BreedProvider>
-          </SpeciesProvider>
         </AuthProvider>
         
       </body>

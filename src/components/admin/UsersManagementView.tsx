@@ -85,7 +85,6 @@ export function UsersManagementView() {
       onConfirm: async () => {
         try {
           await usersService.updateStatus(user.id || "");
-          // El contexto se actualizará automáticamente
           setConfirmationModal({ ...confirmationModal, isOpen: false });
         } catch (error) {
           console.error("Error al cambiar estado del usuario:", error);
@@ -128,8 +127,8 @@ export function UsersManagementView() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2 text-4xl">
+            <Users className="h-10 w-10" />
             Gestión de Usuarios
           </CardTitle>
         </CardHeader>
@@ -155,7 +154,6 @@ export function UsersManagementView() {
                   <TableHead>Usuario</TableHead>
                   <TableHead>Tipo</TableHead>
                   <TableHead>Contacto</TableHead>
-                  <TableHead>Ubicación</TableHead>
                   <TableHead>Estado</TableHead>
                   <TableHead>Acciones</TableHead>
                 </TableRow>
@@ -196,15 +194,7 @@ export function UsersManagementView() {
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <MapPin className="w-4 h-4 mr-1" />
-                        <div>
-                          <div>{user.city}</div>
-                          <div className="text-xs text-gray-500">{user.country}</div>
-                        </div>
-                      </div>
-                    </TableCell>
+
                     <TableCell>
                       {getStatusBadge(user)}
                     </TableCell>

@@ -14,4 +14,5 @@ export interface Shelter {
   isVerified?: boolean;
   isActive?: boolean;
   avatarURL?: string;
+  createdAt?: string;
 }

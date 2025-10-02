@@ -10,6 +10,7 @@ interface UserContextType {
     user: UserInterface | null;
     setUser: (user: UserInterface | null) => void;
     getProfile: () => Promise<void>;
+    updateProfile: (userData: Partial<UserInterface>) => Promise<UserInterface>;
     isProfileLoaded: boolean;
     isUserLoading: boolean;
     isInitialized: boolean;
@@ -51,6 +52,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             clearError();
             console.log("Fetching user profile...");
             const response = await usersService.getCurrentUser();
+            console.log("User profile fetched successfully:", response);
             setUser(response);
             setIsProfileLoaded(true);
         } catch (error: unknown) {
@@ -62,13 +64,32 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     }
 
+    const updateProfile = async (userData: Partial<UserInterface>): Promise<UserInterface> => {
+        try {
+            setIsUserLoading(true);
+            clearError();
+            console.log("Updating user profile...");
+            const updatedUser = await usersService.update(userData);
+            setUser(updatedUser);
+            return updatedUser;
+        } catch (error: unknown) {
+            console.error("Error updating profile:", error);
+            throw error;
+        } finally {
+            setIsUserLoading(false);
+        }
+    }
+
     useEffect(() => {
         const initializeUser = async () => {
             try {
+                console.log("UserContext - Initializing user...");
                 await getProfile();
+                console.log("UserContext - User initialized successfully");
             } catch (error) {
-                console.error("Error initializing user:", error);
+                console.error("UserContext - Error initializing user:", error);
             } finally {
+                console.log("UserContext - Setting isInitialized to true");
                 setIsInitialized(true);
             }
         };
@@ -80,7 +101,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         <UserContext.Provider value={{ 
             user, 
             setUser,  
-            getProfile, 
+            getProfile,
+            updateProfile,
             isUserLoading, 
             isProfileLoaded, 
             isInitialized,

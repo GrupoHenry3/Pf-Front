@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowLeft, Upload, X, Plus, MapPin, Heart } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, Upload, X, Plus, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,9 +28,8 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
   const { user } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { species,  isSpeciesLoading, createSpecies } = useSpecies();
-  const { breeds,  isBreedsLoading, createBreed } = useBreeds();
+  const { breeds,  isBreedsLoading, createBreed,setBreeds } = useBreeds();
   
-  // Estados para manejar selecciones
   const [selectedSpeciesId, setSelectedSpeciesId] = useState<string>("");
   const [selectedBreedId, setSelectedBreedId] = useState<string>("");
   const [newSpeciesName, setNewSpeciesName] = useState<string>("");
@@ -39,6 +38,10 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
   const [newBreedAvatarURL, setNewBreedAvatarURL] = useState<string>("");
   const [showNewSpeciesInput, setShowNewSpeciesInput] = useState(false);
   const [showNewBreedInput, setShowNewBreedInput] = useState(false);
+
+  // useEffect(() => {
+  //   setBreeds(breeds.filter(breed => breed.speciesID === selectedSpeciesId));
+  // }, [ breeds, setBreeds, selectedSpeciesId]);
 
   const [formData, setFormData] = useState<Partial<Pet>>({
     name: "",
@@ -51,7 +54,6 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
     neutered: false,
     trained: false,
     dateAdded: new Date().toISOString(),
-    location: "",
   });
 
 
@@ -94,7 +96,7 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
       const breedData = {
         name: newBreedName.trim(),
         description: newBreedDescription.trim(),
-        speciesID: selectedSpeciesId,
+        species: { id: selectedSpeciesId },
         avatarURL: newBreedAvatarURL.trim(),
       };
       const newBreed = await createBreed(breedData);
@@ -108,8 +110,6 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
       alert("Error al crear la raza");
     }
   };
-
-  // Función para manejar selección de especie
   const handleSpeciesChange = (value: string) => {
     if (value === "other") {
       setShowNewSpeciesInput(true);
@@ -118,13 +118,11 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
       setSelectedSpeciesId(value);
       setShowNewSpeciesInput(false);
       setNewSpeciesName("");
-      // Limpiar raza seleccionada cuando cambia la especie
       setSelectedBreedId("");
       setShowNewBreedInput(false);
     }
   };
 
-  // Función para manejar selección de raza
   const handleBreedChange = (value: string) => {
     if (value === "other") {
       if (!selectedSpeciesId) {
@@ -185,10 +183,9 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
 
     try {
       const avatarURL = (formData.photos && formData.photos.length > 0) ? formData.photos[0] : "";
-
       const petData = {
         name: formData.name,
-        age: Number(formData.age) || 0,
+        age: Number(formData.age),
         gender: formData.gender === 'male' ? 'Male' : 'Female', 
         size: formData.size === 'small' ? 'Small' : formData.size === 'medium' ? 'Medium' : 'Large', 
         avatarURL: avatarURL,
@@ -198,9 +195,7 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
         speciesID: selectedSpeciesId,
         neutered: formData.neutered,
       };
-
-      console.log("PetData a enviar:", petData);
-
+      console.log("información que va al bac de la mascota", petData);
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pets`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -228,8 +223,6 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
         return formData.size && formData.gender && (formData.description?.length || 0) >= 50;
       case 3:
         return (formData.photos && formData.photos.length > 0);
-      case 4:
-        return formData.location;
       default:
         return false;
     }
@@ -316,9 +309,7 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
                     onValueChange={handleBreedChange}
                     className="grid grid-cols-2 gap-3 mt-2"
                   >
-                    {breeds
-                      .filter(breed => breed.id && breed.speciesID === selectedSpeciesId)
-                      .map((breed) => (
+                    {breeds.filter(breed => breed.species.id === selectedSpeciesId).map((breed) => (
                         <div key={breed.id} className="flex items-center space-x-2 border border-gray-200 rounded-lg p-3 hover:border-green-500 transition-colors">
                           <RadioGroupItem value={breed.id!} id={`breed-${breed.id}`} />
                           <Label htmlFor={`breed-${breed.id}`} className="cursor-pointer">
@@ -393,7 +384,6 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
                   id="age"
                   type="number"
                   placeholder="Ej: 3"
-                  min="0"
                   value={formData.age}
                   onChange={(e) => handleInputChange('age', e.target.value)}
                   className="mt-2"
@@ -615,21 +605,6 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
               <p className="text-gray-600">Información final para completar el perfil</p>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="location">Ubicación *</Label>
-                <div className="relative mt-2">
-                  <MapPin className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                  <Input
-                    id="location"
-                    placeholder="Ciudad, País"
-                    value={formData.location}
-                    onChange={(e) => handleInputChange('location', e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-
               {/* <div>
                 <Label htmlFor="adoptionFee">Tarifa de adopción (opcional)</Label>
                 <Input
@@ -688,12 +663,11 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-green-700">Ubicación:</span>
-                    <span className="text-green-900">{formData.location}</span>
+                    <span className="text-green-900">{user?.shelter?.city}</span>
                   </div>
                 </CardContent>
               </Card>
             </div>
-          </div>
         );
       default:
         return null;
@@ -703,7 +677,7 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
   
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto w-full px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <Button variant="ghost" onClick={onBack}>
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -723,7 +697,7 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
               Siguiente
             </Button>
           ) : (
-            <Button onClick={handleSubmit} disabled={isSubmitting || !canProceedToNext()}>
+            <Button onClick={handleSubmit} disabled={isSubmitting}>
               {isSubmitting ? "Enviando..." : "Finalizar"}
             </Button>
           )}

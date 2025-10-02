@@ -54,12 +54,12 @@ interface WelcomeProps {
                 </Button>
 
                 <Button
-                  asChild // 👈 Esto deja que el <Button> actúe como un wrapper de <Link>
+                  asChild 
                   variant="outline"
                   size="lg"
                   className="border-2 border-green-500 text-green-600 hover:bg-green-50 px-8 py-4 rounded-xl"
                 >
-                  <Link href="pet-catalog">
+                  <Link href="dashboard/pet-catalog">
                     Ver Mascotas Disponibles
                   </Link>
                 </Button>

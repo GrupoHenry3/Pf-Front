@@ -9,6 +9,9 @@ interface CreateShelterData {
   city: string;
   state: string;
   country: string;
+  website?: string;
+  description?: string;
+  avatarURL?: string;
 }
 
 interface GetSheltersFilters {
@@ -32,6 +35,7 @@ const BASE_URL = getApiUrl();
 
 export const sheltersService = {
   create: async (data: CreateShelterData): Promise<Shelter> => {
+    console.log('SheltersService.create - Data being sent to backend:', data);
     const response = await axios.post(`${BASE_URL}/shelters`, data, {
       withCredentials: true,
     });

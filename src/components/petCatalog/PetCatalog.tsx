@@ -84,7 +84,7 @@ export function PetCatalog() {
   }, [petsToAdopt]);
 
   const handlePetDetail = (pet: Pet) => {
-    router.push(`/dashboard/petDetail/${pet.id}`);
+    router.push(`/dashboard/pet-detail/${pet.id}`);
   }
 
   if (isPetLoading) {
@@ -146,11 +146,7 @@ export function PetCatalog() {
                       {pet.breed?.name} • {pet.age} años • {getSizeLabel(pet.size)}
                     </p>
 
-                    <p className="text-sm text-gray-500 line-clamp-2 mb-3">
-                      {pet.breed?.description}
-                    </p>
-
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between items-center mt-4">
                       <span className="flex items-center text-gray-500 text-sm">
                         <MapPin className="w-4 h-4 mr-1" /> {pet.shelter?.city}, {pet.shelter?.state}
                       </span>

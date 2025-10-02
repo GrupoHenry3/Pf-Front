@@ -18,10 +18,11 @@ export interface AdoptionDTO {
   houseCurrentPets?: string;
   dailyExcercise?: string;
   travelFrequency?: string;
-  petHistory?: string;
-  additionalInfo?: string;
   shelterID: string;
   petID: string;
+  petHistory?: string;
+  additionalInfo?: string;
+
 }
 
 export interface UpdateAdoptionDTO {
@@ -76,25 +77,25 @@ export interface AdoptionWithRelations {
   dailyRoutine: string;
   houseMembers: string;
   livingSpace: string;
-  houseKidsAges?: string;
-  houseCurrentPets?: string;
-  dailyExcercise?: string;
-  travelFrequency?: string;
-  petHistory?: string;
-  additionalInfo?: string;
+  houseKidsAges?: string | null;
+  houseCurrentPets?: string | null;
+  dailyExcercise?: string | null;
+  travelFrequency?: string | null;
+  petHistory?: string | null;
+  additionalInfo?: string | null;
   status: string;
-  rejectionReason?: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
   userID: string;
   shelterID: string;
   petID: string;
+  rejectionReason?: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
   user: {
     id: string;
     fullName: string;
     email: string;
-    phoneNumber: string;
+    phoneNumber: string | null; // 👈 importante
     avatarURL: string;
   };
   pet: {
@@ -120,21 +121,81 @@ export interface AdoptionWithRelations {
   };
 }
 
+export interface AdminAdoptions {
+  id: string;
+  dni: string;
+  birthdate: string;
+  mainReason: string;
+  expectatives: string;
+  previousPetExp: string;
+  houseType: string;
+  houseOwnership: string;
+  houseOuterSpace: string;
+  workingHours: string;
+  dailyRoutine: string;
+  houseMembers: string;
+  livingSpace: string;
+  houseKidsAges?: string | null;
+  houseCurrentPets?: string | null;
+  dailyExcercise?: string | null;
+  travelFrequency?: string | null;
+  petHistory?: string | null;
+  additionalInfo?: string | null;
+  status: string;
+  userID: string;
+  shelterID: string;
+  petID: string;
+  rejectionReason?: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+
+  user: {
+    id: string;
+    fullName: string;
+    email: string;
+    phoneNumber: string | null;
+    avatarURL: string;
+  };
+
+  pet: {
+    id: string;
+    name: string;
+    age: number;
+    gender: string;
+    size: string;
+    avatarURL: string;
+    breed: {
+      name: string;
+    };
+    species: {
+      name: string;
+    };
+  };
+
+  shelter: {
+    id: string;
+    name: string;
+    city: string;
+    state: string;
+    country: string;
+  };
+}
+
+
 export interface AdoptionsByShelterResponse {
   statusCode: number;
   data: AdoptionWithRelations[];
 }
 
 export const adoptionsService = {
-  // Crear solicitud de adopción
   create: async (data: AdoptionDTO): Promise<AdoptionResponse> => {
     const response = await apiClient.post<AdoptionResponse>('/adoptions', data);
     return response.data;
   },
 
-  // Obtener todas las adopciones
-  findAll: async (): Promise<AdoptionResponse> => {
-    const response = await apiClient.get<AdoptionResponse>('/adoptions');
+  findAll: async (): Promise<AdminAdoptions[]> => {
+    const response = await apiClient.get('/adoptions');
     return response.data;
   },
 

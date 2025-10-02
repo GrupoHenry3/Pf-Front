@@ -125,7 +125,7 @@ export default function PetDetailPage() {
     return (
       <div className="flex min-h-screen bg-gray-50">
         <AdminSidebar user={user} />
-        <div className="flex-1 lg:ml-64 p-6">
+        <div className="flex-1 p-6">
           <div className="mx-auto max-w-7xl">
             <div className="text-center py-8">
               <p className="text-gray-600">Mascota no encontrada</p>
@@ -146,7 +146,7 @@ export default function PetDetailPage() {
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar user={user} />
       
-      <div className="flex-1 lg:ml-64 p-6">
+      <div className="flex-1 p-6">
         <div className="mx-auto max-w-7xl">
           {/* Header */}
           <div className="mb-8">

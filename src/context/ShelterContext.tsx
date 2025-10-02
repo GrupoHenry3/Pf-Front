@@ -10,44 +10,53 @@ interface ShelterContextType {
     shelters: Shelter[];
     createShelter: (shelter: Shelter) => void;
     setShelters: (shelters: Shelter[]) => void;
-    getShelters: () => Promise<void>;
 }
 
 const ShelterContext = createContext<ShelterContextType | undefined>(undefined);
 
 
 export const ShelterProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [shelters, setShelters] = useState<Shelter[]>([]);
-    const { getProfile } = useUser();
 
-    const getShelters = async () => {
-        try {
-            const shelters = await sheltersService.findAll();
-            setShelters(shelters);    
+    const [shelters, setShelters] = useState<Shelter[]>([]);
+    const { getProfile, user } = useUser();
+    
+    useEffect(() => {        
+        const getShelters = async () => {
+            try {
+                
+                const shelters = await sheltersService.findAll();
+                setShelters(shelters);    
+            
         } catch (error) {
             console.error("Error fetching shelters:", error);
-        }           
+        }               
     }
+        getShelters();
+    }, [user]);
 
     useEffect(() => {
-        getShelters();
-    }, []);
+        console.log(shelters);
+    }, [shelters]);
 
     const createShelter = async (shelterData: Shelter) => {
+        console.log('ShelterContext.createShelter - Received data:', shelterData);
         const newShelter = await sheltersService.create({
             name: shelterData.name,
             address: shelterData.address,
             phoneNumber: shelterData.phoneNumber,
             city: shelterData.city,
             state: shelterData.state,
-            country: shelterData.country
+            country: shelterData.country,
+            website: shelterData.website,
+            description: shelterData.description,
+            avatarURL: shelterData.avatarURL
         });
         setShelters([...shelters, newShelter]);
         await getProfile();
     }
 
     return(
-        <ShelterContext.Provider value={{ shelters, setShelters, createShelter, getShelters }}>
+        <ShelterContext.Provider value={{ shelters, setShelters, createShelter }}>
             {children}
         </ShelterContext.Provider>
     )

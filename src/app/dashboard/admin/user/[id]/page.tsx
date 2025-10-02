@@ -149,10 +149,8 @@ export default function UserDetailPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <AdminSidebar user={currentUser} />
-      
-      <div className="flex-1 lg:ml-64 p-6">
+    <div className="flex min-h-screen bg-gray-50">      
+      <div className="flex-1 p-6">
         <div className="mx-auto max-w-7xl">
           {/* Header */}
           <div className="mb-8">
@@ -256,7 +254,7 @@ export default function UserDetailPage() {
                       <div>
                         <p className="font-medium">Fecha de registro</p>
                         <p className="text-sm text-gray-600">
-                          {user.createdAt.toLocaleDateString('es-CO')}
+                          {new Date(user.createdAt).toLocaleDateString('es-CO')}
                         </p>
                       </div>
                     </div>
@@ -351,7 +349,7 @@ export default function UserDetailPage() {
                   <div className="flex justify-between">
                     <span className="text-gray-600">Registrado:</span>
                     <span className="font-semibold">
-                      {user.createdAt.toLocaleDateString('es-CO')}
+                      {new Date(user.createdAt).toLocaleDateString('es-CO')}
                     </span>
                   </div>
                   {user.userType === "User" && (

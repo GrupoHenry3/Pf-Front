@@ -1,31 +1,63 @@
+"use client";
+
 import { useUser } from "@/context/UserContext";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
 
 interface ProtectedRouteProps {
-    children: React.ReactNode;
-    allowedUserTypes: string[];
+  children: React.ReactNode;
 }
 
-const ProtectedRoute = ({ children, allowedUserTypes }: ProtectedRouteProps) => {
-    const { user, isUserLoading } = useUser();
-    const router = useRouter();
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  const { user, isUserLoading, isInitialized } = useUser();
+  const router = useRouter();
+  const pathname = usePathname();
 
-    useEffect(() => {
-        if (!isUserLoading) {
-            if (!user) {
-                router.replace("/auth");
-            } else if (!allowedUserTypes.includes(user.userType)) {
-                router.replace((`/dashboard/${user.userType}`).toLowerCase());
-            }
-        }
-    }, [user, isUserLoading, allowedUserTypes, router]);
+  useEffect(() => {
+    if (!isInitialized || isUserLoading) return;
 
-    if (!user || !allowedUserTypes.includes(user.userType)) {
-        return null;
+    if (!user) {
+      router.replace("/auth");
+      return;
     }
 
-    return <>{children}</>;
-}
+    // 🔹 Redirecciones según rol
+    if (user.siteAdmin) {
+      if (!pathname.startsWith("/dashboard/admin")) {
+        router.replace("/dashboard/admin");
+      }
+      return;
+    }
+
+    if (user.userType === "Shelter") {
+      if (!pathname.startsWith("/dashboard/shelter")) {
+        router.replace("/dashboard/shelter");
+      }
+      return;
+    }
+
+    if (user.userType === "User") {
+      if (!pathname.startsWith("/dashboard/user")) {
+        router.replace("/dashboard/user");
+      }
+      return;
+    }
+  }, [user, isUserLoading, isInitialized, router, pathname]);
+
+  if (!isInitialized || isUserLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Verificando permisos...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) return null;
+
+  return <>{children}</>;
+};
 
 export default ProtectedRoute;
