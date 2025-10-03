@@ -11,16 +11,11 @@ function CallbackContent() {
 
   useEffect(() => {
     if (token) {
-      fetch("/api/set-token", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token }),
-      }).then(() => {
-        setIsProcessing(false);
-        router.replace("/dashboard");
-      });
+      // Guardar el token en cookie accesible (sin httpOnly)
+      document.cookie = `access_token=${token}; expires=${new Date(Date.now() + 24 * 60 * 60 * 1000).toUTCString()}; path=/; secure; samesite=none`;
+      
+      setIsProcessing(false);
+      router.replace("/dashboard");
     }
   }, [token, router]);
 
@@ -41,8 +36,7 @@ export default function GoogleCallback() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">Procesando autenticación...</p>
-          <p className="text-sm text-gray-500 mt-2">¡Casi listo! Te estamos llevando al dashboard.</p>
+          <p className="text-gray-600">Cargando...</p>
         </div>
       </div>
     }>
