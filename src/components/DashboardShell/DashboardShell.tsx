@@ -5,19 +5,30 @@ import { ShelterSidebar } from "@/components/sidebar/ShelterSidebar";
 import { Sidebar } from "@/components/sidebar/Sidebar";
 import { useUser } from "@/context/UserContext";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-
+import { useEffect, useState } from "react";
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const { user, isInitialized, isUserLoading } = useUser();
   const router = useRouter();
 
+  const [isMobile, setMobile] = useState<boolean>(false);
+
   useEffect(() => {
     if (isInitialized && !isUserLoading && !user) {
-      router.replace('/auth');
+      router.replace("/auth");
     }
   }, [user, isInitialized, isUserLoading, router]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setMobile(window.innerWidth <= 1024);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   if (!isInitialized || isUserLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -36,9 +47,9 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   const renderSidebar = () => {
     if (user.siteAdmin === true) {
       return <AdminSidebar user={user} />;
-    } else if (user.userType === 'Shelter') {
+    } else if (user.userType === "Shelter") {
       return <ShelterSidebar user={user} />;
-    } else if (user.userType === 'User') {
+    } else if (user.userType === "User") {
       return <Sidebar user={user} />;
     }
     return null;
@@ -46,10 +57,8 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
   return (
     <div className="flex min-h-screen px-4 bg-gray-50">
-      <aside>
-        {renderSidebar()}
-      </aside>
-      <main className="flex-1 bg-gray-50 ml-64">{children}</main>
+      <aside className={`${isMobile ? "mr-0" : "mr-64"}`}>{renderSidebar()}</aside>
+      <main className="flex-1 bg-gray-50 ">{children}</main>
     </div>
   );
 }
