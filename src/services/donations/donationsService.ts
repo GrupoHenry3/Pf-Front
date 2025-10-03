@@ -40,7 +40,7 @@ export const donationsService = {
   },
 
   findByUser: async () => {
-    const response = await apiClient.get(`/donations/user`);
+    const response = await apiClient.get(`/donations/me`);
     return response.data;
   },
 };
