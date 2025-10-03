@@ -5,13 +5,13 @@ import { useUser } from "@/context/UserContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  FileText, 
-  Calendar, 
-  MapPin, 
-  Building2, 
-  Eye, 
-  ChevronLeft, 
+import {
+  FileText,
+  Calendar,
+  MapPin,
+  Building2,
+  Eye,
+  ChevronLeft,
   ChevronRight,
   Loader2,
   Clock,
@@ -105,7 +105,7 @@ export default function UserApplicationsPage() {
                 <p className="text-gray-600 mb-6">
                   Cuando envíes una solicitud de adopción, aparecerá aquí.
                 </p>
-                <Button 
+                <Button
                   onClick={() => window.location.href = '/dashboard/pet-catalog'}
                   className="bg-green-500 hover:bg-green-600"
                 >
@@ -129,18 +129,17 @@ export default function UserApplicationsPage() {
                             width={80}
                             height={80}
                             className="w-20 h-20 object-cover rounded-lg"
-                           
+
                           />
                         </div>
 
                         {/* Application Info */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                            <div>
+                          <div className="flex flex-row items-center justify-between flex-1 gap-4">
+                            <div className="h-full">
                               <h3 className="text-lg font-semibold text-gray-900 mb-1">
                                 {application.pet?.name || "Mascota no disponible"}
                               </h3>
-                              <p className="text-sm text-gray-600 mb-2">
+                              <p className="text-sm text-gray-600 mb-2 capitalize">
                                 {application.pet?.breed?.name} • {application.pet?.age} años • {application.pet?.gender}
                               </p>
                               <div className="flex items-center gap-2 text-sm text-gray-500">
@@ -150,7 +149,7 @@ export default function UserApplicationsPage() {
                                 <span>{application.shelter?.city}, {application.shelter?.state}</span>
                               </div>
                             </div>
-                            <div className="flex flex-col sm:items-end gap-2">
+                            <div className="h-full flex flex-col items-center gap-3">
                               {getStatusBadge(application.status)}
                               <div className="flex items-center gap-1 text-sm text-gray-500">
                                 <Calendar className="w-4 h-4" />
@@ -160,7 +159,6 @@ export default function UserApplicationsPage() {
                               </div>
                             </div>
                           </div>
-                        </div>
 
                         {/* Action Button */}
                         <div className="flex-shrink-0">
@@ -192,7 +190,7 @@ export default function UserApplicationsPage() {
                     <ChevronLeft className="w-4 h-4" />
                     Anterior
                   </Button>
-                  
+
                   <div className="flex items-center gap-1">
                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                       <Button
@@ -253,7 +251,7 @@ export default function UserApplicationsPage() {
                             <p className="text-gray-600 mb-2">
                               {selectedApplication.pet?.breed?.name} • {selectedApplication.pet?.age} años • {selectedApplication.pet?.gender}
                             </p>
-                    
+
                             <div className="flex items-center gap-2 text-sm text-gray-500">
                               <Building2 className="w-4 h-4" />
                               <span>{selectedApplication.shelter?.name}</span>

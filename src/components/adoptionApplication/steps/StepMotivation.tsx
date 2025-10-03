@@ -39,7 +39,7 @@ export function StepMotivation({ data, update }: StepProps) {
       if (!value) error = "Debe seleccionar una opción";
     }
 
-    setErrors(prev => ({ ...prev, [field]: error }));
+    setErrors((prev) => ({ ...prev, [field]: error }));
   };
 
   return (
@@ -51,27 +51,13 @@ export function StepMotivation({ data, update }: StepProps) {
       <div className="space-y-4">
         <div>
           <Label htmlFor="dni">DNI *</Label>
-          <Input
-            id="dni"
-            value={data.dni}
-            onChange={e => update("dni", e.target.value)}
-            onBlur={e => validateField("dni", e.target.value)}
-            placeholder="Ingrese su DNI"
-            className="mt-2"
-          />
+          <Input id="dni" value={data.dni} onChange={(e) => update("dni", e.target.value)} onBlur={(e) => validateField("dni", e.target.value)} placeholder="Ingrese su DNI" className="mt-2" />
           {errors.dni && <p className="text-red-600 text-sm mt-1">{errors.dni}</p>}
         </div>
 
         <div>
           <Label htmlFor="birthDate">Fecha de nacimiento *</Label>
-          <Input
-            id="birthDate"
-            type="date"
-            value={data.birthDate}
-            onChange={e => update("birthDate", e.target.value)}
-            onBlur={e => validateField("birthDate", e.target.value)}
-            className="mt-2"
-          />
+          <Input id="birthDate" type="date" value={data.birthDate} onChange={(e) => update("birthDate", e.target.value)} onBlur={(e) => validateField("birthDate", e.target.value)} className="mt-2" />
           {errors.birthDate && <p className="text-red-600 text-sm mt-1">{errors.birthDate}</p>}
         </div>
 
@@ -80,8 +66,8 @@ export function StepMotivation({ data, update }: StepProps) {
           <Textarea
             id="adoptionReason"
             value={data.adoptionReason}
-            onChange={e => update("adoptionReason", e.target.value)}
-            onBlur={e => validateField("adoptionReason", e.target.value)}
+            onChange={(e) => update("adoptionReason", e.target.value)}
+            onBlur={(e) => validateField("adoptionReason", e.target.value)}
             placeholder="Explica por qué has decidido adoptar..."
             className="mt-2 min-h-24"
           />
@@ -93,8 +79,8 @@ export function StepMotivation({ data, update }: StepProps) {
           <Textarea
             id="expectations"
             value={data.expectations}
-            onChange={e => update("expectations", e.target.value)}
-            onBlur={e => validateField("expectations", e.target.value)}
+            onChange={(e) => update("expectations", e.target.value)}
+            onBlur={(e) => validateField("expectations", e.target.value)}
             placeholder="Describe qué tipo de relación esperas..."
             className="mt-2"
           />
@@ -105,23 +91,23 @@ export function StepMotivation({ data, update }: StepProps) {
           <Label>Experiencia previa con mascotas *</Label>
           <RadioGroup
             value={data.petExperience}
-            onValueChange={v => {
+            onValueChange={(v) => {
               update("petExperience", v);
               validateField("petExperience", v);
             }}
             className="mt-2"
           >
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="extensive" id="extensive" />
-              <Label htmlFor="extensive">Mucha experiencia</Label>
+              <RadioGroupItem value="experienced" id="experienced" />
+              <Label htmlFor="experienced">Mucha experiencia</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="some" id="some" />
-              <Label htmlFor="some">Algo de experiencia</Label>
+              <RadioGroupItem value="moderate" id="moderate" />
+              <Label htmlFor="moderate">Algo de experiencia</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="little" id="little" />
-              <Label htmlFor="little">Poca experiencia</Label>
+              <RadioGroupItem value="basic" id="basic" />
+              <Label htmlFor="basic">Poca experiencia</Label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="none" id="none" />

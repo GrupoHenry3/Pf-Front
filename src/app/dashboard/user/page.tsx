@@ -28,13 +28,13 @@ interface AdoptionApplication {
 
 function AdopterDashboard() {
 
-  const { 
-    user, 
-    isProfileLoaded, 
-    isUserLoading, 
-    isInitialized, 
-    error, 
-    clearError 
+  const {
+    user,
+    isProfileLoaded,
+    isUserLoading,
+    isInitialized,
+    error,
+    clearError
   } = useUser();
 
   const { petsToAdopt, allPets } = usePet();
@@ -96,7 +96,7 @@ function AdopterDashboard() {
   };
 
   const personalizedTip = getPersonalizedTip();
-  
+
   if (!isInitialized || isUserLoading || !isProfileLoaded) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -123,7 +123,7 @@ function AdopterDashboard() {
           {error && (
             <ErrorAlert error={error} onClear={clearError} />
           )}
-          
+
           <div className="mb-8">
             <h1 className="text-3xl text-gray-900 mb-2">
               ¡Hola, {user!.fullName || 'Usuario'}! 👋
@@ -138,7 +138,7 @@ function AdopterDashboard() {
             )}
           </div>
           {/* Estadísticas del usuario */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <Card className="border-0 shadow-md bg-gradient-to-br from-blue-50 to-blue-100">
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4">
@@ -384,8 +384,8 @@ function AdopterDashboard() {
                   <p className="text-sm text-green-700 mb-4">
                     {personalizedTip.content}
                   </p>
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     className="bg-green-500 hover:bg-green-600 text-white"
                     onClick={() => {
                       if (personalizedTip.action === "Explorar Mascotas") handleViewCatalog();
@@ -423,9 +423,9 @@ function AdopterDashboard() {
                           </div>
                         </div>
                       ))}
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         className="w-full mt-3"
                         onClick={handleViewCatalog}
                       >
@@ -457,7 +457,7 @@ function AdopterDashboard() {
                           <div>
                             <p className="text-sm font-medium text-gray-900">${donation.amount.toLocaleString()}</p>
                           </div>
-                          <Badge 
+                          <Badge
                             variant={donation.status === 'completed' ? 'default' : 'secondary'}
                             className={donation.status === 'completed' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}
                           >
@@ -496,9 +496,9 @@ function AdopterDashboard() {
                       <Mail className="w-4 h-4 text-gray-400" />
                       <span className="text-gray-600">{user?.email}</span>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="w-full mt-3"
                       onClick={handleViewProfile}
                     >
@@ -519,16 +519,16 @@ export default AdopterDashboard;
 
 /*
  * Dashboard del Adoptante - Implementación Segura
- * 
+ *
  * Este componente implementa las siguientes medidas de seguridad:
- * 
+ *
  * 1. Validación de inicialización: Solo se renderiza cuando el contexto está completamente inicializado
  * 2. Validación de perfil cargado: Espera a que el perfil del usuario esté completamente cargado
  * 3. Validación de usuario autenticado: Solo muestra contenido si hay un usuario válido
  * 4. Acceso universal: Todos los usuarios autenticados pueden acceder (todos inician como adoptantes)
  * 5. Manejo de errores: Muestra errores del contexto de usuario de forma segura
  * 6. Estados de carga informativos: Proporciona feedback visual durante la carga
- * 
+ *
  * Estados del contexto utilizados:
  * - isInitialized: Indica si el contexto se ha inicializado
  * - isUserLoading: Indica si se está cargando el perfil del usuario

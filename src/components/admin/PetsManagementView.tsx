@@ -135,14 +135,15 @@ export function PetsManagementView() {
 
   return (
     <div className="space-y-6">
+      <header className="flex items-center gap-2 text-4xl font-medium">Mascotas</header>
       <Card>
-        <CardHeader>
+        {/*<CardHeader>
           <CardTitle className="flex items-center gap-2 text-4xl">
             <Heart className="h-10 w-10" />
             Gestión de Mascotas
           </CardTitle>
-        </CardHeader>
-        <CardContent>
+        </CardHeader>*/}
+        <CardContent className="space-y-6 pt-6">
           <AdminPetFilters
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
@@ -158,7 +159,6 @@ export function PetsManagementView() {
             setSelectedLocation={setSelectedLocation}
             onResetFilters={resetFilters}
             hasActiveFilters={hasActiveFilters}
-            className="mb-6"
           />
 
           <div className="rounded-md border">

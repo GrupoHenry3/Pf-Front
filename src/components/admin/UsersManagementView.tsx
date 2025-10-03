@@ -2,33 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Eye, 
-  CheckCircle, 
-  XCircle, 
-  Users, 
-  User,
-  Building2,
-  Shield,
-  Mail,
-  Phone,
-} from "lucide-react";
+import { Eye, CheckCircle, XCircle, Users, User, Building2, Shield, Mail, Phone } from "lucide-react";
 import { useUserFilters } from "@/hooks/useUserFilters";
 import { UserFilters } from "@/components/ui/UserFilters";
 import { ConfirmationModal } from "@/components/ui/ConfirmationModal";
@@ -55,19 +33,8 @@ export function UsersManagementView() {
     onConfirm: () => {},
   });
 
-  const {
-    searchTerm,
-    setSearchTerm,
-    selectedStatus,
-    setSelectedStatus,
-    selectedType,
-    setSelectedType,
-    selectedLocation,
-    setSelectedLocation,
-    filteredUsers,
-    hasActiveFilters,
-    resetFilters,
-  } = useUserFilters({ users: totalUsers });
+  const { searchTerm, setSearchTerm, selectedStatus, setSelectedStatus, selectedType, setSelectedType, selectedLocation, setSelectedLocation, filteredUsers, hasActiveFilters, resetFilters } =
+    useUserFilters({ users: totalUsers });
 
   const handleViewDetails = (userId: string) => {
     router.push(`/dashboard/admin/user/${userId}`);
@@ -77,7 +44,7 @@ export function UsersManagementView() {
     setConfirmationModal({
       isOpen: true,
       title: user.isActive ? "Desactivar Usuario" : "Activar Usuario",
-      description: user.isActive 
+      description: user.isActive
         ? `¿Estás seguro de que quieres desactivar el usuario "${user.fullName}"? Esto impedirá que pueda acceder al sistema.`
         : `¿Estás seguro de que quieres activar el usuario "${user.fullName}"?`,
       type: user.isActive ? "danger" : "success",
@@ -119,19 +86,18 @@ export function UsersManagementView() {
     if (!user.isActive) {
       return <Badge variant="destructive">Inactivo</Badge>;
     }
-    return <Badge variant="default" className="bg-green-600">Activo</Badge>;
+    return (
+      <Badge variant="default" className="bg-green-600">
+        Activo
+      </Badge>
+    );
   };
 
   return (
     <div className="space-y-6">
+      <header className="text-4xl font-medium">Donaciones</header>
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-4xl">
-            <Users className="h-10 w-10" />
-            Gestión de Usuarios
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <UserFilters
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
@@ -162,11 +128,7 @@ export function UsersManagementView() {
                   <TableRow key={user.id}>
                     <TableCell>
                       <div className="flex items-center space-x-3">
-                        <ImageWithFallback
-                          src={user.avatarURL || "/placeholder-user.jpg"}
-                          alt={user.fullName || "Usuario"}
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
+                        <ImageWithFallback src={user.avatarURL || "/placeholder-user.jpg"} alt={user.fullName || "Usuario"} className="w-10 h-10 rounded-full object-cover" />
                         <div>
                           <div className="font-medium">{user.fullName}</div>
                           <div className="text-sm text-gray-500">{user.email}</div>
@@ -194,16 +156,10 @@ export function UsersManagementView() {
                       </div>
                     </TableCell>
 
-                    <TableCell>
-                      {getStatusBadge(user)}
-                    </TableCell>
+                    <TableCell>{getStatusBadge(user)}</TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleViewDetails(user.id || "")}
-                        >
+                        <Button size="sm" variant="outline" onClick={() => handleViewDetails(user.id || "")}>
                           <Eye className="w-4 h-4 mr-1" />
                           Ver
                         </Button>
@@ -234,12 +190,7 @@ export function UsersManagementView() {
           </div>
 
           {filteredUsers.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              {hasActiveFilters 
-                ? "No se encontraron usuarios con los filtros aplicados"
-                : "No hay usuarios registrados"
-              }
-            </div>
+            <div className="text-center py-8 text-gray-500">{hasActiveFilters ? "No se encontraron usuarios con los filtros aplicados" : "No hay usuarios registrados"}</div>
           )}
         </CardContent>
       </Card>

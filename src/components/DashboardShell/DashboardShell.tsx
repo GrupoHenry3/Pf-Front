@@ -21,7 +21,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
   useEffect(() => {
     const handleResize = () => {
-      setMobile(window.innerWidth <= 1024);
+      setMobile(window.innerWidth < 1025);
     };
 
     window.addEventListener("resize", handleResize);
@@ -29,6 +29,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
   if (!isInitialized || isUserLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -58,7 +59,9 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   return (
     <div className="flex min-h-screen px-4 bg-gray-50">
       <aside className={`${isMobile ? "mr-0" : "mr-64"}`}>{renderSidebar()}</aside>
-      <main className="flex-1 bg-gray-50 ">{children}</main>
+      <main className="flex-1 bg-gray-50 py-12 px-8 relative">
+        <section className="max-w-[1300px] mx-auto">{children}</section>
+      </main>
     </div>
   );
 }
