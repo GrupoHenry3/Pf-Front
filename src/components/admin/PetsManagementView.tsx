@@ -2,28 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Eye, 
-  XCircle, 
-  Heart, 
-  Building2
-} from "lucide-react";
+import { Eye, XCircle, Heart, Building2 } from "lucide-react";
 import { usePet } from "@/context/PetContext";
 import { useAdminPetFilters } from "@/hooks/useAdminPetFilters";
 import { AdminPetFilters } from "@/components/ui/AdminPetFilters";
@@ -78,7 +61,7 @@ export function PetsManagementView() {
     setConfirmationModal({
       isOpen: true,
       title: isActive ? "Desactivar Mascota" : "Activar Mascota",
-      description: isActive 
+      description: isActive
         ? `¿Estás seguro de que quieres desactivar la mascota "${pet.name}"? Esto la removerá del catálogo público.`
         : `¿Estás seguro de que quieres activar la mascota "${pet.name}"? Esto la agregará al catálogo público.`,
       type: isActive ? "danger" : "success",
@@ -87,7 +70,7 @@ export function PetsManagementView() {
           await petsService.updateStatus(pet.id || "");
           setConfirmationModal({ ...confirmationModal, isOpen: false });
         } catch (error) {
-          console.error(`Error al ${isActive ? 'desactivar' : 'activar'} mascota:`, error);
+          console.error(`Error al ${isActive ? "desactivar" : "activar"} mascota:`, error);
           setConfirmationModal({ ...confirmationModal, isOpen: false });
         }
       },
@@ -96,35 +79,43 @@ export function PetsManagementView() {
 
   const getStatusBadge = (pet: Pet) => {
     const statusBadges = [];
-    
+
     // Badge de estado de adopción
     const status = getPetStatus(pet);
     const label = getPetStatusLabel(status);
     const variant = getPetStatusVariant(status);
-    
+
     statusBadges.push(
       <Badge key="adoption" variant={variant}>
         {label}
-      </Badge>
+      </Badge>,
     );
-    
+
     // Badge de estado activo/inactivo
     if (pet.isActive) {
-      statusBadges.push(<Badge key="active" variant="default" className="bg-blue-600">Activo</Badge>);
+      statusBadges.push(
+        <Badge key="active" variant="default" className="bg-blue-600">
+          Activo
+        </Badge>,
+      );
     } else {
-      statusBadges.push(<Badge key="active" variant="outline" className="border-gray-400 text-gray-600">Inactivo</Badge>);
+      statusBadges.push(
+        <Badge key="active" variant="outline" className="border-gray-400 text-gray-600">
+          Inactivo
+        </Badge>,
+      );
     }
-    
+
     return <div className="flex flex-col gap-1">{statusBadges}</div>;
   };
 
   const getSizeLabel = (size: string) => {
     switch (size) {
-      case "small":
+      case "Small":
         return "Pequeño";
-      case "medium":
+      case "Medium":
         return "Mediano";
-      case "large":
+      case "Large":
         return "Grande";
       default:
         return size;
@@ -133,9 +124,9 @@ export function PetsManagementView() {
 
   const getGenderLabel = (gender: string) => {
     switch (gender) {
-      case "male":
+      case "Male":
         return "Macho";
-      case "female":
+      case "Female":
         return "Hembra";
       default:
         return gender;
@@ -147,7 +138,7 @@ export function PetsManagementView() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-4xl">
-            <Heart  className="h-10 w-10" />
+            <Heart className="h-10 w-10" />
             Gestión de Mascotas
           </CardTitle>
         </CardHeader>
@@ -187,22 +178,16 @@ export function PetsManagementView() {
                   <TableRow key={pet.id}>
                     <TableCell>
                       <div className="flex items-center space-x-3">
-                        <ImageWithFallback
-                          src={pet.avatarURL}
-                          alt={pet.name}
-                          className="w-12 h-12 rounded-lg object-cover"
-                        />
+                        <ImageWithFallback src={pet.avatarURL} alt={pet.name} className="w-12 h-12 rounded-lg object-cover" />
                         <div>
                           <div className="font-medium">{pet.name}</div>
-                          <div className="text-sm text-gray-500">
-                            {getGenderLabel(pet.gender)}
-                          </div>
+                          <div className="text-sm text-gray-500">{getGenderLabel(pet.gender)}</div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
                       <div>
-                        <div className="font-medium">{pet.species?.name}</div>
+                        <div className="font-medium capitalize">{pet.species?.name}</div>
                         <div className="text-sm text-gray-500">{pet.breed?.name}</div>
                       </div>
                     </TableCell>
@@ -223,25 +208,14 @@ export function PetsManagementView() {
                         </div>
                       </div>
                     </TableCell>
-                    <TableCell>
-                      {getStatusBadge(pet)}
-                    </TableCell>
+                    <TableCell>{getStatusBadge(pet)}</TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleViewDetails(pet.id || "")}
-                        >
+                        <Button size="sm" variant="outline" onClick={() => handleViewDetails(pet.id || "")}>
                           <Eye className="w-4 h-4 mr-1" />
                           Ver
                         </Button>
-                        <Button
-                          size="sm"
-                          variant={pet.isActive ? "destructive" : "default"}
-                          onClick={() => handleToggleActive(pet)}
-                          className={pet.isActive ? "" : "bg-green-600 hover:bg-green-700"}
-                        >
+                        <Button size="sm" variant={pet.isActive ? "destructive" : "default"} onClick={() => handleToggleActive(pet)} className={pet.isActive ? "" : "bg-green-600 hover:bg-green-700"}>
                           {pet.isActive ? (
                             <>
                               <XCircle className="w-4 h-4 mr-1" />
@@ -263,12 +237,7 @@ export function PetsManagementView() {
           </div>
 
           {filteredPets.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
-              {hasActiveFilters 
-                ? "No se encontraron mascotas con los filtros aplicados"
-                : "No hay mascotas registradas"
-              }
-            </div>
+            <div className="text-center py-8 text-gray-500">{hasActiveFilters ? "No se encontraron mascotas con los filtros aplicados" : "No hay mascotas registradas"}</div>
           )}
         </CardContent>
       </Card>
