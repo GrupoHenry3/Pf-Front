@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
+import Cookies from "js-cookie";
 
 export default function GoogleSuccessPage() {
   const router = useRouter();
@@ -20,9 +21,13 @@ export default function GoogleSuccessPage() {
         if (token) {
           console.log("🎫 Token capturado de la URL:", token);
           
-          // Guardar el token en localStorage
-          localStorage.setItem('access_token', token);
-          console.log("✅ Token guardado en localStorage");
+          // Guardar el token en cookie (igual que el login normal)
+          Cookies.set('access_token', token, {
+            expires: 1, // 1 día
+            secure: true,
+            sameSite: 'none'
+          });
+          console.log("✅ Token guardado en cookie");
           
           // Mostrar mensaje de éxito
           toast.success("¡Autenticación con Google exitosa!");

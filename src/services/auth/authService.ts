@@ -41,9 +41,13 @@ export const authService = {
     logout: async () => {
         try {
             const response = await apiClient.post("/auth/signout");
+            // Limpiar la cookie de autenticación
+            document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; secure; samesite=none';
             toast.success("¡Hasta luego!");
             return response.data;
         } catch (error) {
+            // Limpiar la cookie incluso si hay error
+            document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; secure; samesite=none';
             toast.error("Error al cerrar sesión");
             throw error;
         }
@@ -52,5 +56,6 @@ export const authService = {
     googleAuth: () => {
         window.location.href = `${apiClient.defaults.baseURL}/auth/google`;
     },
+
 
 }
