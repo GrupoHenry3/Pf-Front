@@ -1,41 +1,29 @@
 "use client";
 
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { 
-  FileText, 
-  User,
-  Heart,
-  Clock,
-  CheckCircle,
-  XCircle
-} from "lucide-react";
+import { FileText, User, Heart, Clock, CheckCircle, XCircle } from "lucide-react";
 import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
 import { useAdoption } from "@/context/AdoptionContext";
 
-
 export function ApplicationsView() {
-  const {allAdoptions} = useAdoption();
+  const { allAdoptions } = useAdoption();
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "Pending":
-        return <Badge variant="outline" className="border-yellow-500 text-yellow-700">Pendiente</Badge>;
+        return (
+          <Badge variant="outline" className="border-yellow-500 text-yellow-700">
+            Pendiente
+          </Badge>
+        );
       case "Approved":
-        return <Badge variant="default" className="bg-green-600">Aprobada</Badge>;
+        return (
+          <Badge variant="default" className="bg-green-600">
+            Aprobada
+          </Badge>
+        );
       case "Rejected":
         return <Badge variant="destructive">Rechazada</Badge>;
       case "Withdrawn":
@@ -59,23 +47,17 @@ export function ApplicationsView() {
         return <Clock className="w-4 h-4 text-gray-400" />;
     }
   };
-  
-  const pendingCount = allAdoptions?.filter(a => a.status === "Pending").length || 0;
-  const approvedCount = allAdoptions?.filter(a => a.status === "Approved").length || 0;
-  const rejectedCount = allAdoptions?.filter(a => a.status === "Rejected").length || 0;
-  const completedCount = allAdoptions?.filter(a => a.status === "Completed").length || 0;
+
+  const pendingCount = allAdoptions?.filter((a) => a.status === "Pending").length || 0;
+  const approvedCount = allAdoptions?.filter((a) => a.status === "Approved").length || 0;
+  const rejectedCount = allAdoptions?.filter((a) => a.status === "Rejected").length || 0;
+  const completedCount = allAdoptions?.filter((a) => a.status === "Completed").length || 0;
 
   return (
     <div className="space-y-6">
-         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-4xl">
-            <FileText  className="h-10 w-10" />
-            Gestión de Adopciones
-          </CardTitle>
-        </CardHeader>
+      <header className="flex items-center gap-2 text-4xl font-medium">Adopciones</header>
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
-          
           <CardContent className="p-6">
             <div className="flex items-center">
               <Clock className="h-8 w-8 text-yellow-600" />
@@ -141,7 +123,6 @@ export function ApplicationsView() {
                   <TableHead>Refugio</TableHead>
                   <TableHead>Fecha</TableHead>
                   <TableHead>Estado</TableHead>
-                  
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -149,14 +130,10 @@ export function ApplicationsView() {
                   <TableRow key={application.id}>
                     <TableCell>
                       <div className="flex items-center space-x-3">
-                        <ImageWithFallback
-                          src={application.pet.avatarURL}
-                          alt={application.pet.name}
-                          className="w-12 h-12 rounded-lg object-cover"
-                        />
+                        <ImageWithFallback src={application.pet.avatarURL} alt={application.pet.name} className="w-12 h-12 rounded-lg object-cover" />
                         <div>
                           <div className="font-medium">{application.pet.name}</div>
-                          <div className="text-sm text-gray-500">{application.pet.breed.name}</div> 
+                          <div className="text-sm text-gray-500">{application.pet.breed.name}</div>
                         </div>
                       </div>
                     </TableCell>
@@ -168,9 +145,7 @@ export function ApplicationsView() {
                         <div>
                           <div className="font-medium">{application.user.fullName}</div>
                           <div className="text-sm text-gray-500">{application.user.email}</div>
-                          <div className="text-xs text-gray-400">
-                            {application.previousPetExp}
-                          </div>
+                          <div className="text-xs text-gray-400">{application.previousPetExp}</div>
                         </div>
                       </div>
                     </TableCell>
@@ -182,15 +157,12 @@ export function ApplicationsView() {
                           className="w-8 h-8 rounded-lg object-cover"
                         />
                         <div>
-
                           <div className="font-medium">{application.shelter.name}</div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="text-sm text-gray-600">
-                        {application.createdAt}
-                      </div>
+                      <div className="text-sm text-gray-600">{application.createdAt}</div>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
@@ -204,11 +176,7 @@ export function ApplicationsView() {
             </Table>
           </div>
 
-          {(!allAdoptions || allAdoptions.length === 0) && (
-            <div className="text-center py-8 text-gray-500">
-              No hay solicitudes de adopción registradas
-            </div>
-          )}
+          {(!allAdoptions || allAdoptions.length === 0) && <div className="text-center py-8 text-gray-500">No hay solicitudes de adopción registradas</div>}
         </CardContent>
       </Card>
     </div>

@@ -46,7 +46,7 @@ export type ShelterCurrentView =
 
 interface ShelterSidebarProps {
   user: UserInterface | null;
-  embedded?: boolean; 
+  embedded?: boolean;
 }
 
 export function ShelterSidebar({ user, embedded = false }: ShelterSidebarProps) {

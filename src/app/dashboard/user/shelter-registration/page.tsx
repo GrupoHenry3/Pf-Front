@@ -49,7 +49,7 @@ export default function ShelterRegistrationPage() {
   });
 
   const handleInputChange = (field: keyof ShelterFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,14 +57,14 @@ export default function ShelterRegistrationPage() {
     if (!file) return;
 
     // Validar tipo de archivo
-    if (!file.type.startsWith('image/')) {
-      setAvatarError('Por favor selecciona un archivo de imagen válido');
+    if (!file.type.startsWith("image/")) {
+      setAvatarError("Por favor selecciona un archivo de imagen válido");
       return;
     }
 
     // Validar tamaño (máximo 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      setAvatarError('La imagen debe ser menor a 5MB');
+      setAvatarError("La imagen debe ser menor a 5MB");
       return;
     }
 
@@ -75,44 +75,43 @@ export default function ShelterRegistrationPage() {
     try {
       // Subir imagen a Cloudinary
       const imageUrl = await uploadToCloudinary(file);
-      console.log('Frontend - Image uploaded successfully:', imageUrl);
-      
+      console.log("Frontend - Image uploaded successfully:", imageUrl);
+
       // Actualizar el formulario con la nueva URL del avatar
-      setFormData(prev => ({ ...prev, avatarURL: imageUrl }));
-      console.log('Frontend - formData updated with avatarURL:', imageUrl);
-      
+      setFormData((prev) => ({ ...prev, avatarURL: imageUrl }));
+      console.log("Frontend - formData updated with avatarURL:", imageUrl);
+
       setAvatarSuccess(true);
       // Limpiar el mensaje de éxito después de 3 segundos
       setTimeout(() => setAvatarSuccess(false), 3000);
-      
     } catch (error) {
       console.error("Error uploading avatar:", error);
-      setAvatarError(error as string || "Error al subir la imagen");
+      setAvatarError((error as string) || "Error al subir la imagen");
     } finally {
       setIsUploadingAvatar(false);
     }
   };
 
   const handleRemoveAvatar = () => {
-    setFormData(prev => ({ ...prev, avatarURL: undefined }));
+    setFormData((prev) => ({ ...prev, avatarURL: undefined }));
     setAvatarError(null);
     setAvatarSuccess(false);
     if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      fileInputRef.current.value = "";
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!user) {
       toast.error("Debes estar autenticado para crear un refugio");
       return;
     }
 
-    const requiredFields = ['name', 'country', 'state', 'city', 'address', 'phoneNumber'];
-    const missingFields = requiredFields.filter(field => !formData[field as keyof ShelterFormData]);
-    
+    const requiredFields = ["name", "country", "state", "city", "address", "phoneNumber"];
+    const missingFields = requiredFields.filter((field) => !formData[field as keyof ShelterFormData]);
+
     if (missingFields.length > 0) {
       toast.error("Por favor completa todos los campos requeridos");
       return;
@@ -121,9 +120,9 @@ export default function ShelterRegistrationPage() {
     setIsLoading(true);
 
     try {
-      console.log('Frontend - formData before sending:', formData);
-      console.log('Frontend - formData.avatarURL:', formData.avatarURL);
-      
+      console.log("Frontend - formData before sending:", formData);
+      console.log("Frontend - formData.avatarURL:", formData.avatarURL);
+
       const shelterData = {
         name: formData.name,
         country: formData.country,
@@ -136,12 +135,11 @@ export default function ShelterRegistrationPage() {
         ...(formData.avatarURL ? { avatarURL: formData.avatarURL } : {}),
       };
 
-      console.log('Frontend - shelterData being sent:', shelterData);
+      console.log("Frontend - shelterData being sent:", shelterData);
       await createShelter(shelterData);
-      
+
       toast.success("¡Refugio creado exitosamente! Ahora puedes gestionar mascotas.");
       router.push("/dashboard/shelter");
-      
     } catch (error) {
       console.error("Error al crear refugio:", error);
       toast.error("Error al crear el refugio. Por favor intenta nuevamente.");
@@ -151,63 +149,51 @@ export default function ShelterRegistrationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-orange-50 py-8">
-      <div className="mx-auto max-w-2xl px-4 sm:px-6"><div className="mb-8">
-          <Button
-            variant="ghost"
-            onClick={() => router.back()}
-            className="mb-4 text-gray-600 hover:text-gray-900"
-          >
+    <>
+      <div className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-br from-green-50 via-white to-orange-50"></div>
+      <div className="mx-auto max-w-2xl px-4 sm:px-6 relative">
+        <div className="mb-8">
+          <Button variant="ghost" onClick={() => router.back()} className="mb-4 text-gray-600 hover:text-gray-900">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Volver
           </Button>
-          
+
           <div className="text-center">
             <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
               <Building2 className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Conviértete en Refugio
-            </h1>
-            <p className="text-gray-600">
-              Únete a nuestra red de refugios y ayuda a encontrar hogares para mascotas
-            </p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Conviértete en Refugio</h1>
+            <p className="text-gray-600">Únete a nuestra red de refugios y ayuda a encontrar hogares para mascotas</p>
           </div>
-        </div><Card className="shadow-xl border-0">
+        </div>
+        <Card className="shadow-xl border-0">
           <CardHeader className="text-center pb-6">
-            <CardTitle className="text-2xl text-gray-900">
-              Información del Refugio
-            </CardTitle>
-            <CardDescription className="text-gray-600">
-              Completa la información de tu refugio para comenzar a publicar mascotas
-            </CardDescription>
+            <CardTitle className="text-2xl text-gray-900">Información del Refugio</CardTitle>
+            <CardDescription className="text-gray-600">Completa la información de tu refugio para comenzar a publicar mascotas</CardDescription>
           </CardHeader>
 
           <CardContent>
             {/* Avatar Success Alert */}
             {avatarSuccess && (
               <Alert className="mb-6 border-green-200 bg-green-50">
-                <AlertDescription className="text-green-800">
-                  ✅ Imagen de perfil subida exitosamente
-                </AlertDescription>
+                <AlertDescription className="text-green-800">✅ Imagen de perfil subida exitosamente</AlertDescription>
               </Alert>
             )}
 
             {/* Avatar Error Alert */}
             {avatarError && (
               <Alert className="mb-6 border-red-200 bg-red-50">
-                <AlertDescription className="text-red-800">
-                  ❌ {avatarError}
-                </AlertDescription>
+                <AlertDescription className="text-red-800">❌ {avatarError}</AlertDescription>
               </Alert>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6"><div className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                   <Building2 className="w-5 h-5 mr-2 text-green-500" />
                   Información Básica
                 </h3>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="name">Nombre del Refugio *</Label>
                   <Input
@@ -239,7 +225,7 @@ export default function ShelterRegistrationPage() {
                     <User className="w-4 h-4 mr-2 text-green-500" />
                     Imagen de Perfil del Refugio
                   </h4>
-                  
+
                   <div className="flex flex-col items-center space-y-4 p-6 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50">
                     <div className="relative">
                       <Avatar className="w-20 h-20">
@@ -254,30 +240,16 @@ export default function ShelterRegistrationPage() {
                         </div>
                       )}
                     </div>
-                    
+
                     <div className="text-center">
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileSelect}
-                        className="hidden"
-                        disabled={isUploadingAvatar}
-                      />
-                      
+                      <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" disabled={isUploadingAvatar} />
+
                       <div className="flex flex-col gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => fileInputRef.current?.click()}
-                          disabled={isUploadingAvatar}
-                          className="flex items-center gap-2"
-                        >
+                        <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={isUploadingAvatar} className="flex items-center gap-2">
                           <Upload className="w-4 h-4" />
-                          {isUploadingAvatar ? 'Subiendo...' : 'Subir Imagen'}
+                          {isUploadingAvatar ? "Subiendo..." : "Subir Imagen"}
                         </Button>
-                        
+
                         {formData.avatarURL && (
                           <Button
                             type="button"
@@ -292,19 +264,18 @@ export default function ShelterRegistrationPage() {
                           </Button>
                         )}
                       </div>
-                      
-                      <p className="text-xs text-gray-500 mt-2 max-w-48">
-                        JPG, PNG o GIF. Máximo 5MB. Esta será la imagen que represente a tu refugio.
-                      </p>
+
+                      <p className="text-xs text-gray-500 mt-2 max-w-48">JPG, PNG o GIF. Máximo 5MB. Esta será la imagen que represente a tu refugio.</p>
                     </div>
                   </div>
                 </div>
-              </div><div className="space-y-4">
+              </div>
+              <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                   <MapPin className="w-5 h-5 mr-2 text-green-500" />
                   Ubicación
                 </h3>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="country">País *</Label>
@@ -358,12 +329,13 @@ export default function ShelterRegistrationPage() {
                     required
                   />
                 </div>
-              </div><div className="space-y-4">
+              </div>
+              <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                   <Phone className="w-5 h-5 mr-2 text-green-500" />
                   Información de Contacto
                 </h3>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="phoneNumber">Teléfono *</Label>
@@ -390,32 +362,23 @@ export default function ShelterRegistrationPage() {
                     />
                   </div>
                 </div>
-              </div><div className="flex flex-col sm:flex-row gap-4 pt-6">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => router.back()}
-                  className="flex-1 py-3 rounded-xl border-2"
-                  disabled={isLoading}
-                >
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4 pt-6">
+                <Button type="button" variant="outline" onClick={() => router.back()} className="flex-1 py-3 rounded-xl border-2" disabled={isLoading}>
                   Cancelar
                 </Button>
-                
-                <Button
-                  type="submit"
-                  className="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl"
-                  disabled={isLoading}
-                >
+
+                <Button type="submit" className="flex-1 bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl" disabled={isLoading}>
                   {isLoading ? "Creando Refugio..." : "Crear Refugio"}
                 </Button>
-              </div><div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-6">
+              </div>
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-6">
                 <div className="flex items-start">
                   <FileText className="w-5 h-5 text-blue-500 mr-3 mt-0.5" />
                   <div className="text-sm text-blue-800">
                     <p className="font-medium mb-1">¿Qué sucede después?</p>
                     <p>
-                      Una vez creado tu refugio, podrás agregar mascotas, gestionar solicitudes de adopción 
-                      y recibir donaciones. Tu refugio será visible en nuestro directorio para que las personas 
+                      Una vez creado tu refugio, podrás agregar mascotas, gestionar solicitudes de adopción y recibir donaciones. Tu refugio será visible en nuestro directorio para que las personas
                       puedan encontrarte.
                     </p>
                   </div>
@@ -425,6 +388,6 @@ export default function ShelterRegistrationPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </>
   );
 }

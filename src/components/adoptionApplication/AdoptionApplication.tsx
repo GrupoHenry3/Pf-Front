@@ -64,13 +64,7 @@ export default function AdoptionPageWrapper() {
   const validateStep = (step: number) => {
     switch (step) {
       case 1:
-        return (
-          data.dni &&
-          data.birthDate &&
-          data.adoptionReason.length >= 50 &&
-          data.expectations.length >= 30 &&
-          data.petExperience
-        );
+        return data.dni && data.birthDate && data.adoptionReason.length >= 50 && data.expectations.length >= 30 && data.petExperience;
       case 2:
         return data.housingType && data.housingOwnership && data.livingSpace;
       case 3:
@@ -82,37 +76,36 @@ export default function AdoptionPageWrapper() {
     }
   };
 
-  const handleNext = () =>
-    setCurrentStep((prev) => Math.min(totalSteps, prev + 1));
+  const handleNext = () => setCurrentStep((prev) => Math.min(totalSteps, prev + 1));
   const handleBackStep = () => setCurrentStep((prev) => Math.max(1, prev - 1));
 
   // Función para mapear valores del frontend a valores del backend
   const mapFrontendToBackendValues = (frontendValue: string, fieldType: string) => {
     const mappings: Record<string, Record<string, string>> = {
       previousPetExp: {
-        'none': 'None',
-        'basic': 'Basic', 
-        'moderate': 'Moderate',
-        'extensive': 'Experienced',
-        'experienced': 'Experienced'
+        none: "None",
+        basic: "Basic",
+        moderate: "Moderate",
+        extensive: "Experienced",
+        experienced: "Experienced",
       },
       houseType: {
-        'house': 'House',
-        'apartment': 'Apartment',
-        'farm': 'Farm'
+        house: "House",
+        apartment: "Apartment",
+        farm: "Farm",
       },
       houseOwnership: {
-        'own': 'Owned',
-        'owned': 'Owned',
-        'rent': 'Rented',
-        'rented': 'Rented'
+        own: "Owned",
+        owned: "Owned",
+        rent: "Rented",
+        rented: "Rented",
       },
       houseOuterSpace: {
-        'none': 'None',
-        'small': 'Small',
-        'medium': 'Medium',
-        'large': 'Large'
-      }
+        none: "None",
+        small: "Small",
+        medium: "Medium",
+        large: "Large",
+      },
     };
 
     return mappings[fieldType]?.[frontendValue.toLowerCase()] || frontendValue;
@@ -130,10 +123,10 @@ export default function AdoptionPageWrapper() {
         birthdate: data.birthDate,
         mainReason: data.adoptionReason,
         expectatives: data.expectations,
-        previousPetExp: mapFrontendToBackendValues(data.petExperience, 'previousPetExp') as 'None' | 'Basic' | 'Moderate' | 'Experienced',
-        houseType: mapFrontendToBackendValues(data.housingType, 'houseType') as 'House' | 'Apartment' | 'Farm',
-        houseOwnership: mapFrontendToBackendValues(data.housingOwnership, 'houseOwnership') as 'Owned' | 'Rented',
-        houseOuterSpace: mapFrontendToBackendValues(data.yardSize, 'houseOuterSpace') as 'None' | 'Small' | 'Medium' | 'Large',
+        previousPetExp: mapFrontendToBackendValues(data.petExperience, "previousPetExp") as "None" | "Basic" | "Moderate" | "Experienced",
+        houseType: mapFrontendToBackendValues(data.housingType, "houseType") as "House" | "Apartment" | "Farm",
+        houseOwnership: mapFrontendToBackendValues(data.housingOwnership, "houseOwnership") as "Owned" | "Rented",
+        houseOuterSpace: mapFrontendToBackendValues(data.yardSize, "houseOuterSpace") as "None" | "Small" | "Medium" | "Large",
         workingHours: data.workSchedule,
         dailyRoutine: data.dailyRoutine,
         houseMembers: data.householdMembers,
@@ -144,7 +137,7 @@ export default function AdoptionPageWrapper() {
         travelFrequency: data.travelFrequency || undefined,
         petHistory: data.petHistory || undefined,
         additionalInfo: data.additionalInfo || undefined,
-        shelterID: fetchedPet.shelter.id || "", 
+        shelterID: fetchedPet.shelter.id || "",
         petID: fetchedPet.id,
       };
       console.log(adoptionData);
@@ -200,13 +193,8 @@ export default function AdoptionPageWrapper() {
   return (
     <div className="py-8">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        
         <div className="mb-6 flex justify-start">
-          <Button
-            asChild
-            variant="default"
-            className="text-white hover:text-black hover:bg-accent flex items-left"
-          >
+          <Button asChild variant="default" className="text-white hover:text-black hover:bg-accent flex items-left">
             <Link href={PATHROUTES.DASHBOARD}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Volver
@@ -220,9 +208,7 @@ export default function AdoptionPageWrapper() {
             <span className="text-sm text-gray-600">
               Paso {currentStep} de {totalSteps}
             </span>
-            <span className="text-sm text-gray-600">
-              {Math.round(getProgress())}% completado
-            </span>
+            <span className="text-sm text-gray-600">{Math.round(getProgress())}% completado</span>
           </div>
           <Progress value={getProgress()} className="h-2 rounded-full" />
         </div>
@@ -240,13 +226,7 @@ export default function AdoptionPageWrapper() {
         {!loading && fetchedPet && (
           <Card className="mb-8 shadow-md">
             <CardContent className="p-6 flex flex-col sm:flex-row items-center sm:items-start">
-              <Image
-                src={fetchedPet.avatarURL}
-                alt={fetchedPet.name}
-                width={128}
-                height={128}
-                className="w-32 h-32 object-cover rounded-lg mr-4 mb-4 sm:mb-0 shadow"
-              />
+              <Image src={fetchedPet.avatarURL} alt={fetchedPet.name} width={128} height={128} className="w-32 h-32 object-cover rounded-lg mr-4 mb-4 sm:mb-0 shadow" />
               <div className="flex-1">
                 <h2 className="text-xl font-semibold">{fetchedPet.name}</h2>
                 <p className="text-gray-600 mt-1">
@@ -256,9 +236,7 @@ export default function AdoptionPageWrapper() {
                 <p className="mt-1 text-gray-500 text-sm">
                   Ubicación: {fetchedPet.shelter?.city}, {fetchedPet.shelter?.state}
                 </p>
-                <p className="mt-1 text-gray-500 text-sm">
-                  Refugio: {fetchedPet.shelter?.name}
-                </p>
+                <p className="mt-1 text-gray-500 text-sm">Refugio: {fetchedPet.shelter?.name}</p>
               </div>
             </CardContent>
           </Card>
@@ -271,29 +249,16 @@ export default function AdoptionPageWrapper() {
 
         {/* Navegación de pasos */}
         <div className="flex flex-col sm:flex-row justify-between mt-6 gap-2 sm:gap-0">
-          <Button
-            variant="outline"
-            onClick={handleBackStep}
-            disabled={currentStep === 1}
-            className="w-full sm:w-auto"
-          >
+          <Button variant="outline" onClick={handleBackStep} disabled={currentStep === 1} className="w-full sm:w-auto">
             <ArrowLeft className="w-4 h-4 mr-2" /> Anterior
           </Button>
 
           {currentStep < totalSteps ? (
-            <Button
-              onClick={handleNext}
-              disabled={!validateStep(currentStep)}
-              className="bg-green-500 hover:bg-green-600 w-full sm:w-auto"
-            >
+            <Button onClick={handleNext} disabled={!validateStep(currentStep)} className="bg-green-500 hover:bg-green-600 w-full sm:w-auto">
               Siguiente <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           ) : (
-            <Button
-              onClick={handleSubmitForm}
-              disabled={!validateStep(currentStep) || isSubmitting}
-              className="bg-green-500 hover:bg-green-600 w-full sm:w-auto"
-            >
+            <Button onClick={handleSubmitForm} disabled={!validateStep(currentStep) || isSubmitting} className="bg-green-500 hover:bg-green-600 w-full sm:w-auto">
               {isSubmitting ? "Enviando..." : "Enviar Solicitud"} <Send className="w-4 h-4 ml-2" />
             </Button>
           )}
@@ -304,8 +269,7 @@ export default function AdoptionPageWrapper() {
           <Alert className="border-green-200 bg-green-50 mt-6 flex items-center gap-2">
             <Check className="w-4 h-4 text-green-600" />
             <AlertDescription>
-              <strong>¡Casi terminamos!</strong> Revisa tu información antes de
-              enviar la solicitud.
+              <strong>¡Casi terminamos!</strong> Revisa tu información antes de enviar la solicitud.
             </AlertDescription>
           </Alert>
         )}
