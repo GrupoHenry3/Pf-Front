@@ -41,12 +41,13 @@ export const authService = {
     logout: async () => {
         try {
             const response = await apiClient.post("/auth/signout");
-            // Limpiar la cookie de autenticación
+            // El backend ya limpia la cookie httpOnly automáticamente
+            // Solo necesitamos limpiar la cookie del frontend (Google OAuth)
             document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; secure; samesite=none';
             toast.success("¡Hasta luego!");
             return response.data;
         } catch (error) {
-            // Limpiar la cookie incluso si hay error
+            // Limpiar la cookie del frontend incluso si hay error
             document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; secure; samesite=none';
             toast.error("Error al cerrar sesión");
             throw error;
