@@ -233,9 +233,15 @@ export const adoptionsService = {
     return response.data;
   },
 
-  // Obtener adopciones por shelter ID
+  // Obtener adopciones por shelter ID (Admin only)
   findByShelterId: async (shelterId: string): Promise<AdoptionsByShelterResponse> => {
     const response = await apiClient.get<AdoptionsByShelterResponse>(`/adoptions/shelter/${shelterId}`);
+    return response.data;
+  },
+
+  // Obtener adopciones del shelter actual
+  findByCurrentShelter: async (): Promise<AdoptionsByShelterResponse> => {
+    const response = await apiClient.get<AdoptionsByShelterResponse>(`/adoptions/shelter`);
     return response.data;
   }
 };

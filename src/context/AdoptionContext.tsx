@@ -31,10 +31,10 @@ export const AdoptionProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useEffect(() => {
     const fetchAdoptionsByShelter = async () => {
-      if (user && user.userType === "Shelter" && user.shelter?.id) {
+      if (user && user.userType === "Shelter") {
         setIsAdoptionsLoading(true);
         try {
-          const response = await adoptionsService.findByShelterId(user.shelter.id);
+          const response = await adoptionsService.findByCurrentShelter();
           setShelterAdoptions(response.data);
         } catch (error) {
           console.error("Error al cargar adopciones del shelter:", error);

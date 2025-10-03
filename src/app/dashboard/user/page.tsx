@@ -52,6 +52,10 @@ function AdopterDashboard() {
     router.push("/dashboard/donation");
   }
 
+  const handleViewDonationHistory = () => {
+    router.push("/dashboard/user/donations/history");
+  }
+
   const handleViewProfile = () => {
     router.push("/dashboard/user/profile");
   }
@@ -68,8 +72,8 @@ function AdopterDashboard() {
   // Obtener mascotas recientes (últimas 4)
   const recentPets = allPets.slice(0, 4);
 
-  // Obtener donaciones recientes
-  const recentDonations = userDonations.slice(0, 3);
+  // Obtener donaciones recientes (últimas 4)
+  const recentDonations = userDonations.slice(0, 4);
 
   // Consejos dinámicos basados en la actividad del usuario
   const getPersonalizedTip = () => {
@@ -402,7 +406,7 @@ function AdopterDashboard() {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <Eye className="w-5 h-5 text-blue-600" />
-                    <span>Mascotas Recientes</span>
+                    <span>Mascotas agregadas Recientemente</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -451,7 +455,7 @@ function AdopterDashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {recentDonations.map((donation) => (
+                      {recentDonations.reverse().map((donation) => (
                         <div key={donation.id} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                           <div>
                             <p className="text-sm font-medium text-gray-900">${donation.amount.toLocaleString()}</p>
@@ -464,14 +468,6 @@ function AdopterDashboard() {
                           </Badge>
                         </div>
                       ))}
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="w-full mt-3"
-                        onClick={handleViewDonations}
-                      >
-                        Ver historial completo
-                      </Button>
                     </div>
                   </CardContent>
                 </Card>

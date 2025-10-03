@@ -29,6 +29,7 @@ export function DonationsView() {
 
   const {donations} = useDonation();
 
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
@@ -118,7 +119,7 @@ export function DonationsView() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {donations.map((donation) => (
+                {donations.reverse().map((donation) => (
                   <TableRow key={donation.id}>
                     <TableCell>
                       <div className="flex items-center space-x-3">

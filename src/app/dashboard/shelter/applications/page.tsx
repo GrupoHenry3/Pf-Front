@@ -46,6 +46,8 @@ const ShelterApplicationsView = () => {
         return <Badge variant="destructive">Rechazada</Badge>;
       case "Completed":
         return <Badge variant="secondary">Completada</Badge>;
+      case "Withdrawn":
+        return <Badge variant="secondary">Retirada</Badge>;
       default:
         return <Badge variant="outline">Desconocido</Badge>;
     }
@@ -69,7 +71,6 @@ const ShelterApplicationsView = () => {
   const pendingCount = shelterAdoptions?.filter(a => a.status === "Pending").length || 0;
   const approvedCount = shelterAdoptions?.filter(a => a.status === "Approved").length || 0;
   const rejectedCount = shelterAdoptions?.filter(a => a.status === "Rejected").length || 0;
-  const completedCount = shelterAdoptions?.filter(a => a.status === "Completed").length || 0;       
 
   return (
     <div className="space-y-6">
@@ -116,18 +117,6 @@ const ShelterApplicationsView = () => {
             </div>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <Heart className="h-8 w-8 text-blue-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Completadas</p>
-                <p className="text-2xl font-bold">{completedCount}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       <Card>
@@ -168,7 +157,15 @@ const ShelterApplicationsView = () => {
                     <TableCell>
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                          <User className="w-4 h-4 text-gray-600" />
+                          {application.user.avatarURL ? (
+                            <ImageWithFallback
+                              src={application.user.avatarURL}
+                              alt={application.user.fullName}
+                              className="w-8 h-8 rounded-full object-cover"
+                            />
+                          ) : (
+                            <User className="w-4 h-4 text-gray-600" />
+                          )}
                         </div>
                         <div>
                           <div className="font-medium">{application.user.fullName}</div>

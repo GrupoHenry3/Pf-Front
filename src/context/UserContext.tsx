@@ -81,6 +81,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     useEffect(() => {
+        console.log(user);
+    }, [user]);
+
+    useEffect(() => {
         const initializeUser = async () => {
             try {
                 console.log("UserContext - Initializing user...");
