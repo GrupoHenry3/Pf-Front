@@ -51,5 +51,46 @@ export const authService = {
 
     googleAuth: () => {
         window.location.href = `${apiClient.defaults.baseURL}/auth/google`;
+    },
+
+    handleGoogleCallback: async () => {
+        try {
+            const response = await apiClient.get("/auth/google/callback");
+            
+            if (response.data.statusCode === 200) {
+                toast.success("¡Autenticación con Google exitosa!");
+                
+                // Guardar el token en localStorage para uso posterior
+                if (response.data.accessToken) {
+                    localStorage.setItem('access_token', response.data.accessToken);
+                }
+                
+                // Redirigir a la URL especificada
+                if (response.data.redirectUrl) {
+                    window.location.href = response.data.redirectUrl;
+                }
+                
+                return response.data;
+            } else {
+                throw new Error(response.data.message || 'Error en la autenticación');
+            }
+        } catch (error: unknown) {
+            toast.error("Error en la autenticación con Google");
+            
+            // Si hay una URL de redirección de error, redirigir a ella
+            if (error && typeof error === 'object' && 'response' in error) {
+                const axiosError = error as { response?: { data?: { redirectUrl?: string } } };
+                if (axiosError.response?.data?.redirectUrl) {
+                    window.location.href = axiosError.response.data.redirectUrl;
+                } else {
+                    window.location.href = "/auth?error=oauth_failed";
+                }
+            } else {
+                // Redirección por defecto en caso de error
+                window.location.href = "/auth?error=oauth_failed";
+            }
+            
+            throw error;
+        }
     }
 }
