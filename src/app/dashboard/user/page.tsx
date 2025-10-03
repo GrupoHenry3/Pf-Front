@@ -96,29 +96,30 @@ function AdopterDashboard() {
 
   const personalizedTip = getPersonalizedTip();
   
-if (!isInitialized || isUserLoading || !isProfileLoaded) {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
-        <p className="text-gray-600">Cargando tu dashboard...</p>
-        <p className="text-sm text-gray-500 mt-2">
-          {!isInitialized && "Inicializando..."}
-          {isInitialized && isUserLoading && "Cargando perfil..."}
-          {isInitialized && !isUserLoading && !isProfileLoaded && "Verificando autenticación..."}
-        </p>
+  if (!isInitialized || isUserLoading || !isProfileLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Cargando tu dashboard...</p>
+          <p className="text-sm text-gray-500 mt-2">
+            {!isInitialized && "Inicializando..."}
+            {isInitialized && isUserLoading && "Cargando perfil..."}
+            {isInitialized && !isUserLoading && !isProfileLoaded && "Verificando autenticación..."}
+          </p>
+        </div>
       </div>
-    </div>
-  );
+    );
 }
 
-if (isInitialized && isProfileLoaded && !user) {
-  return null;
-}
+  if (isInitialized && isProfileLoaded && !user) {
+    return null;
+  }
   return (
     <div className="flex min-h-screen">
       <div className="flex-1 bg-gray-50">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">{error && (
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+          {error && (
             <ErrorAlert error={error} onClear={clearError} />
           )}
           
@@ -128,7 +129,8 @@ if (isInitialized && isProfileLoaded && !user) {
             </h1>
             <p className="text-lg text-gray-600">
               Te ayudamos a encontrar a tu compañero perfecto
-            </p>{user!.email && (
+            </p>
+            {user!.email && (
               <p className="text-sm text-gray-500 mt-1">
                 Conectado como: {user!.email}
               </p>
@@ -225,7 +227,11 @@ if (isInitialized && isProfileLoaded && !user) {
                 </div>
               </CardContent>
             </Card>
-          </div><div className="grid grid-cols-1 lg:grid-cols-3 gap-8"><div className="lg:col-span-2 space-y-8"><Card className="border-0 shadow-md">
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-8">
+              <Card className="border-0 shadow-md">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <Calendar className="w-5 h-5 text-green-600" />
@@ -325,7 +331,6 @@ if (isInitialized && isProfileLoaded && !user) {
                                 {donation.status === 'completed' ? 'Completada' : 'Fallida'}
                               </Badge>
                             </div>
-                
                             <p className="text-sm text-gray-500">
                               {new Date(donation.createdAt).toLocaleDateString('es-ES', {
                                 year: 'numeric',
