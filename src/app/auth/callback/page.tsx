@@ -11,8 +11,8 @@ function CallbackContent() {
 
   useEffect(() => {
     if (token) {
-      // Guardar el token en cookie accesible (sin httpOnly)
-      document.cookie = `access_token=${token}; expires=${new Date(Date.now() + 24 * 60 * 60 * 1000).toUTCString()}; path=/; secure; samesite=none`;
+      // Guardar el token en localStorage
+      localStorage.setItem('access_token', token);
       
       setIsProcessing(false);
       router.replace("/dashboard");
