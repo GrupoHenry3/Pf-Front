@@ -20,6 +20,7 @@ import PATHROUTES from "@/components/utils/PathRoutes.util";
 import { petsService } from "@/services/pets/petsService";
 import { Pet } from "@/interfaces/Pet";
 import { getPetStatus, getPetStatusLabel, getPetStatusBadgeClasses } from "@/utils/petStatusUtils";
+import toast from "react-hot-toast";
 
  function PetDetail({params}: {params: Promise<{id: string}>}) {
 
@@ -177,7 +178,7 @@ import { getPetStatus, getPetStatusLabel, getPetStatusBadgeClasses } from "@/uti
                       {pet.name}
                     </CardTitle>
                     <div className="flex items-center space-x-4 text-gray-600">
-                      <span>{pet.breed.name}</span>
+                      <span>{pet.breed?.name}</span>
                       <span>•</span>
                       <span>{pet.age} años</span>
                       <span>•</span>
@@ -197,7 +198,7 @@ import { getPetStatus, getPetStatusLabel, getPetStatusBadgeClasses } from "@/uti
                       Sobre {pet.name}
                   </h3>
                   <p className="text-gray-700 leading-relaxed">
-                    {pet.breed.description}
+                    {pet.breed?.description}
                   </p>
                 </div>
 
@@ -220,7 +221,7 @@ import { getPetStatus, getPetStatusLabel, getPetStatusBadgeClasses } from "@/uti
                     </div>
                     <div className="flex items-center space-x-2">
                       <span className="text-gray-600">Raza:</span>
-                      <span className="text-gray-900">{pet.breed.name}</span>
+                      <span className="text-gray-900">{pet.breed?.name}</span>
                     </div>
                   </div>
                 </div>
@@ -237,13 +238,13 @@ import { getPetStatus, getPetStatusLabel, getPetStatusBadgeClasses } from "@/uti
               <CardContent>
                 <div className="flex items-center space-x-3 mb-4">
                   <Avatar className="w-12 h-12">
-                    <AvatarImage src="" alt={pet.shelter.name} />
+                    <AvatarImage src="" alt={pet.shelter?.name} />
                     <AvatarFallback className="bg-green-500 text-white">
-                      {pet.shelter.name.slice(0, 2).toUpperCase()}
+                      {pet.shelter?.name.slice(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h4 className="text-gray-900">{pet.shelter.name}</h4>
+                    <h4 className="text-gray-900">{pet.shelter?.name}</h4>
                     <p className="text-sm text-gray-500">Refugio verificado</p>
                   </div>
                 </div>
@@ -251,9 +252,9 @@ import { getPetStatus, getPetStatusLabel, getPetStatusBadgeClasses } from "@/uti
                 <Separator className="my-4" />
 
                 <div className="text-sm text-gray-600">
-                  <p className="mb-2">📍 {pet.shelter.address}, {pet.shelter.city}</p>
-                  <p className="mb-2">📞 {pet.shelter.phoneNumber}</p>
-                  {pet.shelter.website && <p className="mb-2">🌐 {pet.shelter.website}</p>}
+                  <p className="mb-2">📍 {pet.shelter?.address}, {pet.shelter?.city}</p>
+                  <p className="mb-2">📞 {pet.shelter?.phoneNumber}</p>
+                  {pet.shelter?.website && <p className="mb-2">🌐 {pet.shelter?.website}</p>}
                 </div>
               </CardContent>
             </Card>
@@ -291,7 +292,7 @@ import { getPetStatus, getPetStatusLabel, getPetStatusBadgeClasses } from "@/uti
                     <Button
                       className="w-full bg-green-500 hover:bg-green-600"
                       onClick={() =>
-                        alert("Inicia sesión para solicitar adopción")
+                        toast.error("Inicia sesión para solicitar adopción")
                       }
                     >
                       <Heart className="w-4 h-4 mr-2" />
@@ -314,7 +315,7 @@ import { getPetStatus, getPetStatusLabel, getPetStatusBadgeClasses } from "@/uti
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Raza:</span>
-                  <span className="text-gray-900">{pet.breed.name}</span>
+                  <span className="text-gray-900">{pet.breed?.name}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Edad:</span>

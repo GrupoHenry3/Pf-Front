@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { Pet } from "@/interfaces/Pet";
+import { getPetStatus } from "@/utils/petStatusUtils";
 
 export interface UseAdminPetFiltersProps {
   pets: Pet[];
@@ -30,11 +31,12 @@ export function useAdminPetFilters({ pets, initialFilters = {} }: UseAdminPetFil
         pet.shelter?.name.toLowerCase().includes(searchTerm.toLowerCase());
 
       // Filtro por estado
+      const petStatus = getPetStatus(pet);
       const matchesStatus =
         selectedStatus === "all" ||
-        (selectedStatus === "available" && pet.status === "available") ||
-        (selectedStatus === "adopted" && pet.status === "adopted") ||
-        (selectedStatus === "pending" && pet.status === "pending");
+        (selectedStatus === "available" && petStatus === "available") ||
+        (selectedStatus === "adopted" && petStatus === "adopted") ||
+        (selectedStatus === "pending" && petStatus === "pending");
 
       // Filtro por especie
       const matchesSpecies =

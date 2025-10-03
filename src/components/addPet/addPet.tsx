@@ -19,6 +19,7 @@ import { useSpecies } from "@/context/SpeciesContext";
 import { useBreeds } from "@/context/BreedContext";
 import { usePet } from "@/context/PetContext";
 import { CreatePetData } from "@/interfaces/Pet";
+import toast from "react-hot-toast";
 
 interface AddPetProps {
   onBack: () => void;
@@ -90,7 +91,7 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
       setShowNewSpeciesInput(false);
     } catch (error) {
       console.error("Error creando especie:", error);
-      alert("Error al crear la especie");
+      toast.error("Error al crear la especie");
     }
   };
 
@@ -112,7 +113,7 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
       setShowNewBreedInput(false);
     } catch (error) {
       console.error("Error creando raza:", error);
-      alert("Error al crear la raza");
+      toast.error("Error al crear la raza");
     }
   };
   const handleSpeciesChange = (value: string) => {
@@ -131,7 +132,7 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
   const handleBreedChange = (value: string) => {
     if (value === "other") {
       if (!selectedSpeciesId) {
-        alert("Primero debes seleccionar una especie antes de crear una nueva raza");
+        toast.error("Primero debes seleccionar una especie antes de crear una nueva raza");
         return;
       }
       setShowNewBreedInput(true);
@@ -224,7 +225,7 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
       onSuccess();
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al agregar la mascota.");
+      toast.error("Hubo un error al agregar la mascota");
     } finally {
       setIsSubmitting(false);
     }

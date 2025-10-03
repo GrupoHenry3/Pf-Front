@@ -164,7 +164,7 @@ export default function PetDetailPage() {
               </div>
               <div className="flex items-center gap-3">
                 {getStatusBadge()}
-                {pet.status === "available" && (
+                {getPetStatus(pet) === "available" && (
                   <Button
                     variant="destructive"
                     onClick={handleToggleActive}
@@ -380,7 +380,7 @@ export default function PetDetailPage() {
                   <CardTitle>Acciones Rápidas</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {pet.status === "available" && (
+                  {getPetStatus(pet) === "available" && (
                     <Button
                       variant="destructive"
                       onClick={handleToggleActive}

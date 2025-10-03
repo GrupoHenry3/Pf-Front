@@ -1,5 +1,6 @@
 import { apiClient } from "../apiClient";
 import { CreatePetData, Pet } from "@/interfaces/Pet";
+import toast from "react-hot-toast";
 
 export interface PetFilters {
   skip?: number;
@@ -8,8 +9,14 @@ export interface PetFilters {
 
 export const petsService = {
   create: async (data: CreatePetData): Promise<CreatePetData> => {
-    const response = await apiClient.post('/pets', data);
-    return response.data;
+    try {
+      const response = await apiClient.post('/pets', data);
+      toast.success("Mascota creada exitosamente");
+      return response.data;
+    } catch (error) {
+      toast.error("Error al crear la mascota");
+      throw error;
+    }
   },
 
   findAll: async (filters: PetFilters = {}): Promise<Pet[]> => {
@@ -43,13 +50,25 @@ export const petsService = {
   },
 
   update: async (id: string, data: Partial<CreatePetData>): Promise<Pet> => {
-    const response = await apiClient.patch(`/pets/${id}`, data);
-    return response.data;
+    try {
+      const response = await apiClient.patch(`/pets/${id}`, data);
+      toast.success("Mascota actualizada exitosamente");
+      return response.data;
+    } catch (error) {
+      toast.error("Error al actualizar la mascota");
+      throw error;
+    }
   },
 
   updateStatus: async (id: string): Promise<Pet> => {
-    const response = await apiClient.patch(`/pets/${id}/status`);
-    return response.data;
+    try {
+      const response = await apiClient.patch(`/pets/${id}/status`);
+      toast.success("Estado de mascota actualizado");
+      return response.data;
+    } catch (error) {
+      toast.error("Error al actualizar el estado de la mascota");
+      throw error;
+    }
   },
 
   findAllWithInactive: async (filters: PetFilters = {}): Promise<Pet[]> => {

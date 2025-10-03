@@ -1,4 +1,5 @@
 import { apiClient } from "../apiClient";
+import toast from "react-hot-toast";
 
 // Interfaces que coinciden con el backend
 export interface AdoptionDTO {
@@ -190,8 +191,14 @@ export interface AdoptionsByShelterResponse {
 
 export const adoptionsService = {
   create: async (data: AdoptionDTO): Promise<AdoptionResponse> => {
-    const response = await apiClient.post<AdoptionResponse>('/adoptions', data);
-    return response.data;
+    try {
+      const response = await apiClient.post<AdoptionResponse>('/adoptions', data);
+      toast.success("Solicitud de adopción enviada exitosamente");
+      return response.data;
+    } catch (error) {
+      toast.error("Error al enviar la solicitud de adopción");
+      throw error;
+    }
   },
 
   findAll: async (): Promise<AdminAdoptions[]> => {
@@ -207,8 +214,17 @@ export const adoptionsService = {
 
   // Actualizar estado de adopción
   updateStatus: async (id: string, data: UpdateAdoptionDTO): Promise<AdoptionResponse> => {
-    const response = await apiClient.patch<AdoptionResponse>(`/adoptions/${id}/status`, data);
-    return response.data;
+    try {
+      const response = await apiClient.patch<AdoptionResponse>(`/adoptions/${id}/status`, data);
+      const statusMessage = data.status === 'Approved' ? 'Solicitud aprobada' : 
+                           data.status === 'Rejected' ? 'Solicitud rechazada' : 
+                           'Estado actualizado';
+      toast.success(statusMessage);
+      return response.data;
+    } catch (error) {
+      toast.error("Error al actualizar el estado de la adopción");
+      throw error;
+    }
   },
 
   // Eliminar adopción (soft delete)

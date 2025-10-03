@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { Pet } from "@/interfaces/Pet";
 import { AdvancedFilters } from "@/components/ui/PetFilters";
+import { getPetStatus } from "@/utils/petStatusUtils";
 
 export interface UsePetFiltersProps {
   pets: Pet[];
@@ -57,11 +58,12 @@ export function usePetFilters({ pets, initialFilters = {} }: UsePetFiltersProps)
         selectedGender === "all" || pet.gender.toLowerCase() === selectedGender;
 
       // Filtro por estado
+      const petStatus = getPetStatus(pet);
       const matchesStatus =
         selectedStatus === "all" || 
-        (selectedStatus === "available" && pet.status === "available") ||
-        (selectedStatus === "adopted" && pet.status === "adopted") ||
-        (selectedStatus === "pending" && pet.status === "pending");
+        (selectedStatus === "available" && petStatus === "available") ||
+        (selectedStatus === "adopted" && petStatus === "adopted") ||
+        (selectedStatus === "pending" && petStatus === "pending");
 
       // Filtro por ubicación
       const matchesLocation =

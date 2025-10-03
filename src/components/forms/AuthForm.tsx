@@ -10,6 +10,7 @@ import RegisterForm from "./RegisterForm";
 import { LoginFormValues, RegisterFormValues } from "@/validators/loginSchema";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import toast from "react-hot-toast";
 
 
 export function AuthForm() {
@@ -49,9 +50,9 @@ export function AuthForm() {
         router.push("/dashboard");
       }
       catch(error){
-        alert(error);
+        toast.error("Error al iniciar sesión");
         return;
-    }
+      }
     }
     else{
 
@@ -60,7 +61,7 @@ export function AuthForm() {
         setIsLogin(true);
       }
       catch(error){
-        alert(error);
+        toast.error("Error al registrar usuario");
         return;
       }
     }

@@ -18,6 +18,7 @@ import { useSpecies } from "@/context/SpeciesContext";
 import { useBreeds } from "@/context/BreedContext";
 import { petsService } from "@/services/pets/petsService";
 import { Pet } from "@/interfaces/Pet";
+import toast from "react-hot-toast";
 import Image from "next/image";
 
 interface EditPetPageProps {
@@ -164,7 +165,7 @@ export default function EditPetPage({ params }: EditPetPageProps) {
       setShowNewSpeciesInput(false);
     } catch (error) {
       console.error("Error creando especie:", error);
-      alert("Error al crear la especie");
+      toast.error("Error al crear la especie");
     }
   };
 
@@ -186,7 +187,7 @@ export default function EditPetPage({ params }: EditPetPageProps) {
       setShowNewBreedInput(false);
     } catch (error) {
       console.error("Error creando raza:", error);
-      alert("Error al crear la raza");
+      toast.error("Error al crear la raza");
     }
   };
 
@@ -209,7 +210,7 @@ export default function EditPetPage({ params }: EditPetPageProps) {
   const handleBreedChange = (value: string) => {
     if (value === "other") {
       if (!selectedSpeciesId) {
-        alert("Primero debes seleccionar una especie antes de crear una nueva raza");
+        toast.error("Primero debes seleccionar una especie antes de crear una nueva raza");
         return;
       }
       setShowNewBreedInput(true);
@@ -266,12 +267,12 @@ export default function EditPetPage({ params }: EditPetPageProps) {
     try {
       // Validar que tenemos los datos necesarios
       if (!formData.name || !selectedSpeciesId || !selectedBreedId || !formData.age) {
-        alert("Por favor completa todos los campos obligatorios");
+        toast.error("Por favor completa todos los campos obligatorios");
         return;
       }
 
       if (!user?.shelter?.id) {
-        alert("Error: No se encontró información del refugio");
+        toast.error("Error: No se encontró información del refugio");
         return;
       }
 
@@ -304,7 +305,7 @@ export default function EditPetPage({ params }: EditPetPageProps) {
       router.push("/dashboard/shelter");
     } catch (error) {
       console.error("Error al actualizar la mascota:", error);
-      alert("Hubo un error al actualizar la mascota. Por favor intenta de nuevo.");
+      toast.error("Hubo un error al actualizar la mascota. Por favor intenta de nuevo.");
     } finally {
       setIsSubmitting(false);
     }

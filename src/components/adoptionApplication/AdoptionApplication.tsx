@@ -18,6 +18,7 @@ import { petsService } from "@/services/pets/petsService";
 import { AdoptionDTO, adoptionsService } from "@/services/adoptions/adoptionsService";
 import { Pet } from "@/interfaces/Pet";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import PATHROUTES from "../utils/PathRoutes.util";
 
 export default function AdoptionPageWrapper() {
@@ -148,10 +149,10 @@ export default function AdoptionPageWrapper() {
       };
       console.log(adoptionData);
       await adoptionsService.create(adoptionData);
-      window.alert("✅ Solicitud de adopción enviada con éxito");
+      toast.success("✅ Solicitud de adopción enviada con éxito");
       router.push("/dashboard/user");
     } catch (error: unknown) {
-      alert(error);
+      toast.error("Error al enviar la solicitud de adopción");
       const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || "Error al enviar la solicitud de adopción";
       setSubmitError(errorMessage);
     } finally {
@@ -169,6 +170,7 @@ export default function AdoptionPageWrapper() {
         setFetchedPet(pet);
       } catch (error) {
         console.error("Error al cargar la mascota:", error);
+        toast.error("Error al cargar la información de la mascota");
         setSubmitError("Error al cargar la información de la mascota");
       } finally {
         setLoading(false);
@@ -248,14 +250,14 @@ export default function AdoptionPageWrapper() {
               <div className="flex-1">
                 <h2 className="text-xl font-semibold">{fetchedPet.name}</h2>
                 <p className="text-gray-600 mt-1">
-                  {fetchedPet.breed.name} • {fetchedPet.age} años • {fetchedPet.gender}
+                  {fetchedPet.breed?.name} • {fetchedPet.age} años • {fetchedPet.gender}
                 </p>
-                <p className="mt-2 text-gray-700">{fetchedPet.breed.description}</p>
+                <p className="mt-2 text-gray-700">{fetchedPet.breed?.description}</p>
                 <p className="mt-1 text-gray-500 text-sm">
-                  Ubicación: {fetchedPet.shelter.city}, {fetchedPet.shelter.state}
+                  Ubicación: {fetchedPet.shelter?.city}, {fetchedPet.shelter?.state}
                 </p>
                 <p className="mt-1 text-gray-500 text-sm">
-                  Refugio: {fetchedPet.shelter.name}
+                  Refugio: {fetchedPet.shelter?.name}
                 </p>
               </div>
             </CardContent>

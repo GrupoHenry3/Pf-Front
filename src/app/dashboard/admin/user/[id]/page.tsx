@@ -24,6 +24,7 @@ import {
   Heart
 } from "lucide-react";
 import { AdminSidebar } from "@/components/sidebar/AdminSidebar";
+import { getPetStatus } from "@/utils/petStatusUtils";
 import { useUser } from "@/context/UserContext";
 import { usePet } from "@/context/PetContext";
 import { ImageWithFallback } from "@/components/utils/ImageWithFallback";
@@ -60,7 +61,7 @@ export default function UserDetailPage() {
   }, [params.id, totalUsers]);
 
   // Mock data para adopciones del usuario
-  const userAdoptions = petsToAdopt.filter(pet => pet.status === 'adopted').slice(0, 3);
+  const userAdoptions = petsToAdopt.filter(pet => getPetStatus(pet) === 'adopted').slice(0, 3);
 
   const handleToggleActive = () => {
     if (!user) return;

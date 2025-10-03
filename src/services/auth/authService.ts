@@ -1,4 +1,5 @@
 import { apiClient } from "../apiClient";
+import toast from "react-hot-toast";
 
 interface LoginData {
   email: string;
@@ -16,18 +17,36 @@ interface RegisterData {
 
 export const authService = {
     login: async (data: LoginData) => {
-        const response = await apiClient.post("/auth/signin", data);
-        return response.data; 
+        try {
+            const response = await apiClient.post("/auth/signin", data);
+            toast.success("¡Bienvenido!");
+            return response.data;
+        } catch (error) {
+            toast.error("Credenciales incorrectas");
+            throw error;
+        }
     },
 
     register: async (data: RegisterData) => {
-        const response = await apiClient.post("/auth/signup", data);
-        return response.data; 
+        try {
+            const response = await apiClient.post("/auth/signup", data);
+            toast.success("¡Cuenta creada exitosamente!");
+            return response.data;
+        } catch (error) {
+            toast.error("Error al crear la cuenta");
+            throw error;
+        }
     },
 
     logout: async () => {
-        const response = await apiClient.post("/auth/signout");
-        return response.data;
+        try {
+            const response = await apiClient.post("/auth/signout");
+            toast.success("¡Hasta luego!");
+            return response.data;
+        } catch (error) {
+            toast.error("Error al cerrar sesión");
+            throw error;
+        }
     },
 
     googleAuth: () => {

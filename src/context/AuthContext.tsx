@@ -9,14 +9,7 @@ interface AuthContextType {
     register: (fullName: string, email: string, password: string, confirmedPassword: string) => Promise<UserInterface>;
     logout: () => Promise<void>;
 }
-interface AxiosError {
-    response?: {
-        status?: number;
-        data?: {
-            message?: string;
-        };
-    };
-}
+
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -31,8 +24,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             console.log("Getting profile after login...");
         } catch (error: unknown) {
             console.error("Error during login:", error);
-            const errorMessage = (error as AxiosError)?.response?.data?.message || "Error al iniciar sesión";
-            alert(errorMessage);
             throw error;
         }
     }
@@ -43,8 +34,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             return newUser;
         } catch (error: unknown) {
             console.error("Error during registration:", error);
-            const errorMessage = (error as AxiosError)?.response?.data?.message || "Error al registrarse";
-            alert(errorMessage);
             throw error;
         }
     }
@@ -53,8 +42,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             await authService.logout();
         } catch (error: unknown) {
             console.error("Error during logout:", error);
-            const errorMessage = (error as AxiosError)?.response?.data?.message || "Error al cerrar sesión";
-            alert(errorMessage);
             throw error;
         }
     }
