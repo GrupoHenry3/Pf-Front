@@ -19,6 +19,8 @@ import { useBreeds } from "@/context/BreedContext";
 import { petsService } from "@/services/pets/petsService";
 import { Pet } from "@/interfaces/Pet";
 import Image from "next/image";
+import toast from "react-hot-toast";
+
 
 interface EditPetPageProps {
   params: Promise<{
@@ -162,9 +164,10 @@ export default function EditPetPage({ params }: EditPetPageProps) {
       setSelectedSpeciesId(newSpecies.id || "");
       setNewSpeciesName("");
       setShowNewSpeciesInput(false);
+      toast.success("Especie creada ✅");
     } catch (error) {
       console.error("Error creando especie:", error);
-      alert("Error al crear la especie");
+      toast.error("Error al crear la especie");
     }
   };
 
@@ -184,9 +187,10 @@ export default function EditPetPage({ params }: EditPetPageProps) {
       setNewBreedDescription("");
       setNewBreedAvatarURL("");
       setShowNewBreedInput(false);
+      toast.success("Raza creada ✅"); 
     } catch (error) {
       console.error("Error creando raza:", error);
-      alert("Error al crear la raza");
+      toast.error("Error al crear la raza");
     }
   };
 
@@ -209,7 +213,7 @@ export default function EditPetPage({ params }: EditPetPageProps) {
   const handleBreedChange = (value: string) => {
     if (value === "other") {
       if (!selectedSpeciesId) {
-        alert("Primero debes seleccionar una especie antes de crear una nueva raza");
+        toast.error("Primero debes seleccionar una especie", { id: "need-species" });
         return;
       }
       setShowNewBreedInput(true);
@@ -293,12 +297,12 @@ export default function EditPetPage({ params }: EditPetPageProps) {
       if (!response.ok) {
         throw new Error("Error al actualizar la mascota");
       }
-
+      toast.success("Mascota actualizada ✨");
       // Redirigir al dashboard del refugio
       router.push("/dashboard/shelter");
     } catch (error) {
       console.error(error);
-      alert("Hubo un error al actualizar la mascota.");
+       toast.error("Hubo un error al actualizar la mascota.");
     } finally {
       setIsSubmitting(false);
     }

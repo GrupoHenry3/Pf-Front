@@ -14,6 +14,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import type { Pet } from "@/interfaces/Pet";
 import Image from "next/image";
 import { useUser } from "@/context/UserContext";
+import toast from "react-hot-toast";
 
 import { useSpecies } from "@/context/SpeciesContext";
 import { useBreeds } from "@/context/BreedContext";
@@ -83,9 +84,11 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
       setSelectedSpeciesId(newSpecies.id || "");
       setNewSpeciesName("");
       setShowNewSpeciesInput(false);
+       toast.success("Especie creada ✅");
     } catch (error) {
       console.error("Error creando especie:", error);
-      alert("Error al crear la especie");
+      toast.error("Error al crear la especie");
+
     }
   };
 
@@ -105,9 +108,10 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
       setNewBreedDescription("");
       setNewBreedAvatarURL("");
       setShowNewBreedInput(false);
+       toast.success("Raza creada ✅");
     } catch (error) {
       console.error("Error creando raza:", error);
-      alert("Error al crear la raza");
+       toast.error("Error al crear la raza");
     }
   };
   const handleSpeciesChange = (value: string) => {
@@ -126,7 +130,7 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
   const handleBreedChange = (value: string) => {
     if (value === "other") {
       if (!selectedSpeciesId) {
-        alert("Primero debes seleccionar una especie antes de crear una nueva raza");
+        toast.error("Primero debes seleccionar una especie", { id: "need-species" });
         return;
       }
       setShowNewBreedInput(true);
@@ -178,42 +182,48 @@ export function AddPet({ onBack, onSuccess }: AddPetProps) {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  e.preventDefault();
+  setIsSubmitting(true);
 
-    try {
-      const avatarURL = (formData.photos && formData.photos.length > 0) ? formData.photos[0] : "";
-      const petData = {
-        name: formData.name,
-        age: Number(formData.age),
-        gender: formData.gender === 'male' ? 'Male' : 'Female', 
-        size: formData.size === 'small' ? 'Small' : formData.size === 'medium' ? 'Medium' : 'Large', 
-        avatarURL: avatarURL,
-        shelterID: user?.shelter?.id,
-        adoptionFee: 0,
-        breedID: selectedBreedId,
-        speciesID: selectedSpeciesId,
-        neutered: formData.neutered,
-      };
-      console.log("información que va al bac de la mascota", petData);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pets`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(petData),
-      });
+  // opcional: mostrar "cargando..."
+  const tId = toast.loading("Creando mascota...");
 
-      if (!response.ok) {
-        throw new Error("Error al crear la mascota");
-      }
+  try {
+    const avatarURL = (formData.photos && formData.photos.length > 0) ? formData.photos[0] : "";
+    const petData = {
+      name: formData.name,
+      age: Number(formData.age),
+      gender: formData.gender === 'male' ? 'Male' : 'Female',
+      size: formData.size === 'small' ? 'Small' : formData.size === 'medium' ? 'Medium' : 'Large',
+      avatarURL,
+      shelterID: user?.shelter?.id,
+      adoptionFee: 0,
+      breedID: selectedBreedId,
+      speciesID: selectedSpeciesId,
+      neutered: formData.neutered,
+    };
 
-      onSuccess();
-    } catch (error) {
-      console.error(error);
-      alert("Hubo un error al agregar la mascota.");
-    } finally {
-      setIsSubmitting(false);
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pets`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(petData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al crear la mascota");
     }
-  };
+
+    toast.success("Mascota creada 🐾");
+    onSuccess();
+  } catch (error) {
+    console.error(error);
+    toast.error("Hubo un error al agregar la mascota."); // ← reemplaza alert
+  } finally {
+    setIsSubmitting(false);
+    toast.dismiss(tId); // cierra el "loading" si lo usaste
+  }
+};
+
 
   const canProceedToNext = () => {
     switch (currentStep) {

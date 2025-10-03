@@ -6,6 +6,7 @@ import {
   Heart,
   Share2
 } from "lucide-react";
+import toast from "react-hot-toast";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -290,7 +291,7 @@ import { Pet } from "@/interfaces/Pet";
                     <Button
                       className="w-full bg-green-500 hover:bg-green-600"
                       onClick={() =>
-                        alert("Inicia sesión para solicitar adopción")
+                        toast.error("Inicia sesión para solicitar adopción", { id: "login-required" })
                       }
                     >
                       <Heart className="w-4 h-4 mr-2" />

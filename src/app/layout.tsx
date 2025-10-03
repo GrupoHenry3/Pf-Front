@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import ToasterProvider from "@/components/providers/ToasterProvider";
 
 
 
@@ -33,7 +34,7 @@ export default function RootLayout({
         <AuthProvider>
               {children}
         </AuthProvider>
-        
+        <ToasterProvider />
       </body>
     </html>
   );

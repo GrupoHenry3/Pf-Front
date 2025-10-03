@@ -19,6 +19,7 @@ import { AdoptionDTO, adoptionsService } from "@/services/adoptions/adoptionsSer
 import { Pet } from "@/interfaces/Pet";
 import Link from "next/link";
 import PATHROUTES from "../utils/PathRoutes.util";
+import toast from "react-hot-toast";
 
 export default function AdoptionPageWrapper() {
   const params = useParams();
@@ -148,12 +149,18 @@ export default function AdoptionPageWrapper() {
       };
       console.log(adoptionData);
       await adoptionsService.create(adoptionData);
-      window.alert("✅ Solicitud de adopción enviada con éxito");
+      toast.success("Solicitud de adopción enviada con éxito ✅", { id: "adoption-success" });
       router.push("/dashboard/user");
     } catch (error: unknown) {
-      alert(error);
-      const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || "Error al enviar la solicitud de adopción";
-      setSubmitError(errorMessage);
+      const ax = error as { response?: { data?: { message?: string; error?: string } }; message?: string; code?: string };
+    const errorMessage =
+      ax?.response?.data?.message ??
+      ax?.response?.data?.error ??
+      (ax?.code === "ERR_NETWORK" ? "No hay conexión con el servidor. Intentalo de nuevo." : ax?.message) ??
+      "Error al enviar la solicitud de adopción";
+
+    setSubmitError(errorMessage);
+    toast.error(errorMessage, { id: "adoption-error" });
     } finally {
       setIsSubmitting(false);
     }
