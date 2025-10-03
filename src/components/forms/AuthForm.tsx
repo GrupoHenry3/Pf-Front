@@ -10,6 +10,7 @@ import RegisterForm from "./RegisterForm";
 import { LoginFormValues, RegisterFormValues } from "@/validators/loginSchema";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { authService } from "@/services/auth/authService";
 import toast from "react-hot-toast";
 
 
@@ -124,7 +125,7 @@ export function AuthForm() {
                 className="w-full py-3 rounded-xl border-2"
                 size="lg"
                 onClick={() => {
-                  window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
+                  authService.googleAuth();
                 }}
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">

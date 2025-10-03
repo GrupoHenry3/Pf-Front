@@ -17,6 +17,7 @@ interface UserContextType {
     error: string | null;
     clearError: () => void;
     totalUsers: UserInterface[];
+    checkAuthToken: () => boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -31,6 +32,20 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const clearError = () => setError(null);
 
+    // Función para verificar si hay token en localStorage
+    const checkAuthToken = () => {
+        const token = localStorage.getItem('access_token');
+        
+        if (!token && user) {
+            // No hay token pero hay usuario, limpiar
+            console.log("🧹 No hay token en localStorage, limpiando usuario");
+            setUser(null);
+            setIsProfileLoaded(false);
+        }
+        
+        return !!token;
+    };
+
     const getTotalUsers = async () => {
         const response = await usersService.list();
         setTotalUsers(response);
@@ -44,6 +59,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             console.error("Error al obtener el total de usuarios:", error);
         }
         }
+   }, [user]);
+
+   // Verificar token de autenticación periódicamente
+   useEffect(() => {
+        const interval = setInterval(() => {
+            checkAuthToken();
+        }, 1000); // Verificar cada segundo
+
+        return () => clearInterval(interval);
    }, [user]);
 
     const getProfile = async () => {
@@ -112,7 +136,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             isInitialized,
             error,
             totalUsers,
-            clearError
+            clearError,
+            checkAuthToken
         }}>
             {children}
         </UserContext.Provider>

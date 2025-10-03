@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useUser } from "@/context/UserContext";
 import { useDonation } from "@/context/DonationContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent,} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Gift, Calendar, DollarSign, Heart, Loader2 } from "lucide-react";
@@ -29,7 +29,6 @@ export default function DonationHistoryPage() {
   // Calcular estadísticas
   const totalDonated = userDonations.reduce((sum, donation) => sum + donation.amount, 0);
   const completedDonations = userDonations.filter(d => d.status === 'completed').length;
-  const failedDonations = userDonations.filter(d => d.status === 'failed').length;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -195,7 +194,7 @@ export default function DonationHistoryPage() {
                             </div>
                             {donation.message && (
                               <p className="text-sm text-gray-600 mt-2 italic">
-                                "{donation.message}"
+                              {donation.message}
                               </p>
                             )}
                           </div>

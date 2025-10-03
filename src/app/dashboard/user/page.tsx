@@ -52,9 +52,6 @@ function AdopterDashboard() {
     router.push("/dashboard/donation");
   }
 
-  const handleViewDonationHistory = () => {
-    router.push("/dashboard/user/donations/history");
-  }
 
   const handleViewProfile = () => {
     router.push("/dashboard/user/profile");
