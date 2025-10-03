@@ -49,7 +49,7 @@ export function AuthForm() {
         await login(loginFormData.email, loginFormData.password)
         router.push("/dashboard");
       }
-      catch(error){
+      catch{
         toast.error("Error al iniciar sesión");
         return;
       }
@@ -60,7 +60,7 @@ export function AuthForm() {
         await register(registerFormData.fullName, registerFormData.email, registerFormData.password, registerFormData.confirmedPassword || "")
         setIsLogin(true);
       }
-      catch(error){
+      catch{
         toast.error("Error al registrar usuario");
         return;
       }

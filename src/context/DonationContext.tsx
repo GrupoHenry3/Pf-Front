@@ -23,12 +23,6 @@ export const DonationProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const [shelterDonations, setShelterDonations] =useState<Donation[]>([])
     const [userDonations, setUserDonations] =useState<Donation[]>([])
     const [isDonationLoading, setIsDonationLoading] = useState(false);
-
-
-
-    useEffect(() => {
-        console.log(userDonations);
-    }, [donations]);
     
     useEffect(() => {
         const getDonations = async () => {
