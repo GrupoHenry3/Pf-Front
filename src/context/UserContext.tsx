@@ -1,0 +1,122 @@
+"use client"
+
+import { UserInterface } from "@/interfaces/User"
+import { usersService } from "@/services/users/usersService";
+import { createContext, useContext, useState, useEffect } from "react";
+
+
+
+interface UserContextType {
+    user: UserInterface | null;
+    setUser: (user: UserInterface | null) => void;
+    getProfile: () => Promise<void>;
+    updateProfile: (userData: Partial<UserInterface>) => Promise<UserInterface>;
+    isProfileLoaded: boolean;
+    isUserLoading: boolean;
+    isInitialized: boolean;
+    error: string | null;
+    clearError: () => void;
+    totalUsers: UserInterface[];
+}
+
+const UserContext = createContext<UserContextType | undefined>(undefined);
+
+export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [user, setUser] = useState<UserInterface | null>(null);
+    const [isProfileLoaded, setIsProfileLoaded] = useState(false);
+    const [isUserLoading, setIsUserLoading] = useState(false);
+    const [isInitialized, setIsInitialized] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [totalUsers, setTotalUsers] = useState<UserInterface[]>([]);
+
+    const clearError = () => setError(null);
+
+    const getTotalUsers = async () => {
+        const response = await usersService.list();
+        setTotalUsers(response);
+    }
+
+   useEffect(() => {
+    if (user && user.siteAdmin === true) {
+        try{
+            getTotalUsers();
+        } catch (error) {
+            console.error("Error al obtener el total de usuarios:", error);
+        }
+        }
+   }, [user]);
+
+    const getProfile = async () => {
+        try {
+            setIsUserLoading(true);
+            clearError();
+            console.log("Fetching user profile...");
+            const response = await usersService.getCurrentUser();
+            console.log("User profile fetched successfully:", response);
+            setUser(response);
+            setIsProfileLoaded(true);
+        } catch (error: unknown) {
+            console.error("Error fetching profile:", error);
+            setUser(null);
+            setIsProfileLoaded(true);
+        } finally {
+            setIsUserLoading(false);
+        }
+    }
+
+    const updateProfile = async (userData: Partial<UserInterface>): Promise<UserInterface> => {
+        try {
+            setIsUserLoading(true);
+            clearError();
+            console.log("Updating user profile...");
+            const updatedUser = await usersService.update(userData);
+            setUser(updatedUser);
+            return updatedUser;
+        } catch (error: unknown) {
+            console.error("Error updating profile:", error);
+            throw error;
+        } finally {
+            setIsUserLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        const initializeUser = async () => {
+            try {
+                console.log("UserContext - Initializing user...");
+                await getProfile();
+                console.log("UserContext - User initialized successfully");
+            } catch (error) {
+                console.error("UserContext - Error initializing user:", error);
+            } finally {
+                console.log("UserContext - Setting isInitialized to true");
+                setIsInitialized(true);
+            }
+        };
+
+        initializeUser();
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    return (
+        <UserContext.Provider value={{ 
+            user, 
+            setUser,  
+            getProfile,
+            updateProfile,
+            isUserLoading, 
+            isProfileLoaded, 
+            isInitialized,
+            error,
+            totalUsers,
+            clearError
+        }}>
+            {children}
+        </UserContext.Provider>
+    );
+}
+
+export const useUser = () => {
+    const context = useContext(UserContext);
+    if (!context) throw new Error("useUser debe usarse dentro de UserProvider");
+    return context;
+};
