@@ -2,7 +2,7 @@
 
 import { UserInterface } from "@/interfaces/User"
 import { usersService } from "@/services/users/usersService";
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
 
 
 
@@ -17,6 +17,7 @@ interface UserContextType {
     error: string | null;
     clearError: () => void;
     totalUsers: UserInterface[];
+    checkAuthCookie: () => boolean;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -30,6 +31,23 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [totalUsers, setTotalUsers] = useState<UserInterface[]>([]);
 
     const clearError = () => setError(null);
+
+    // Función para verificar si hay cookie de autenticación
+    const checkAuthCookie = useCallback(() => {
+        const token = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('access_token='))
+            ?.split('=')[1];
+        
+        if (!token && user) {
+            // No hay cookie pero hay usuario, limpiar
+            console.log("🧹 No hay cookie de autenticación, limpiando usuario");
+            setUser(null);
+            setIsProfileLoaded(false);
+        }
+        
+        return !!token;
+    }, [user]);
 
     const getTotalUsers = async () => {
         const response = await usersService.list();
@@ -45,6 +63,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
         }
    }, [user]);
+
+   // Verificar cookie de autenticación periódicamente
+   useEffect(() => {
+        const interval = setInterval(() => {
+            checkAuthCookie();
+        }, 1000); // Verificar cada segundo
+
+        return () => clearInterval(interval);
+   }, [user, checkAuthCookie]);
 
     const getProfile = async () => {
         try {
@@ -112,7 +139,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             isInitialized,
             error,
             totalUsers,
-            clearError
+            clearError,
+            checkAuthCookie
         }}>
             {children}
         </UserContext.Provider>
